@@ -6,6 +6,7 @@
 
 
 ############################################################################################################
+require                   './exception-handler'
 CND                       = require 'cnd'
 rpr                       = CND.rpr
 badge                     = 'INTERPLOT/DEMO-PUPPETEER'
@@ -20,7 +21,9 @@ PATH                      = require 'path'
 FS                        = require 'fs'
 { jr, }                   = CND
 assign                    = Object.assign
+join_path                 = ( P... ) -> PATH.resolve PATH.join P...
 #...........................................................................................................
+isa                       = require 'intertype'
 PD                        = require 'pipedreams'
 { $
   async }                 = PD
@@ -30,28 +33,18 @@ page_html_path            = PATH.resolve PATH.join __dirname, '../../public/main
 PUPPETEER                 = require 'puppeteer'
 
 #-----------------------------------------------------------------------------------------------------------
-demo_1 = ->
-  urge "µ29922-1 launching browser"
-  browser = await PUPPETEER.launch()
-  urge "µ29922-2 new page"
-  page    = await browser.newPage()
-  urge "µ29922-3 page goto"
-  await page.goto 'https://de.wikipedia.org/wiki/Berlin', { waitUntil: 'networkidle2', }
-  urge "µ29922-4 take PDF"
-  await page.pdf  { path: 'page.pdf', format: 'A4', }
-  urge "µ29922-5 close"
-  await browser.close()
-  urge "µ29922-6 done"
-
-#-----------------------------------------------------------------------------------------------------------
 settings =
+  has_error:    false
+  close:
+    on_finish:  true
+    on_error:   false
   puppeteer:
     headless:           false
     deviceScaleFactor:  2
     args: [
       '--disable-infobars' # hide 'Chrome is being controlled by ...'
       '--no-first-run'
-      '--incognito'
+      # '--incognito'
       # process.env.NODE_ENV === "production" ? "--kiosk" : null
       '--allow-file-access-from-files'
       '--no-sandbox'
@@ -69,46 +62,57 @@ settings =
 #   return content
 
 #-----------------------------------------------------------------------------------------------------------
+echo_browser_console = ( c ) =>
+  whisper c
+  if c._type is 'error'
+    settings.has_error = true
+    warn 'µ37763', 'console:', c._text
+    if ( settings.close?.on_error ? false )
+      after 3, => process.exit 1
+    # throw new Error c._text
+  #.........................................................................................................
+  else
+    info 'µ37763', 'console:', c._text
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+get_page = ( browser ) ->
+  if isa.empty ( pages = await browser.pages() )
+    urge "µ29923-2 new page";           R = await browser.newPage()
+  else
+    urge "µ29923-2 use existing page";  R = pages[ 0 ]
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
 demo_2 = ->
   # Set up browser and page.
-  urge "µ29923-1 launching browser"
-  browser = await PUPPETEER.launch settings.puppeteer
-  urge "µ29923-2 new page"
-  page    = await browser.newPage()
+  urge "µ29923-1 launching browser";  browser = await PUPPETEER.launch settings.puppeteer
+  page = await get_page browser
   page.setViewport { width: 1280, height: 926, }
   page.on 'error', ( error ) => throw error
-  page.on 'console', ( c ) =>
-    if c._type is 'error'
-      warn 'µ37763', 'console:', c._text
-      process.exit 1
-      # throw new Error c._text
-    else
-      info 'µ37763', 'console:', c._text
-  # Navigate to this blog post and wait a bit.
-  urge "µ29923-3-1 page goto"
-  # await page.goto 'https://intoli.com/blog/saving-images/'
-  await page.goto 'file:///home/flow/io/interplot/public/main.html'
-  urge "µ29923-4-2 page goto"
-  await page.waitForSelector '#my_dataviz'
-  urge "µ29923-5-3 page goto"
-  # Select the #my_dataviz img element and save the screenshot.
-  svg_image = await page.$ '#my_dataviz'
-  urge "µ29923-6 take screenshot"
-  await svg_image.screenshot { path: 'logo-screenshot.png', omitBackground: false, }
+  page.on 'console', echo_browser_console
+  urge "µ29923-3 page goto";          await page.goto 'file:///home/flow/io/interplot/public/main.html'
+  # urge "µ29923-4 page goto";          await page.waitForSelector '#my_dataviz'
+  # urge "µ29923-5 page goto";          svg_image = await page.$ '#my_dataviz'
+  # urge "µ29923-6 take screenshot";    await svg_image.screenshot { path: 'logo-screenshot.png', omitBackground: false, }
+  # # #.........................................................................................................
+  # # try
+  # #   urge "µ29923-7 get SVG"
+  # #   url           = await page.evaluate => ( document.querySelector '#my_dataviz' ).src
+  # #   content       = await getImageContent page, url
+  # #   contentBuffer = Buffer.from content, 'base64'
+  # #   fs.writeFileSync 'logo-extracted.svg', contentBuffer, 'base64'
+  # # catch error
+  # #   warn error
   # #.........................................................................................................
-  # try
-  #   urge "µ29923-7 get SVG"
-  #   url           = await page.evaluate => ( document.querySelector '#my_dataviz' ).src
-  #   content       = await getImageContent page, url
-  #   contentBuffer = Buffer.from content, 'base64'
-  #   fs.writeFileSync 'logo-extracted.svg', contentBuffer, 'base64'
-  # catch error
-  #   warn error
-  #.........................................................................................................
-  saveSvgAsPng ( document.getElementById '#my_dataviz' ), 'diagram.png'
-  #.........................................................................................................
-  urge "µ29923-8 close"
-  # after 0, => await browser.close()
+  ### TAINT how to make sure drawing chart has finished? ###
+  svg_txt   = await page.evaluate => ( jQuery '#chart svg' )[ 0 ].outerHTML
+  svg_path  = join_path __dirname, '../.cache/chart.svg'
+  FS.writeFileSync svg_path, svg_txt
+  help "output written to #{PATH.relative process.cwd(), svg_path}"
+  # #.........................................................................................................
+  if ( settings.close?auto ? false ) and ( not settings.has_error ? false )
+    urge "µ29923-8 close"; browser.close()
   urge "µ29923-9 done"
 
 
