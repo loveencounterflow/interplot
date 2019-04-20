@@ -6,11 +6,11 @@ cd "$(readlink -f "$0" | xargs dirname)"/.
 
 
 rsvg-convert                                      \
-  --zoom 10                                        \
+  --zoom 2                                        \
   --keep-aspect-ratio                             \
   --background-color white                        \
-  --output sample1.png                            \
-  sample1.svg
+  --output .cache/chart.png                       \
+  .cache/chart.svg
   # --width 100                                     \
   # --height 100                                    \
   # --dpi-x 600                                     \
