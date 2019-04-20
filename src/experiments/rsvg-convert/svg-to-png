@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(readlink -f "$0" | xargs dirname)"/.
+# echo "CWD is $(pwd)"
+
+
+rsvg-convert                                      \
+  --zoom 10                                        \
+  --keep-aspect-ratio                             \
+  --background-color white                        \
+  --output sample1.png                            \
+  sample1.svg
+  # --width 100                                     \
+  # --height 100                                    \
+  # --dpi-x 600                                     \
+  # --dpi-y 600                                     \
+
+# presets_A='-A'
+# presets_B='-A -l -F'
+# ls $presets_A
+# ls $presets_B
+
+# SYNOPSIS
+
+# rsvg-convert [options] in.svg > out.png
+
+# DESCRIPTION
+
+# Converts SVG images into PNG raster images, PDF, PS, or SVG vector images, or dumps of Cairo XML or recording surfaces.
+
+# OPTIONS
+# `-d --dpi-x number`—Set the X resolution of the image in pixels per inch. RSVG's current default is 90dpi
+
+# `-p --dpi-y number`—Set the Y resolution of the image in pixels per inch. RSVG's current default is 90dpi
+
+# `-x --x-zoom number`—X Zoom factor, as a percentage. If unspecified, 1.0 is used as the default.
+
+# `-y --y-zoom number`—Y Zoom factor, as a percentage. If unspecified, 1.0 is used as the default.
+
+# `-z ---zoom number`—Zoom factor, as a percentage. If unspecified, 1.0 is used as the default.
+
+# `-w --width integer`—Specify how wide you wish the image to be. If unspecified, the natural width of the image is used as the default.
+
+# `-h --height integer`—Specify how tall you wish the image to be. If unspecified, the natural height of the image is used as the default.
+
+# `-f --format [png, pdf, ps, svg, xml, recording]`—Specify the output format you wish the image to be saved in. If unspecified, PNG is used as the default.
+
+# `-o --output filename`—Specify the output filename. If unspecified, outputs to stdout.
+
+# `-a --keep-aspect-ratio`—Specify that the aspect ratio is to be preserved. If unspecified, aspect ratio will not be preserved.
+
+# `-b --background-color [black, white, #abccee, #aaa...]`—Specify the background color. If unspecified, none is used as the default.
+
+# `--base-uri uri`—Specify the base URI for SVG files. If unspecified, none is used as the default.
+
+# `-v --version`—Display what version of rsvg this is.
+
+# AUTHORS
+#        Dom Lachowicz (cinamod@hotmail.com), Caleb Moore (c.moore@student.unsw.edu.au), and a host of others.
+
+
+
+
+# set +u; sub_command="$1"; set -u
+# if [ -z "$sub_command" ]; then
+#   echo "$0: need sub-command"
+#   exit 1
+#   fi
+
+# echo command is "$sub_command"
+
+# sub_command_executable=./bin/intershop-"$sub_command"
+# if [ -x "$sub_command_executable" ]; then
+#   echo "$0: found executable $sub_command_executable for sub-command $sub_command"
+# else
+#   echo "$0: no executable $sub_command_executable found for sub-command $sub_command"
+#   exit 1
+#   fi
+
+
+
+
+# thx to https://unix.stackexchange.com/a/60808
+# compgen -c | sort | grep --color=always -P '^i.*$' | less -SRN
+# compgen -c | sort | grep --color=always -P '^...$' | less -SRN
+# compgen -c | sort | less -SRN +G
+# compgen -A function -abck | sort | less -SRN +G
+
+
+
+
+
