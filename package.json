@@ -1,0 +1,17 @@
+{
+  "name": "interplot",
+  "version": "0.0.1",
+  "description": "SVG Plotting, based on d3",
+  "main": "lib/main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cnd": "^4.5.0",
+    "coffeenode-teacup": "^0.2.0",
+    "intertype": "0.0.3",
+    "pipedreams": "^7.6.1"
+  }
+}
