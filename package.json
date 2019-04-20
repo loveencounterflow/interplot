@@ -12,6 +12,7 @@
     "cnd": "^4.5.0",
     "coffeenode-teacup": "^0.2.0",
     "intertype": "0.0.3",
+    "jsdom": "^14.0.0",
     "pipedreams": "^7.6.1",
     "puppeteer": "^1.14.0"
   }
