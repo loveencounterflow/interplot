@@ -67,18 +67,22 @@ Object.assign @, TEACUP
     # @META 'http-equiv': "Content-Security-Policy", content: "script-src 'unsafe-inline'"
     @TITLE 'INTERPLOT'
     ### ------------------------------------------------------------------------------------------------ ###
-    # @JS     './jquery-3.3.1.js'
+    @JS     './jquery-3.3.1.js'
     # @CSS    './reset.css'
-    # @CSS    './styles-01.css'
+    @CSS    './styles-01.css'
     ### ------------------------------------------------------------------------------------------------ ###
     ### LIBRARIES                                                                                       ###
-    @JS  'http://d3js.org/d3.v4.js'
+    # @JS  'http://d3js.org/d3.v4.js'
     # @JS  'http://d3js.org/d3.v5.js'
-    # @JS  'file:///home/flow/io/interplot/public/d3.v5.js'
-    # @CSS 'file:///home/flow/io/interplot/public/c3-0.6.14/c3.css'
-    # @JS  'file:///home/flow/io/interplot/public/c3-0.6.14/c3.min.js'
+    # @JS   './d3.v5.js'
+    @JS   'https://cdn.plot.ly/plotly-latest.min.js'
+    # @JS   'https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.js'
+    # @CSS  'https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.css'
+    # @CSS './c3-0.6.14/c3.css'
+    # @JS  './c3-0.6.14/c3.min.js'
+    @CSS  './styles-99.css'
+    @CSS  'https://fonts.googleapis.com/css?family=Lobster'
     #=======================================================================================================
-    @DIV '#my_dataviz'
     @DIV '#chart'
     @JS  './ops.js'
     return null

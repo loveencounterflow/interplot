@@ -29,6 +29,7 @@ PD                        = require 'pipedreams'
   async }                 = PD
 #...........................................................................................................
 after                     = ( dts, f ) -> setTimeout f, dts * 1000
+sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done
 page_html_path            = PATH.resolve PATH.join __dirname, '../../public/main.html'
 PUPPETEER                 = require 'puppeteer'
 
@@ -40,7 +41,8 @@ settings =
     on_error:   false
   puppeteer:
     headless:           false
-    deviceScaleFactor:  2
+    # defaultViweport:
+    #   deviceScaleFactor:  0.5
     args: [
       '--disable-infobars' # hide 'Chrome is being controlled by ...'
       '--no-first-run'
@@ -49,21 +51,25 @@ settings =
       '--allow-file-access-from-files'
       '--no-sandbox'
       '--disable-setuid-sandbox'
+      # '--start-fullscreen'
+      '--start-maximized'
       ]
-
-# #-----------------------------------------------------------------------------------------------------------
-# getImageContent = ( page, url ) =>
-#   frameId = String page.mainFrame()._id
-#   debug 'µ37744', 'frameId', rpr frameId
-#   debug 'µ37744', 'url', rpr url
-#   { content, base64Encoded } = await page._client.send 'Page.getResourceContent', { frameId, url }
-#   unless base64Encoded
-#     throw new Error "µ34774", 'expected base64Encoded'
-#   return content
+  screenshot:
+    path:             PATH.resolve __dirname, '../.cache/chart.png'
+    omitBackground:   false
+    # fullPage:         true
+    fullPage:         false
+    type:             'png'
+    # clip:
+    #   x:                0
+    #   y:                0
+    #   width:            500
+    #   height:           500
 
 #-----------------------------------------------------------------------------------------------------------
 echo_browser_console = ( c ) =>
-  whisper c
+  unless c._type in [ 'log', ]
+    whisper ( rpr c )[ .. 500 ]
   if c._type is 'error'
     settings.has_error = true
     warn 'µ37763', 'console:', c._text
@@ -84,33 +90,37 @@ get_page = ( browser ) ->
   return R
 
 #-----------------------------------------------------------------------------------------------------------
+take_screenshot = ( page ) ->
+  screenshot_written = false
+  if settings.screenshot.fullPage
+    urge "µ29923-6 take screenshot";    await page.screenshot settings.screenshot
+    screenshot_written = true
+  else
+    urge "µ29923-5 page goto";          chart_dom = await page.$ '#chart'
+    if chart_dom?
+      urge "µ29923-6 take screenshot";    await chart_dom.screenshot settings.screenshot
+      screenshot_written = true
+    else
+      warn "unable to take screenshot: DOM element not found"
+  if screenshot_written
+    help "output written to #{PATH.relative process.cwd(), settings.screenshot.path}"
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
 demo_2 = ->
   # Set up browser and page.
   urge "µ29923-1 launching browser";  browser = await PUPPETEER.launch settings.puppeteer
   page = await get_page browser
-  page.setViewport { width: 1280, height: 926, }
+  page.setViewport { width: 1200, height: 1200, }
   page.on 'error', ( error ) => throw error
   page.on 'console', echo_browser_console
   urge "µ29923-3 page goto";          await page.goto 'file:///home/flow/io/interplot/public/main.html'
-  # urge "µ29923-4 page goto";          await page.waitForSelector '#my_dataviz'
-  # urge "µ29923-5 page goto";          svg_image = await page.$ '#my_dataviz'
-  # urge "µ29923-6 take screenshot";    await svg_image.screenshot { path: 'logo-screenshot.png', omitBackground: false, }
-  # # #.........................................................................................................
-  # # try
-  # #   urge "µ29923-7 get SVG"
-  # #   url           = await page.evaluate => ( document.querySelector '#my_dataviz' ).src
-  # #   content       = await getImageContent page, url
-  # #   contentBuffer = Buffer.from content, 'base64'
-  # #   fs.writeFileSync 'logo-extracted.svg', contentBuffer, 'base64'
-  # # catch error
-  # #   warn error
-  # #.........................................................................................................
-  ### TAINT how to make sure drawing chart has finished? ###
-  svg_txt   = await page.evaluate => ( jQuery '#chart svg' )[ 0 ].outerHTML
-  svg_path  = join_path __dirname, '../.cache/chart.svg'
-  FS.writeFileSync svg_path, svg_txt
-  help "output written to #{PATH.relative process.cwd(), svg_path}"
-  # #.........................................................................................................
+  # urge "µ29923-3 page goto";          await page.goto 'https://de.wikipedia.org/wiki/Berlin'
+  # urge "µ29923-3 page goto";          await page.goto 'http://google.com'
+  urge "µ29923-4 page goto";          await page.waitForSelector '#chart'
+  urge "µ29923-4 page goto";          await page.waitForSelector '#chart_ready', { timeout: 600e3, }
+  await take_screenshot page
+  #.........................................................................................................
   if ( settings.close?auto ? false ) and ( not settings.has_error ? false )
     urge "µ29923-8 close"; browser.close()
   urge "µ29923-9 done"
@@ -120,6 +130,7 @@ demo_2 = ->
 ############################################################################################################
 unless module.parent?
   do =>
+    # await sleep 5
     await demo_2()
     help 'ok'
 
