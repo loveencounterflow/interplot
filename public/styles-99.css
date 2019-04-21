@@ -1,0 +1,22 @@
+
+html * {
+  /* Set height, width, borders, and global font properties here */
+  /*font-family:            flow;*/
+  /*font-size:              calc( 2 * var(--mktw-font-size) );*/
+}
+
+#chart {
+  /*font-size:              200%*/
+}
+
+.tau-chart__svg .label .label-token {
+    font-size: 24px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.tau-chart__legend__item {
+    font-size: 24px;
+    line-height: 1.2em;
+    cursor: pointer;
+}
