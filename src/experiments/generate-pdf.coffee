@@ -1,15 +1,11 @@
 
-
-
-
 'use strict'
 
 
 ############################################################################################################
-require                   '../exception-handler'
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'INTERPLOT/DEMO-PUPPETEER'
+badge                     = 'INTERPLOT/GENERATE-PDF'
 debug                     = CND.get_logger 'debug',     badge
 alert                     = CND.get_logger 'alert',     badge
 whisper                   = CND.get_logger 'whisper',   badge
@@ -23,7 +19,11 @@ FS                        = require 'fs'
 assign                    = Object.assign
 join_path                 = ( P... ) -> PATH.resolve PATH.join P...
 #...........................................................................................................
-isa                       = require 'intertype'
+types                     = require '../types'
+{ isa
+  validate
+  cast
+  type_of }               = types
 PD                        = require 'pipedreams'
 { $
   async }                 = PD
@@ -116,8 +116,8 @@ demo_2 = ->
   page.on 'error', ( error ) => throw error
   page.on 'console', echo_browser_console
   # urge "^interplot/gpdf@4198-2 page goto";          await page.goto 'file:///home/flow/io/interplot/public/main.html'
-  # urge "^interplot/gpdf@4198-3 page goto";          await page.goto 'https://de.wikipedia.org/wiki/Berlin'
-  urge "^interplot/gpdf@4198-3 page goto";          await page.goto 'http://localhost:8080/slugs'
+  urge "^interplot/gpdf@4198-3 page goto";          await page.goto 'https://de.wikipedia.org/wiki/Berlin'
+  # urge "^interplot/gpdf@4198-3 page goto";          await page.goto 'http://localhost:8080/slugs'
   # urge "^interplot/gpdf@4198-3 page goto";          await page.goto 'http://localhost:8080/slugs', { waitUntil: "networkidle2" }
   # urge "^interplot/gpdf@4198-4 page goto";          await page.goto 'http://google.com'
   # urge "^interplot/gpdf@4198-5 waitForSelector";    await page.waitForSelector '#chart'
