@@ -40,21 +40,33 @@ settings =
     on_finish:  true
     on_error:   false
   puppeteer:
-    # headless:           false
-    headless:           true
-    defaultViweport:
-      deviceScaleFactor:  0.5
+    headless:           false
+    # headless:           true
+    defaultViewport:    null
+    #   width:                  1000
+    #   height:                 500
+    #   deviceScaleFactor:      1
+    ignoreDefaultArgs:  [ '--enable-automation', ]
     args: [
-      '--disable-infobars' # hide 'Chrome is being controlled by ...'
+      ### see https://peter.sh/experiments/chromium-command-line-switches/ ###
+      ### https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md ###
+      # '--disable-infobars' # hide 'Chrome is being controlled by ...'
       '--no-first-run'
+      # '--enable-automation'
+      '--no-default-browser-check'
       # '--incognito'
       # process.env.NODE_ENV === "production" ? "--kiosk" : null
       '--allow-file-access-from-files'
-      '--no-sandbox'
-      '--disable-setuid-sandbox'
+      # '--no-sandbox'
+      # '--disable-setuid-sandbox'
       # '--start-fullscreen'
       '--start-maximized'
       ]
+  # viewport:
+  #   ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagesetviewportviewport ###
+  #   width:                  1000
+  #   height:                 500
+  #   deviceScaleFactor:      15
   pdf:
     ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagepdfoptions ###
     displayHeaderFooter:    false
@@ -86,8 +98,8 @@ settings =
 #-----------------------------------------------------------------------------------------------------------
 echo_browser_console = ( c ) =>
   # unless c._type in [ 'log', ]
-  #   whisper ( rpr c )[ .. 100 ]
-  text = ( ( c._text ? '' ).replace /\s+/, ' ' )[ ... 108 ]
+  # whisper '^33489^', ( rpr c ) # [ .. 100 ]
+  text = ( ( c._text ? '???' ).replace /\s+/, ' ' )[ ... 108 ]
   if c._type is 'error'
     settings.has_error = true
     warn 'µ37763', 'console:', text
@@ -132,17 +144,17 @@ take_screenshot = ( page ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 demo_2 = ->
-  # url             = 'https://de.wikipedia.org/wiki/Berlin'
-  # target_selector = '#content'
+  url             = 'https://de.wikipedia.org/wiki/Berlin'
+  target_selector = '#content'
   # url             = 'http://localhost:8080/slugs'
   # url             = 'http://localhost:8080/slugs', { waitUntil: "networkidle2" }
   # url             = 'http://example.com'
   # target_selector = 'a'
   # target_selector = '#page-ready', { timeout: 600e3, }
-  #.........................................................................................................
-  url             = 'file:///home/flow/jzr/interplot/public/main.html'
-  target_selector = '#chart'
-  # target_selector = '#chart_ready', { timeout: 600e3, }
+  # #.........................................................................................................
+  # url             = 'file:///home/flow/jzr/interplot/public/main.html'
+  # target_selector = '#chart'
+  # # target_selector = '#chart_ready', { timeout: 600e3, }
   #.........................................................................................................
   url             = 'file:///home/flow/jzr/benchmarks/assets/datamill/html-columns/main.html'
   target_selector = '#page-ready'
@@ -151,18 +163,26 @@ demo_2 = ->
   urge "launching browser";  browser = await PUPPETEER.launch settings.puppeteer
   page = await get_page browser
   #.........................................................................................................
-  # page.setViewport { width: 1200, height: 1200, }
   page.on 'error', ( error ) => throw error
   page.on 'console', echo_browser_console
+  #.........................................................................................................
+  urge "emulate media: 'screen'"
+  await page.emulateMedia 'screen'
+  await page._client.send 'Emulation.clearDeviceMetricsOverride'
+  # await page.emulateMedia null
+  # page.setViewport settings.viewport
+  # await page.emulate PUPPETEER.devices[ 'iPhone 6' ]
   #.........................................................................................................
   urge "goto #{url}"
   await page.goto url
   #.........................................................................................................
   urge "waitForSelector"
   await page.waitForSelector target_selector
-  #.........................................................................................................
-  urge "emulate media: 'screen'"
-  await page.emulateMedia 'screen'
+  # await page.focus 'div'
+  # await page.mainFrame().focus 'div'
+  # await page.keyboard.type 'helo'
+  element_handle = await page.$ 'div'
+  debug '^77788^', await element_handle.click()
   #.........................................................................................................
   if settings.puppeteer.headless
     #.......................................................................................................
