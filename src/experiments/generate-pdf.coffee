@@ -40,10 +40,10 @@ settings =
     on_finish:  true
     on_error:   false
   puppeteer:
-    headless:           false
-    # headless:           true
-    # defaultViweport:
-    #   deviceScaleFactor:  0.5
+    # headless:           false
+    headless:           true
+    defaultViweport:
+      deviceScaleFactor:  0.5
     args: [
       '--disable-infobars' # hide 'Chrome is being controlled by ...'
       '--no-first-run'
@@ -55,6 +55,19 @@ settings =
       # '--start-fullscreen'
       '--start-maximized'
       ]
+  pdf:
+    ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagepdfoptions ###
+    displayHeaderFooter:    false
+    landscape:              false
+    # preferCSSPageSize:      true
+    format:                 'A4' # takes precedence over width, height
+    # width:                  '2000mm'
+    # height:                 '50mm'
+    margin:
+      top:                  '0mm'
+      right:                '0mm'
+      bottom:               '0mm'
+      left:                 '0mm'
   screenshot:
     target_selector:  '#chart' ### only used when screenshot.puppeteer.fullPage is false ###
     # target_selector:  'div' ### only used when screenshot.puppeteer.fullPage is false ###
@@ -131,35 +144,41 @@ demo_2 = ->
   target_selector = '#chart'
   # target_selector = '#chart_ready', { timeout: 600e3, }
   #.........................................................................................................
+  url             = 'file:///home/flow/jzr/benchmarks/assets/datamill/html-columns/main.html'
+  target_selector = '#page-ready'
+  #.........................................................................................................
   # Set up browser and page.
-  urge "^interplot/gpdf@4198-1 launching browser";  browser = await PUPPETEER.launch settings.puppeteer
+  urge "launching browser";  browser = await PUPPETEER.launch settings.puppeteer
   page = await get_page browser
   #.........................................................................................................
-  page.setViewport { width: 1200, height: 1200, }
+  # page.setViewport { width: 1200, height: 1200, }
   page.on 'error', ( error ) => throw error
   page.on 'console', echo_browser_console
   #.........................................................................................................
-  urge "^interplot/gpdf@4198-3 page goto"
+  urge "goto #{url}"
   await page.goto url
   #.........................................................................................................
-  urge "^interplot/gpdf@4198-5 waitForSelector"
+  urge "waitForSelector"
   await page.waitForSelector target_selector
   #.........................................................................................................
+  urge "emulate media: 'screen'"
+  await page.emulateMedia 'screen'
+  #.........................................................................................................
   if settings.puppeteer.headless
-    await take_screenshot page
     #.......................................................................................................
-    urge "^interplot/gpdf@4198-7 wait for PDF"
-    pdf = await page.pdf { format: 'A4', }
+    # await take_screenshot page
     #.......................................................................................................
-    path = '/tmp/test.pdf'
+    urge "write PDF"
+    pdf   = await page.pdf settings.pdf
+    path  = '/tmp/test.pdf'
     ( require 'fs' ).writeFileSync path, pdf
     info "ouput written to #{path}"
   #.........................................................................................................
   if ( settings.close?auto ? false ) and ( not settings.has_error ? false )
-    urge "^interplot/gpdf@4198-8 close"
+    urge "close"
     await browser.close()
   #.........................................................................................................
-  urge "^interplot/gpdf@4198-9 done"
+  urge "done"
   return null
 
 
