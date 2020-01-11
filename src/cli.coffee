@@ -67,7 +67,7 @@ types                     = require './types'
         help ( rpr name for name of TEMPLATES ).join ', '
         process.exit 1
       html = TEMPLATES[ template_name ] parameters...
-      if target_path is '--'
+      if target_path is '%'
         echo html
       else
         FS.writeFileSync target_path, html
@@ -76,7 +76,10 @@ types                     = require './types'
   #.........................................................................................................
   app.parse process.argv
   unless has_command
-    app.outputHelp ( message ) -> CND.orange message
+    app.outputHelp ( message ) -> ( CND.orange message ) + CND.blue """
+
+      use % (percent sign) to write to stdout, may add parameters after that, ex.:
+      node lib/cli.js write-template layout % foobar\n"""
   # debug '^33376^', ( k for k of app).sort().join ', '
   return null
 

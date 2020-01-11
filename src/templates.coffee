@@ -84,11 +84,20 @@ _.CSS                  = _.new_tag ( route ) -> _.LINK   rel:  'stylesheet',    
 
 #-----------------------------------------------------------------------------------------------------------
 @main_2 = ->
+  unless ( arity = arguments.length ) is 0
+    throw new Error "^33211^ expected 0 arguments, got #{arity}"
   return ( @layout 'Triangular Chart' ) + '\n\n' + _.render =>
     _.JS   'https://cdn.plot.ly/plotly-latest.min.js'
     _.CSS  './chart-styles.css'
     _.CSS  'https://fonts.googleapis.com/css?family=Lobster'
     _.DIV '#chart'
     return null
+
+#-----------------------------------------------------------------------------------------------------------
+@demo_columns = ->
+  unless ( arity = arguments.length ) is 0
+    throw new Error "^33211^ expected 0 arguments, got #{arity}"
+  return ( @layout 'Columns Demo' ) + '\n\n' + _.render =>
+    _.JS   'https://cdn.plot.ly/plotly-latest.min.js'
 
 
