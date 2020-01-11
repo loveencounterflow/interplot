@@ -17,11 +17,11 @@ jr                        = JSON.stringify
 Intertype                 = ( require 'intertype' ).Intertype
 intertype                 = new Intertype module.exports
 
-# #-----------------------------------------------------------------------------------------------------------
-# @declare 'datom_settings',
-#   tests:
-#     "x is a object":                          ( x ) -> @isa.object                      x
-#     "x.merge is a ?boolean":                  ( x ) -> ( not x.merge? ) or @isa.boolean x.merge
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_template_name',
+  tests:
+    "x is a nonempty_text":                   ( x ) -> @isa.nonempty_text                      x
+    "x is name of template":                  ( x ) -> @isa.function ( require './templates' )[ x ]
 
 # #-----------------------------------------------------------------------------------------------------------
 # @declare 'datom_nonempty_list_of_positive_integers', ( x ) ->

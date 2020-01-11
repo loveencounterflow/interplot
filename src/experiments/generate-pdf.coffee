@@ -61,6 +61,7 @@ settings =
       # '--disable-setuid-sandbox'
       # '--start-fullscreen'
       '--start-maximized'
+      '--auto-open-devtools-for-tabs'
       ]
   # viewport:
   #   ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagesetviewportviewport ###
@@ -156,7 +157,7 @@ demo_2 = ->
   # target_selector = '#chart'
   # # target_selector = '#chart_ready', { timeout: 600e3, }
   #.........................................................................................................
-  url             = 'file:///home/flow/jzr/benchmarks/assets/datamill/html-columns/main.html'
+  url             = 'file:///home/flow/jzr/interplot/public/demo-columns/index.html'
   target_selector = '#page-ready'
   #.........................................................................................................
   # Set up browser and page.

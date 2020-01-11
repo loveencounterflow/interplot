@@ -48,10 +48,3 @@ html, body {
   /*line-height-step:       var(--mktw-grid);*/
 }
 
-#chart {
-  border:                 1px solid red;
-  background-color:       #ffffe6;
-  width:                  1200;
-  height:                 1200;
-}
-

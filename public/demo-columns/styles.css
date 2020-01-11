@@ -1,0 +1,68 @@
+body {
+  -webkit-print-color-adjust: exact;
+  overflow:               hidden;
+  width:                  210mm;
+  height:                 297mm;
+  padding:                0mm;
+  margin:                 0mm;
+  outline:                1px solid red;
+  font-size:              3.5mm;
+  line-height:            4mm; }
+
+/*@page {
+  width:                  110mm;
+  height:                 297mm;
+  margin:                 10mm; }
+*/
+.col {
+  text-align:             justify;
+  orphans:                1;
+  widows:                 1;
+  column-rule-width:      1mm;
+  column-rule-style:      dotted;
+  column-rule-color:      black; }
+
+.col p {
+  text-indent:            1em;
+  margin-top:             1em; }
+
+.col p:first-of-type {
+  text-indent:            0em;
+  margin-top:             0em; }
+
+.col3 {
+  columns:                3;
+  column-gap:             5mm;
+  column-fill:            balance; }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family:            sans-serif;
+  font-weight:            bolder;
+  font-size:              125%;
+  padding-top:            3mm;
+  padding-bottom:         3mm;
+  background-color:       rgba(171, 184, 142, 0.5)
+}
+
+.col h1,
+.col h2,
+.col h3,
+.col h4,
+.col h5,
+.col h6 {
+  break-before:           avoid;
+  break-after:            avoid;
+  column-span:            all;
+}
+
+next-column {
+  display:                block;
+  height:                 0mm;
+  outline:                3px solid red;
+  break-before:           column; }
+

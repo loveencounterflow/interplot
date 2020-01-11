@@ -198,10 +198,27 @@ demo_plotly_ternary = ->
   plot data, layout, config
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+demo_ranges_and_coordinates = ->
+  log = console.log;
+  log document.querySelector 'p'
+  # d = document.getSelection();
+  # d = window.getSelection();
+  # d.empty();
+  # d.addRange( range );
+  first_p = document.querySelector 'p'
+  log 'bounding box', first_p.getClientRects()
+  range = document.createRange()
+  range.selectNode first_p
+  log range
+  newNode = document.createElement 'p'
+  newNode.appendChild document.createTextNode "New Node Inserted Here"
+  range.insertNode newNode
+
 ############################################################################################################
 # demo_d3()
 # demo_taucharts()
 # demo_plotly_1()
-demo_plotly_ternary()
-
+# demo_plotly_ternary()
+demo_ranges_and_coordinates()
 

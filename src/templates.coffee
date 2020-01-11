@@ -31,22 +31,22 @@ TEACUP                    = require 'coffeenode-teacup'
 #===========================================================================================================
 # TEACUP NAMESPACE ACQUISITION
 #-----------------------------------------------------------------------------------------------------------
-Object.assign @, TEACUP
+_ = TEACUP
 
 # #-----------------------------------------------------------------------------------------------------------
-# @FULLHEIGHTFULLWIDTH  = @new_tag ( P... ) -> @TAG 'fullheightfullwidth', P...
-# @OUTERGRID            = @new_tag ( P... ) -> @TAG 'outergrid',           P...
-# @LEFTBAR              = @new_tag ( P... ) -> @TAG 'leftbar',             P...
-# @CONTENT              = @new_tag ( P... ) -> @TAG 'content',             P...
-# @RIGHTBAR             = @new_tag ( P... ) -> @TAG 'rightbar',            P...
-# @SHADE                = @new_tag ( P... ) -> @TAG 'shade',               P...
-# @SCROLLER             = @new_tag ( P... ) -> @TAG 'scroller',            P...
-# @BOTTOMBAR            = @new_tag ( P... ) -> @TAG 'bottombar',           P...
-# @FOCUSFRAME           = @new_tag ( P... ) -> @TAG 'focusframe',          P...
+# _.FULLHEIGHTFULLWIDTH  = @new_tag ( P... ) -> _.TAG 'fullheightfullwidth', P...
+# _.OUTERGRID            = @new_tag ( P... ) -> _.TAG 'outergrid',           P...
+# _.LEFTBAR              = @new_tag ( P... ) -> _.TAG 'leftbar',             P...
+# _.CONTENT              = @new_tag ( P... ) -> _.TAG 'content',             P...
+# _.RIGHTBAR             = @new_tag ( P... ) -> _.TAG 'rightbar',            P...
+# _.SHADE                = @new_tag ( P... ) -> _.TAG 'shade',               P...
+# _.SCROLLER             = @new_tag ( P... ) -> _.TAG 'scroller',            P...
+# _.BOTTOMBAR            = @new_tag ( P... ) -> _.TAG 'bottombar',           P...
+# _.FOCUSFRAME           = @new_tag ( P... ) -> _.TAG 'focusframe',          P...
 #...........................................................................................................
-@JS                   = @new_tag ( route ) -> @SCRIPT type: 'text/javascript',  src: route
-@CSS                  = @new_tag ( route ) -> @LINK   rel:  'stylesheet',      href: route
-# @STYLUS               = ( source ) -> @STYLE {}, _STYLUS.render source
+_.JS                   = _.new_tag ( route ) -> _.SCRIPT type: 'text/javascript',  src: route
+_.CSS                  = _.new_tag ( route ) -> _.LINK   rel:  'stylesheet',      href: route
+# _.STYLUS               = ( source ) -> _.STYLE {}, _STYLUS.render source
 
 
 #===========================================================================================================
@@ -55,39 +55,40 @@ Object.assign @, TEACUP
 # @get_flexgrid_html = ( cdtsel_nr, term ) ->
 #   selector = if cdtsel_nr is 1 then '.cdtsel' else ''
 #   ### TAINT use API to derive cdtsel_id ###
-#   return @render => @DIV "#candidate-#{cdtsel_nr}.glyph#{selector}", term
+#   return @render => _.DIV "#candidate-#{cdtsel_nr}.glyph#{selector}", term
+
+#-----------------------------------------------------------------------------------------------------------
+@layout = ( title ) ->
+  return _.render =>
+    _.DOCTYPE 5
+    _.META charset: 'utf-8'
+    # _.META 'http-equiv': "Content-Security-Policy", content: "default-src 'self'"
+    # _.META 'http-equiv': "Content-Security-Policy", content: "script-src 'unsafe-inline'"
+    _.TITLE title ? 'INTERPLOT'
+    ### ------------------------------------------------------------------------------------------------ ###
+    _.JS     './jquery-3.3.1.js'
+    # _.CSS    './reset.css'
+    _.CSS    './styles.css'
+    ### ------------------------------------------------------------------------------------------------ ###
+    ### LIBRARIES                                                                                       ###
+    # _.JS  'http://d3js.org/d3.v4.js'
+    # _.JS  'http://d3js.org/d3.v5.js'
+    # _.JS   './d3.v5.js'
+    # _.JS   'https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.js'
+    # _.CSS  'https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.css'
+    # _.CSS './c3-0.6.14/c3.css'
+    # _.JS  './c3-0.6.14/c3.min.js'
+    #=======================================================================================================
+    _.JS  './ops.js'
+    return null
 
 #-----------------------------------------------------------------------------------------------------------
 @main_2 = ->
-  #.........................................................................................................
-  return @render =>
-    @DOCTYPE 5
-    @META charset: 'utf-8'
-    # @META 'http-equiv': "Content-Security-Policy", content: "default-src 'self'"
-    # @META 'http-equiv': "Content-Security-Policy", content: "script-src 'unsafe-inline'"
-    @TITLE 'INTERPLOT'
-    ### ------------------------------------------------------------------------------------------------ ###
-    @JS     './jquery-3.3.1.js'
-    # @CSS    './reset.css'
-    @CSS    './styles-01.css'
-    ### ------------------------------------------------------------------------------------------------ ###
-    ### LIBRARIES                                                                                       ###
-    # @JS  'http://d3js.org/d3.v4.js'
-    # @JS  'http://d3js.org/d3.v5.js'
-    # @JS   './d3.v5.js'
-    @JS   'https://cdn.plot.ly/plotly-latest.min.js'
-    # @JS   'https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.js'
-    # @CSS  'https://cdn.jsdelivr.net/npm/taucharts@2/dist/taucharts.min.css'
-    # @CSS './c3-0.6.14/c3.css'
-    # @JS  './c3-0.6.14/c3.min.js'
-    @CSS  './styles-99.css'
-    @CSS  'https://fonts.googleapis.com/css?family=Lobster'
-    #=======================================================================================================
-    @DIV '#chart'
-    @JS  './ops.js'
+  return ( @layout 'Triangular Chart' ) + '\n\n' + _.render =>
+    _.JS   'https://cdn.plot.ly/plotly-latest.min.js'
+    _.CSS  './chart-styles.css'
+    _.CSS  'https://fonts.googleapis.com/css?family=Lobster'
+    _.DIV '#chart'
     return null
-
-
-
 
 
