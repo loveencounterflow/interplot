@@ -194,7 +194,7 @@ demo_2 = ->
   # page.click '#writehere'
   debug '^22762^', "sending keys"
   text = "this text courtesy of Puppeteer"
-  await page.type '#writehere', text, { delay: 10, }
+  await page.type '#writehere', text #, { delay: 10, }
   # page.keyboard.press 'Tab'
   await page.keyboard.down 'Shift'
   for chr in text
@@ -208,13 +208,15 @@ demo_2 = ->
   await sleep 1
   await page.keyboard.down 'Tab'
   await page.keyboard.up 'Tab'
-  await page.keyboard.down 'Shift'
+  delta = parseFloat await page.evaluate -> ( $ 'p' ).offset().left
+  # await page.keyboard.down 'Shift'
   for chr in text
-    await page.keyboard.down 'ArrowRight'
-    await page.keyboard.up 'ArrowRight'
     rectangle = await page.evaluate -> OPS.rectangle_from_selection()
-    # info '^34736^', "selection width:", rectangle
-    info '^34736^', "selection width:", jr rectangle.width
+    info '^34736^', "selection x:", rectangle.x - delta
+    await page.keyboard.press 'ArrowRight'
+    # await page.keyboard.down 'ArrowRight'
+    # await page.keyboard.up 'ArrowRight'
+    # info '^34736^', "selection width:", jr rectangle.width
   # await page.keyboard.press('KeyA');
   # await page.keyboard.up('Shift');
   # await page.keyboard.press('KeyA');
