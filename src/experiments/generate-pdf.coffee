@@ -43,6 +43,9 @@ settings =
     headless:           false
     # headless:           true
     defaultViewport:    null
+    pipe:               true ### use pipe instead of web sockets for communication ###
+    # slowMo:             250 # slow down by 250ms
+
     #   width:                  1000
     #   height:                 500
     #   deviceScaleFactor:      1
@@ -61,7 +64,9 @@ settings =
       # '--disable-setuid-sandbox'
       # '--start-fullscreen'
       '--start-maximized'
-      '--auto-open-devtools-for-tabs'
+      '--high-dpi-support=1'
+      # '--force-device-scale-factor=0.9' ### ca. 0.5 .. 1.0, smaller number scales down entire UI ###
+      # '--auto-open-devtools-for-tabs'
       ]
   # viewport:
   #   ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagesetviewportviewport ###
@@ -109,7 +114,7 @@ echo_browser_console = ( c ) =>
     # throw new Error text
   #.........................................................................................................
   else
-    info 'µ37763', "console: #{c._type}: #{text}"
+    whisper "^console/#{c._type}^", text
   return null
 
 #-----------------------------------------------------------------------------------------------------------
@@ -156,8 +161,11 @@ demo_2 = ->
   # url             = 'file:///home/flow/jzr/interplot/public/main.html'
   # target_selector = '#chart'
   # # target_selector = '#chart_ready', { timeout: 600e3, }
+  # #.........................................................................................................
+  # url             = 'file:///home/flow/jzr/interplot/public/demo-columns/main.html'
+  # target_selector = '#page-ready'
   #.........................................................................................................
-  url             = 'file:///home/flow/jzr/interplot/public/demo-columns/index.html'
+  url             = 'file:///home/flow/jzr/interplot/public/demo-galley/main.html'
   target_selector = '#page-ready'
   #.........................................................................................................
   # Set up browser and page.
@@ -167,25 +175,77 @@ demo_2 = ->
   page.on 'error', ( error ) => throw error
   page.on 'console', echo_browser_console
   #.........................................................................................................
-  urge "emulate media: 'screen'"
-  await page.emulateMedia 'screen'
+  media = 'print'
+  urge "emulate media: #{rpr media}"
+  debug '^4432^', await page.evaluate -> ( matchMedia 'print' ).matches
+  await page.emulateMediaType media
+  debug '^4432^', await page.evaluate -> ( matchMedia 'print' ).matches
   await page._client.send 'Emulation.clearDeviceMetricsOverride'
   # await page.emulateMedia null
   # page.setViewport settings.viewport
   # await page.emulate PUPPETEER.devices[ 'iPhone 6' ]
+  # await page.emulate PUPPETEER.devices[ 'Galaxy Note 3 landscape' ]
   #.........................................................................................................
   urge "goto #{url}"
   await page.goto url
   #.........................................................................................................
   urge "waitForSelector"
   await page.waitForSelector target_selector
-  # await page.focus 'div'
-  # await page.mainFrame().focus 'div'
-  # await page.keyboard.type 'helo'
-  element_handle = await page.$ 'div'
-  debug '^77788^', await element_handle.click()
+  # page.click '#writehere'
+  debug '^22762^', "sending keys"
+  text = "this text courtesy of Puppeteer"
+  await page.type '#writehere', text, { delay: 10, }
+  # page.keyboard.press 'Tab'
+  await page.keyboard.down 'Shift'
+  for chr in text
+    await page.keyboard.down 'ArrowLeft'
+    await page.keyboard.up 'ArrowLeft'
+  # await page.keyboard.down 'ArrowLeft'
+  # await page.keyboard.down 'ArrowLeft'
+  # await page.keyboard.down 'ArrowLeft'
+  # await page.keyboard.down 'ArrowLeft'
+  await page.keyboard.up 'Shift'
+  await sleep 1
+  await page.keyboard.down 'Tab'
+  await page.keyboard.up 'Tab'
+  await page.keyboard.down 'Shift'
+  for chr in text
+    await page.keyboard.down 'ArrowRight'
+    await page.keyboard.up 'ArrowRight'
+    rectangle = await page.evaluate -> OPS.rectangle_from_selection()
+    # info '^34736^', "selection width:", rectangle
+    info '^34736^', "selection width:", jr rectangle.width
+  # await page.keyboard.press('KeyA');
+  # await page.keyboard.up('Shift');
+  # await page.keyboard.press('KeyA');
+  # await page.focus target_selector # doesn't work??
+  # after 10, ->
+    # debug '^22762^', "page.select", page.select 'stick#xe761'
+    # page.keyboard.press 'ShiftRight'
+    # page.keyboard.press 'ShiftRight'
+    # page.keyboard.press 'ShiftRight'
+  #.........................................................................................................
+  # info '^33987^', jr await page.evaluate OPS.demo_ranges_and_coordinates()
+  # info '^33987^', jr await page.evaluate OPS.demo_jquery_test()
+  info '^33987^', "number of DOM elements:          ", jr await page.evaluate -> OPS.demo_jquery_test()
+  # info '^33987^', "OPS.demo_insert_html_fragment()  ", jr await page.evaluate -> OPS.demo_insert_html_fragment()
+  # info '^33987^', "OPS.demo_find_end_of_line()      ", jr await page.evaluate -> OPS.demo_find_end_of_line()
+  #.........................................................................................................
+  ### thx to https://github.com/puppeteer/puppeteer/issues/4419 ###
+  # session = await page.target().createCDPSession()
+  # await session.send 'Emulation.setPageScaleFactor', { pageScaleFactor: 0.1, }
   #.........................................................................................................
   if settings.puppeteer.headless
+    # await page.emulate {
+    #   name: 'MingKwai Typesetter / InterPlot',
+    #   userAgent: 'Mozilla/5.0 (Linux; Android 7.1.1; Nexus 6 Build/N6F26U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3765.0 Mobile Safari/537.36',
+    #   viewport:
+    #     width:              40000
+    #     height:             50000
+    #     deviceScaleFactor:  1
+    #     isMobile:           true
+    #     hasTouch:           false
+    #     isLandscape:        true }
     #.......................................................................................................
     # await take_screenshot page
     #.......................................................................................................
@@ -205,13 +265,12 @@ demo_2 = ->
 
 
 ############################################################################################################
-unless module.parent?
-  do =>
-    # await sleep 5
-    await demo_2()
-    help 'ok'
-    if settings.puppeteer.headless
-      process.exit 0 ### needed? ###
+if module is require.main then do =>
+  # await sleep 5
+  await demo_2()
+  help 'ok'
+  if settings.puppeteer.headless
+    process.exit 0 ### needed? ###
 
 
 

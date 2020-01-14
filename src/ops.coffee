@@ -1,224 +1,150 @@
 
-#-----------------------------------------------------------------------------------------------------------
-after = ( dts, f ) -> setTimeout f, dts * 1000
-log   = console.log
+provide_ops = ->
+  #-----------------------------------------------------------------------------------------------------------
+  @demo_ranges_and_coordinates = ->
+    log = console.log;
+    log document.querySelector 'p'
+    # d = document.getSelection();
+    # d = window.getSelection();
+    # d.empty();
+    # d.addRange( range );
+    selectors = 'div p'.split /\s+/
+    for selector in selectors
+      for element in $ selector
+        # log Object::toString.call element
+    # first_p = document.querySelector 'p'
+    # log 'bounding box', first_p.getClientRects()
+        for d from element.getClientRects()
+          # Rectangle attributes: x, y, width, height, top, right, bottom, left, toJSON()
+          # log '^37365^', "Rectangle ( #{d.x}, #{d.y} ) .. ( #{d.right}, #{d.bottom} )"
+          rectangle = $ "<div class='dbg domrectangle'></div>"
+          rectangle.offset d
+          rectangle.width  d.width
+          rectangle.height d.height
+          ( $ 'body' ).append rectangle
+    # range = document.createRange()
+    # range.selectNode first_p
+    # log range
+    # newNode = document.createElement 'p'
+    # newNode.appendChild document.createTextNode "New Node Inserted Here"
+    # range.insertNode newNode
 
-#-----------------------------------------------------------------------------------------------------------
-demo_d3 = ->
-  # set the dimensions and margins of the graph
-  margin  = { top: 20, right: 30, bottom: 40, left: 90, }
-  width   = 460 - margin.left - margin.right
-  height  = 400 - margin.top - margin.bottom
+  #-----------------------------------------------------------------------------------------------------------
+  @demo_jquery_test = ->
+    # log '^77763^', 'demo_jquery_test'
+    element = $ 'stick#xe761'
+    log '^33987^', element
+    # info '^33987^', element
+    # element.text "change to something"
+    return ( $ '*' ).length
 
-  # append the svg object to the body of the page
-  svg = d3.select '#chart'
-    .append 'svg'
-      .attr 'width', width + margin.left + margin.right
-      .attr 'height', height + margin.top + margin.bottom
-    .append 'g'
-      .attr 'transform', "translate( #{margin.left}, #{margin.top}  )"
+  #-----------------------------------------------------------------------------------------------------------
+  @demo_wait_for_dom_ready = ->
+    ###
+    thx to https://stackoverflow.com/a/48514876/7568091
 
-  path = 'file:///home/flow/io/interplot/public/7_OneCatOneNum_header.csv'
-  d3.csv path, ( data ) ->
-    window.x = d3.scaleLinear()
-      .domain   [ 0, 13000, ]
-      .range    [ 0, width, ]
+    The observer event handler will trigger whenever any node is added or removed from the document. Inside
+    the handler, we then perform a contains check to determine if myElement is now in the document.
 
-    # Add X axis
-    svg.append 'g'
-      .attr 'transform', "translate( 0, #{height} )"
-      .call d3.axisBottom x
-      .selectAll 'text'
-      .attr 'transform', "translate(-10,0)rotate(-45)"
-      .style 'text-anchor', 'end'
+    You don't need to iterate over each MutationRecord stored in mutations because you can perform the
+    document.contains check directly upon myElement.
 
-    # Y axis
-    y = d3.scaleBand()
-      .range [ 0, height, ]
-      .domain data.map ( d ) -> d.Country
-      .padding 0.1
+    To improve performance, replace document with the specific element that will contain myElement in the DOM.
 
-    svg.append 'g'
-      .call d3.axisLeft y
+    ###
+    ###
+    var myElement = $("<div>hello world</div>")[0];
 
-    #Bars
-    svg.selectAll 'myRect'
-      .data data
-      .enter()
-      .append 'rect'
-      .attr 'x',      x 0
-      .attr 'y',      ( d ) -> y d.Country
-      .attr 'width',  ( d ) -> x d.Value
-      .attr 'height', y.bandwidth()
-      .attr 'fill',   '#69b333'
-  return null
+    var observer = new MutationObserver(function(mutations) {
+       if (document.contains(myElement)) {
+            console.log("It's in the DOM!");
+            observer.disconnect();
+        }
+    });
 
-#-----------------------------------------------------------------------------------------------------------
-demo_plotly_1 = ->
-  #.........................................................................................................
-  trace_1 =
-    name:         'trace_1'
-    x:            [ 0, 1, 2, 3, 4, 5, ]
-    y:            [ 20, 1, 2, 4, 8, 16, ]
-    mode:         'lines+markers'
-    line:
-      shape:  'spline'
-  trace_2 =
-    name:         'trace_2'
-    x:            [ 0, 1, 2, 3, 4, 5, ]
-    y:            [ 20, 1, 2, 4, 8, 16, ]
-    type:         'bar'
-    orientation:  'h'
-  trace_3 =
-    name:         'trace_3'
-    x:            [ 0, 1, 2, 3, 4, 5, ]
-    y:            [ 20, 1, 2, 4, 8, 16, ]
-    type:         'bar'
-    orientation:  'v'
-  #.........................................................................................................
-  data    = [ trace_1, trace_3, trace_2, ]
-  #.........................................................................................................
-  layout  =
-    title:        "Just A Line"
-    showlegend:   true
-    #.......................................................................................................
-    # margin:
-    #   t:          10
-    #.......................................................................................................
-    font:
-      size:       20
-      family:     'Lobster'
-  #.........................................................................................................
-  config =
-    displayModeBar:   true
-    staticPlot:       false
-    scrollZoom:       true
-    showLink:         true
-    responsive:       true
-    toImageButtonOptions:
-      format:           'png'
-      filename:         'custom_image',
-      height:           1200,
-      width:            1200,
-      scale:            2
-  #.........................................................................................................
-  plot data, layout, config
-  return null
+    observer.observe(document, {attributes: false, childList: true, characterData: false, subtree:true});
 
-#-----------------------------------------------------------------------------------------------------------
-plot = ( data, layout = null, config = null ) ->
-  t0 = Date.now(); log 'µ3332-1', "before plot #{t0}"
-  Plotly.plot 'chart', data, layout, config
-  t1 = Date.now(); log 'µ3332-2', "after plot #{t1}"
-  log 'µ3332-3', "plotting took #{( t1 - t0 ) / 1000}s"
-  signal_plot_ready()
+    $("body").append(myElement); // console.log: It's in the DOM!
+    ###
+    return null
 
-#-----------------------------------------------------------------------------------------------------------
-signal_plot_ready = -> ( jQuery 'body' ).append ( jQuery "<div id=chart_ready></" )
+  #-----------------------------------------------------------------------------------------------------------
+  @demo_find_end_of_line = ->
+    return null
 
-#-----------------------------------------------------------------------------------------------------------
-demo_plotly_ternary = ->
-  #.........................................................................................................
-  make_axis = ( title, tickangle ) ->
-    R =
-      title:        title
-      titlefont:    { size: 20, }
-      tickangle:    tickangle
-      tickfont:     { size: 15, }
-      tickcolor:    'rgba(0,0,0,0)'
-      ticklen:      5
-      showline:     true
-      showgrid:     true
-  #.........................................................................................................
-  rawData = [
-      { journalist: 75, developer: 25,  designer: 0,  label: 'point 1',   }
-      { journalist: 70, developer: 10,  designer: 20, label: 'point 2',   }
-      { journalist: 75, developer: 20,  designer: 5,  label: 'point 3',   }
-      { journalist: 5,  developer: 60,  designer: 35, label: 'point 4',   }
-      { journalist: 10, developer: 80,  designer: 10, label: 'point 5',   }
-      { journalist: 10, developer: 90,  designer: 0,  label: 'point 6',   }
-      { journalist: 20, developer: 70,  designer: 10, label: 'point 7',   }
-      { journalist: 10, developer: 20,  designer: 70, label: 'point 8',   }
-      { journalist: 15, developer: 5,   designer: 80, label: 'point 9',   }
-      { journalist: 10, developer: 10,  designer: 80, label: 'point 10',  }
-      { journalist: 20, developer: 10,  designer: 70, label: 'point 11',  }
-      { journalist: 50, developer: 50,  designer: 50, label: 'center',  }
-      { journalist: 50, developer: 50,  designer: 0, label: 'jourdev',  }
-      { journalist: 50, developer: 50,  designer: 10, label: 'jourdevdes10',  }
-      { journalist: 100, developer: 0,  designer: 0, label: 'only-journalist',  }
-      { journalist: 0, developer: 100,  designer: 0, label: 'only-developer',  }
-      { journalist: 0, developer: 0,  designer: 100, label: 'only-designer',  }
-    ]
-  #.........................................................................................................
-  trace_1 =
-    type:   'scatterternary',
-    mode:   'markers+lines',
-    a:      rawData.map ( d ) -> d.journalist
-    b:      rawData.map ( d ) -> d.developer
-    c:      rawData.map ( d ) -> d.designer
-    text:   rawData.map ( d ) -> d.label
-    marker:
-      symbol: 100,
-      color: '#DB7365',
-      size: 14,
-      line: { width: 2 }
-  #.........................................................................................................
-  data = [ trace_1, ]
-  #.........................................................................................................
-  layout =
-    showlegend:   true
-    ternary:
-        sum: 100
-        aaxis: make_axis "Journalist",    0
-        baxis: make_axis "\nDeveloper", +45
-        caxis: make_axis "\nDesigner",  -45
-        bgcolor: '#fff1e0'
-    annotations: [{
-      showarrow:  false
-      text:       "Replica of Tom Pearson's block"
-      x:          1.0
-      y:          1.3
-      font:       { size: 15 }
-      }]
-    paper_bgcolor: '#fff1e0'
-  #.........................................................................................................
-  config =
-    displayModeBar:   true
-    staticPlot:       false
-    scrollZoom:       true
-    showLink:         true
-    responsive:       true
-    toImageButtonOptions:
-      format:           'png'
-      filename:         'custom_image',
-      height:           1200,
-      width:            1200,
-      scale:            2
-  #.........................................................................................................
-  plot data, layout, config
-  return null
+  #-----------------------------------------------------------------------------------------------------------
+  @rectangle_from_selection = ->
+    selection = window.getSelection()
+    range     = selection.getRangeAt 0
+    ### TAINT use method to convert to JSON-compatible value ###
+    { x
+      y
+      width
+      height
+      top
+      right
+      bottom
+      left  } = range.getBoundingClientRect()
+    return { x, y, width, height, top, right, bottom, left, }
 
-#-----------------------------------------------------------------------------------------------------------
-demo_ranges_and_coordinates = ->
-  log = console.log;
-  log document.querySelector 'p'
-  # d = document.getSelection();
-  # d = window.getSelection();
-  # d.empty();
-  # d.addRange( range );
-  first_p = document.querySelector 'p'
-  log 'bounding box', first_p.getClientRects()
-  range = document.createRange()
-  range.selectNode first_p
-  log range
-  newNode = document.createElement 'p'
-  newNode.appendChild document.createTextNode "New Node Inserted Here"
-  range.insertNode newNode
+  #-----------------------------------------------------------------------------------------------------------
+  @demo_insert_html_fragment = ->
+    log '^OPS/demo_insert_html_fragment@34341^', stick = $ 'stick'
+    ### NOTE
+
+    Here we parse and insert an HTML fragment. We have to represent the *context* of the fragment—that is, the
+    sequence of open HTML tags at that point—so the browser can know what CSS rules to apply to the line. We
+    wrap the line into a generic `<div>` tag which will cause both jQuery (I guess) and the browser to close
+    all open tags at the end of the line. Without that tag, the last open `<em>` and its text would be missing
+    from the page (I guess jQuery does that, but not sure).
+
+    Observe that with this technique, we do *not* have to reproduce syntactically complete HTML fragments but
+    can let the browser do that for us; this appears to work with both inline and block tags such as `<p>`.
+    Keep in mind that some disparities as compared to regular rendering of a whole page may occur since some
+    CSS rules such as `text-align-last` do apply in this situation that would not apply had the line be
+    typeset in the middle of a paragraph. ###
+    context         = "<p>"
+    content         = context + "<a href='http://example.com'>This<flag/> is a <em>first bit</em> of text. It is <strong>not</strong> a <em>very long one.</a>"
+    wrapped_content = "<div>#{content}</div>"
+    stick.append $ wrapped_content
+    return "inserted #{content}"
+
 
 ############################################################################################################
+provide_ops.apply globalThis.OPS = {}
+
+
 # demo_d3()
 # demo_taucharts()
 # demo_plotly_1()
 # demo_plotly_ternary()
-demo_ranges_and_coordinates()
+if running_in_browser() then do =>
+  ( $ document ).ready =>
+    log "^333498^ document ready"
+    OPS.demo_insert_html_fragment()
+    # after 5, ->
+    log "focusing anchor"
+    ( $ 'a' ).focus()
+    ### thx to https://stackoverflow.com/a/987376/7568091 ###
+    id        = 'xe761'
+    element   = document.getElementById id
+    selection = window.getSelection()
+    range     = document.createRange()
+    range.selectNodeContents element
+    selection.removeAllRanges()
+    selection.addRange range
+    #.......................................................................................................
+    log '^343376^ element   ', element
+    log '^343376^ selection ', selection
+    log '^343376^ range     ', range
+    globalThis.element   = element
+    globalThis.selection = selection
+    globalThis.range     = range
+    #.......................................................................................................
+    galley = $ 'galley'
+    galley.prepend $ "<p>123</p>"
+    # ( $ 'a' ).trigger { type: 'keypress', which: 13, keyCode: 13, }
+log '^557576^', "running_in_browser:", @running_in_browser()
+# log '^557576^', ( k for k of globalThis )
+
 

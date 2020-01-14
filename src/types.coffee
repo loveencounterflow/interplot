@@ -18,6 +18,12 @@ Intertype                 = ( require 'intertype' ).Intertype
 intertype                 = new Intertype module.exports
 
 #-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_shy',
+  tests:
+    "x is a text":                   					( x ) -> @isa.text                      x
+    "x ends with soft hyphen":       					( x ) -> x[ x.length - 1 ] is '\u00ad'
+
+#-----------------------------------------------------------------------------------------------------------
 @declare 'interplot_template_name',
   tests:
     "x is a nonempty_text":                   ( x ) -> @isa.nonempty_text                      x
