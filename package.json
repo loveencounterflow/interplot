@@ -18,6 +18,7 @@
     "commander": "^4.1.0",
     "intertype": "^3.1.0",
     "jsdom": "^15.2.1",
+    "linebreak": "^1.0.2",
     "pipedreams": "^12.1.0",
     "puppeteer": "^2.0.0"
   }
