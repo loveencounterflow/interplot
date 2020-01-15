@@ -152,11 +152,11 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
   layout        = @layout 'Galley Demo', PATH.resolve demo_path
   # tabletop      = insert layout, @tabletop 4
   content       = _.render =>
-    _.CSS './styles.css'
+    _.CSS './galley.css'
     _.DIV =>
       _.INPUT '#writehere', { type: 'text', }
-    _.STICK '100mm'
-    _.GALLEY '50mm', => _.RAW """
+    _.STICK '150mm'
+    _.GALLEY '150mm', => _.RAW """
 
         <strong>galley</strong> <em>(n.)</em>
         13c., "sea&shy;going ves&shy;sel ha&shy;ving both sails and oars," from Old French ga&shy;lie,

@@ -73,9 +73,31 @@ provide_ops = ->
     return null
 
   #-----------------------------------------------------------------------------------------------------------
-  @rectangle_from_selection = ->
-    selection = window.getSelection()
-    range     = selection.getRangeAt 0
+  @xxx = ->
+    ###
+    selection:
+      anchorNode, anchorOffset, focusNode, focusOffset, isCollapsed, rangeCount, type, baseNode, baseOffset,
+      extentNode, extentOffset, getRangeAt, addRange, removeRange, removeAllRanges, empty, collapse,
+      setPosition, collapseToStart, collapseToEnd, extend, setBaseAndExtent, selectAllChildren,
+      deleteFromDocument, containsNode, modify
+    range:
+      startContainer, startOffset, endContainer, endOffset, collapsed, commonAncestorContainer, setStart,
+      setEnd, setStartBefore, setStartAfter, setEndBefore, setEndAfter, collapse, selectNode,
+      selectNodeContents, compareBoundaryPoints, deleteContents, extractContents, cloneContents, insertNode,
+      surroundContents, cloneRange, detach, isPointInRange, comparePoint, intersectsNode, getClientRects,
+      getBoundingClientRect, createContextualFragment, expand
+    ###
+
+  #-----------------------------------------------------------------------------------------------------------
+  @rectangle_from_selection = ( selection = null ) ->
+    selection  ?= window.getSelection()
+    range       = selection.getRangeAt 0
+    text        = selection.anchorNode.wholeText
+    log '^3334^', selection.anchorNode.parentNode.id, selection.anchorOffset, jr text[ ... selection.anchorOffset ]
+    # log '^33452^', selection.anchorNode.nodeType
+    # log '^33452^', ( k for k of selection.anchorNode ); xxx
+    # log '^3334^', selection.focusNode.parentNode.id, selection.focusOffset
+    # log '^3334^', selection.baseNode.parentNode.id, selection.baseOffset
     ### TAINT use method to convert to JSON-compatible value ###
     { x
       y
@@ -104,8 +126,17 @@ provide_ops = ->
     CSS rules such as `text-align-last` do apply in this situation that would not apply had the line be
     typeset in the middle of a paragraph. ###
     context         = "<p>"
-    content         = context + "<a href='http://example.com'>This<flag/> is a <em>first bit</em> of text. It is <strong>not</strong> a <em>very long one.</a>"
-    wrapped_content = "<div>#{content}</div>"
+    context         = context + "<spleft/>"
+    zwsp            = String.fromCodePoint 0x200b
+    zwnj            = String.fromCodePoint 0x200c
+    # content         = context + "This<f/> is<f/> a<f/> <em>first<f/> bit<f/></em> of<f/> text.<f/> It<f/> is<f/> <strong>not<f/></strong> a<f/> <em>very<f/> long<f/> one.<f/>"
+    # content         = context + "This is a <em>first f#{zwnj}irst bit</em> of text. Yaffir stood high. (1) Yaf&shy;f&shy;ir (2) Yaf#{zwnj}f#{zwnj}ir. It is <strong>not</strong> a <em>very long one."
+    # content         = context + "This is a <em>first f#{zwnj}irst bit</em> of text. <i>Yaffir stood high."
+    # content         = context + "This<sp/>is<sp/>a<sp/><em>first<sp/>f#{zwnj}irst<sp/>bit</em><sp/>of<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
+    content         = context + "This<sp/>is<sp/>a<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
+    # content         = context + "<txt id=nr1>This is a </txt><em><txt id=nr2>first bit</txt></em><txt id=nr3> of text & a test. It is </txt><strong><txt id=nr4>not</txt></strong><txt id=nr5> a </txt><em><txt id=nr6>very long one.</txt>"
+    wrapped_content = "<div><span id=innerwrap>#{content}</span><flag/></div>"
+    # content         = context + "<a href='http://example.com'>This<flag/> is a <em>first bit</em> of text. It is <strong>not</strong> a <em>very long one.</a>"
     stick.append $ wrapped_content
     return "inserted #{content}"
 

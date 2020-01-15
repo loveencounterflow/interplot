@@ -195,25 +195,20 @@ demo_2 = ->
   debug '^22762^', "sending keys"
   text = "this text courtesy of Puppeteer"
   await page.type '#writehere', text #, { delay: 10, }
-  # page.keyboard.press 'Tab'
-  await page.keyboard.down 'Shift'
-  for chr in text
-    await page.keyboard.down 'ArrowLeft'
-    await page.keyboard.up 'ArrowLeft'
-  # await page.keyboard.down 'ArrowLeft'
-  # await page.keyboard.down 'ArrowLeft'
-  # await page.keyboard.down 'ArrowLeft'
-  # await page.keyboard.down 'ArrowLeft'
-  await page.keyboard.up 'Shift'
-  await sleep 1
+  # await page.keyboard.down 'Shift'
+  # for chr in text
+  #   await page.keyboard.down 'ArrowLeft'
+  #   await page.keyboard.up 'ArrowLeft'
+  # await page.keyboard.up 'Shift'
+  # await sleep 1
   await page.keyboard.down 'Tab'
   await page.keyboard.up 'Tab'
   delta = parseFloat await page.evaluate -> ( $ 'p' ).offset().left
   # await page.keyboard.down 'Shift'
-  for chr in text
-    rectangle = await page.evaluate -> OPS.rectangle_from_selection()
-    info '^34736^', "selection x:", rectangle.x - delta
-    await page.keyboard.press 'ArrowRight'
+  # for _ in [ 1 .. 60 ]
+  #   rectangle = await page.evaluate -> OPS.rectangle_from_selection()
+  #   info '^34736^', "selection x:", rectangle.x - delta
+  #   await page.keyboard.press 'ArrowRight'
     # await page.keyboard.down 'ArrowRight'
     # await page.keyboard.up 'ArrowRight'
     # info '^34736^', "selection width:", jr rectangle.width
