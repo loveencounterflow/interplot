@@ -30,11 +30,19 @@ stick { /* composing stick, Winkelhaken */
   white-space:            nowrap;
   outline:                1px solid rgba( 0, 100, 0, 0.5 ); }
 
-sp {
+
+ng { /* EXPERIMENTAL: 'n-gram' as DOM element */
   display:                inline-block;
   /*vertical-align:         text-bottom;*/
   /*outline:                1px solid green;*/
-  margin-right:           2Q; /* ### TAINT compute from text size */
+  margin-right:           24Q; /* ### TAINT compute from text size */ }
+
+/*==============================================================================*/
+sp { /* EXPERIMENTAL: space as DOM element */;
+  display:                inline-block;
+  /*vertical-align:         text-bottom;*/
+  /*outline:                1px solid green;*/
+  margin-right:           4Q; /* ### TAINT compute from text size */
   width:                  0mm;
   height:                 1em; }
 

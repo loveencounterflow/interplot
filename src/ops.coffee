@@ -133,12 +133,44 @@ provide_ops = ->
     # content         = context + "This is a <em>first f#{zwnj}irst bit</em> of text. Yaffir stood high. (1) Yaf&shy;f&shy;ir (2) Yaf#{zwnj}f#{zwnj}ir. It is <strong>not</strong> a <em>very long one."
     # content         = context + "This is a <em>first f#{zwnj}irst bit</em> of text. <i>Yaffir stood high."
     # content         = context + "This<sp/>is<sp/>a<sp/><em>first<sp/>f#{zwnj}irst<sp/>bit</em><sp/>of<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
-    content         = context + "This<sp/>is<sp/>a<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
+    # content         = context + "This<sp/>is<sp/>a<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
+    content         = context + "<ng style='margin-left:-6Q;'>This</ng><ng>guy</ng><ng>called</ng><ng><em>Yaffir</em>,</ng><ng>he</ng><ng><strong>stood</strong></ng><ng><strong>high</strong>.</ng><ng>Hyphen-</ng><ng>able</ng>"
     # content         = context + "<txt id=nr1>This is a </txt><em><txt id=nr2>first bit</txt></em><txt id=nr3> of text & a test. It is </txt><strong><txt id=nr4>not</txt></strong><txt id=nr5> a </txt><em><txt id=nr6>very long one.</txt>"
     wrapped_content = "<div><span id=innerwrap>#{content}</span><flag/></div>"
     # content         = context + "<a href='http://example.com'>This<flag/> is a <em>first bit</em> of text. It is <strong>not</strong> a <em>very long one.</a>"
     stick.append $ wrapped_content
     return "inserted #{content}"
+
+  #-----------------------------------------------------------------------------------------------------------
+  @demo_insert_slabs = ( slabs ) ->
+    ### TAINT should validate slabs ###
+    #.........................................................................................................
+    target_id   = 'xe761'
+    target_dom  = document.getElementById target_id
+    unless target_dom?
+      throw new Error "^OPS@9872^ no such element ##{target_id}" ### TAINT use sth like `rpr` ###
+    #.........................................................................................................
+    for slab in slabs.$value
+      # log '^55545^', slab.rhs, slab.txt
+      rhs         = slab.rhs ? 'tight'
+      slab_dom    = document.createElement 'slab'
+      if rhs is 'shy'
+        slab.txt += '-'
+      else if rhs is 'spc'
+        slab.txt += ' '
+      txt_dom     = document.createTextNode slab.txt
+      slab_dom.appendChild txt_dom
+      target_dom.insertAdjacentElement 'beforeend', slab_dom
+      #.......................................................................................................
+      switch rhs
+        when 'shy'
+          null
+        when 'spc'
+          null
+        when 'tight'
+          null
+        else throw new Error "^OPS@9871^ unknown value for slab.rhs: #{rhs}" ### TAINT use sth like `rpr` ###
+    return null
 
 
 ############################################################################################################

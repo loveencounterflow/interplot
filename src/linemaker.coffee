@@ -27,35 +27,11 @@ types                     = require './types'
 SP                        = require 'steampipes'
 { $
   $drain }                = SP.export()
-
-#-----------------------------------------------------------------------------------------------------------
-provide_hyphenation = ->
-  createHyphenator  = require 'hyphen'
-  patterns          = require 'hyphen/patterns/en-us'
-  hyphenate = createHyphenator patterns #, { hyphenChar: '-', }
-
-  #-----------------------------------------------------------------------------------------------------------
-  @hyphenate = ( text ) -> hyphenate text
-provide_hyphenation.apply HYPH = {}
-
-# #-----------------------------------------------------------------------------------------------------------
-# @hyphenate_2 = ( text ) ->
-#   { hyphenated, } = require 'hyphenated'
-#   R               = hyphenated text
-#   return R.replace /\u00ad/g, '-'
-
-# #-----------------------------------------------------------------------------------------------------------
-# xxx = null
-# @hyphenate_3 = ( text ) ->
-#   hyphenopoly = require 'hyphenopoly'
-#   hyphenator  = hyphenopoly.config {
-#       require:    [ 'de', 'en-us', ]
-#       hyphen:     '-',
-#       exceptions: { 'en-us': 'en-han-ces', }
-#   hyphenate = await hyphenator.get 'en-us'
-#   async function hyphenate_en(text) {
-#       console.log(hyphenateText(text));
-#   }
+DATOM                     = require 'datom'
+{ new_datom
+  select }                = DATOM.export()
+HYPHENATOR                = require './hyphenator'
+hyphenate                 = HYPHENATOR.new_hyphenator()
 
 #-----------------------------------------------------------------------------------------------------------
 @demo_hyphenation = ->
@@ -68,33 +44,90 @@ provide_hyphenation.apply HYPH = {}
     "the lopsided honeybadger"
     ]
   for text in texts
-    htext = HYPH.hyphenate text
+    htext = hyphenate text
     htext = htext.replace /\u00ad/g, '-'
     info htext
   return null
 
-#-----------------------------------------------------------------------------------------------------------
-@demo_compare_hyphenators = -> new Promise ( done ) =>
-  count1    = 0
-  count2    = 0
-  pipeline  = []
-  pipeline.push SP.read_from_file '/etc/dictionaries-common/words'
-  pipeline.push SP.$split()
-  pipeline.push SP.$filter ( word ) -> word.length > 0
-  pipeline.push SP.$watch ( word ) =>
-    t1 = @hyphenate_1 word
-    t2 = @hyphenate_2 word
-    return if t1 is t2
-    count1 += ( t1.replace /[^-]/g, '' ).length
-    count2 += ( t2.replace /[^-]/g, '' ).length
-    info ( CND.lime t1 ), ( CND.gold t2 )
-  # pipeline.push SP.$show()
-  pipeline.push $drain ->
-    info ( CND.lime count1 ), ( CND.gold count2 )
-    done()
-  SP.pull pipeline...
-  return null
 
+###
+
+'Slab': the part of a word that is separated from others by breakpoints
+
+> The addressable unit of memory on the NCR 315 series is a "slab", short for "syllable", consisting of 12
+> data bits and a parity bit. Its size falls between a byte and a typical word (hence the name, 'syllable').
+> A slab may contain three digits (with at sign, comma, space, ampersand, point, and minus treated as
+> digits) or two alphabetic characters of six bits each.—[Wikipedia, "NCR
+> 315"](https://en.wikipedia.org/wiki/NCR_315)
+
+###
+
+#===========================================================================================================
+#
+#-----------------------------------------------------------------------------------------------------------
+reconstitute_text = ( slab ) ->
+  R = slab.txt
+  if slab.rhs is 'shy' then R += '-'
+  else if slab.rhs is 'spc' then R += ' '
+  return R
+@slabs_from_paragraph = ( text ) ->
+  ### TAINT avoid to instantiate new parser for each paragraph ###
+  ### TAINT consider to use pipestreaming instead of looping ###
+  parse_html  = SP.HTML.new_onepiece_parser()
+  ctx_stack   = []
+  R           = []
+  for d in parse_html text
+    ### TAINT should check for matching tags ###
+    ### TAINT must also store HTML attributes ###
+    if ( select d, '<' )      then ctx_stack.push d.$key[ 1 .. ]
+    else if ( select d, '>' ) then ctx_stack.pop()
+    #.......................................................................................................
+    if ( select d, '<' ) and ( d.is_block ? false )
+      info CND.white '————————————————————————————————————— ' + d.$key
+      continue
+    #.......................................................................................................
+    if ( select d, '^text' )
+      text      = d.text.replace /\n/g, ' '
+      slabs     = @slabs_from_text text
+      R.push slabs
+      # for slab in slabs.$value
+      #   rhs = if slab.rhs? then slab.rhs else null
+      opener  = "<slug>" + ( "<#{element}>" for element in ctx_stack ).join ''
+      closer  = "</slug>"
+      info ( CND.yellow opener ), \
+        ( ( ( CND.blue reconstitute_text slab ) for slab in slabs.$value ). join CND.grey '|' ), \
+        ( CND.yellow closer )
+      continue
+    whisper d.$key
+  #.........................................................................................................
+  return new_datom '^slab-blocks', R
+
+#-----------------------------------------------------------------------------------------------------------
+@slabs_from_text = ( text ) ->
+  text          = hyphenate text
+  ### TAINT benchmark against https://github.com/hfour/linebreak-ts ###
+  LineBreaker   = require 'linebreak'
+  breaker       = new LineBreaker text
+  prv_position  = 0
+  slabs         = []
+  ### LBO: line break opportunity ###
+  while ( lbo = breaker.nextBreak() )?
+    txt           = text[ prv_position ... lbo.position ]
+    prv_position  = lbo.position
+    last_codeunit = txt[ txt.length - 1 ]
+    slab          = {}
+    if last_codeunit is HYPHENATOR.soft_hyphen_chr
+      slab.rhs      = 'shy'
+      txt           = txt[ ... txt.length - 1 ]
+    else if last_codeunit is '\u0020'
+      ### TAINT in the future, we might want to consider other breaking (fixed or variable) spaces ###
+      slab.rhs      = 'spc'
+      txt           = txt[ ... txt.length - 1 ]
+    debug '^876^', jr txt
+    slab.txt = txt
+    slabs.push slab
+  return new_datom '^slabs', slabs
+  return null
 
 #-----------------------------------------------------------------------------------------------------------
 @demo_linebreak = ->
@@ -120,6 +153,15 @@ provide_hyphenation.apply HYPH = {}
 ############################################################################################################
 if module is require.main then do =>
   # @demo_linebreak()
-  @demo_hyphenation()
+  # @demo_hyphenation()
+  html = """<p><strong>Letterpress</strong> printing is a <em>technique of relief printing using a printing
+  press,</em> a process by which many copies are produced by <em>repeated direct impression of an inked,
+  raised surface</em> against sheets or a continuous roll of paper.</p> <p>A worker composes and locks
+  movable type into the ‘bed’ or ‘chase’ of a press, inks it, and presses paper against it to transfer the
+  ink from the type which creates an impression on the paper.</p>"""
+  text = """Letterpress printing is a technique of relief printing using a printing press."""
+  html = """<p>#{text}</p>"""
+  # urge @slabs_from_paragraph html
+  urge @slabs_from_text text
 
 

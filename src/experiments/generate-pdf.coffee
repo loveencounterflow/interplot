@@ -31,7 +31,9 @@ PD                        = require 'pipedreams'
 after                     = ( dts, f ) -> setTimeout f, dts * 1000
 sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done
 page_html_path            = PATH.resolve PATH.join __dirname, '../../../public/main.html'
+LINEMAKER                 = require '../linemaker'
 PUPPETEER                 = require 'puppeteer'
+
 
 #-----------------------------------------------------------------------------------------------------------
 settings =
@@ -66,7 +68,7 @@ settings =
       '--start-maximized'
       '--high-dpi-support=1'
       # '--force-device-scale-factor=0.9' ### ca. 0.5 .. 1.0, smaller number scales down entire UI ###
-      # '--auto-open-devtools-for-tabs'
+      '--auto-open-devtools-for-tabs'
       ]
   # viewport:
   #   ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagesetviewportviewport ###
@@ -191,61 +193,12 @@ demo_2 = ->
   #.........................................................................................................
   urge "waitForSelector"
   await page.waitForSelector target_selector
-  # page.click '#writehere'
-  debug '^22762^', "sending keys"
-  text = "this text courtesy of Puppeteer"
-  await page.type '#writehere', text #, { delay: 10, }
-  # await page.keyboard.down 'Shift'
-  # for chr in text
-  #   await page.keyboard.down 'ArrowLeft'
-  #   await page.keyboard.up 'ArrowLeft'
-  # await page.keyboard.up 'Shift'
-  # await sleep 1
-  await page.keyboard.down 'Tab'
-  await page.keyboard.up 'Tab'
   delta = parseFloat await page.evaluate -> ( $ 'p' ).offset().left
-  # await page.keyboard.down 'Shift'
-  # for _ in [ 1 .. 60 ]
-  #   rectangle = await page.evaluate -> OPS.rectangle_from_selection()
-  #   info '^34736^', "selection x:", rectangle.x - delta
-  #   await page.keyboard.press 'ArrowRight'
-    # await page.keyboard.down 'ArrowRight'
-    # await page.keyboard.up 'ArrowRight'
-    # info '^34736^', "selection width:", jr rectangle.width
-  # await page.keyboard.press('KeyA');
-  # await page.keyboard.up('Shift');
-  # await page.keyboard.press('KeyA');
-  # await page.focus target_selector # doesn't work??
-  # after 10, ->
-    # debug '^22762^', "page.select", page.select 'stick#xe761'
-    # page.keyboard.press 'ShiftRight'
-    # page.keyboard.press 'ShiftRight'
-    # page.keyboard.press 'ShiftRight'
-  #.........................................................................................................
-  # info '^33987^', jr await page.evaluate OPS.demo_ranges_and_coordinates()
-  # info '^33987^', jr await page.evaluate OPS.demo_jquery_test()
   info '^33987^', "number of DOM elements:          ", jr await page.evaluate -> OPS.demo_jquery_test()
-  # info '^33987^', "OPS.demo_insert_html_fragment()  ", jr await page.evaluate -> OPS.demo_insert_html_fragment()
-  # info '^33987^', "OPS.demo_find_end_of_line()      ", jr await page.evaluate -> OPS.demo_find_end_of_line()
   #.........................................................................................................
-  ### thx to https://github.com/puppeteer/puppeteer/issues/4419 ###
-  # session = await page.target().createCDPSession()
-  # await session.send 'Emulation.setPageScaleFactor', { pageScaleFactor: 0.1, }
+  await demo_insert_slabs page
   #.........................................................................................................
   if settings.puppeteer.headless
-    # await page.emulate {
-    #   name: 'MingKwai Typesetter / InterPlot',
-    #   userAgent: 'Mozilla/5.0 (Linux; Android 7.1.1; Nexus 6 Build/N6F26U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3765.0 Mobile Safari/537.36',
-    #   viewport:
-    #     width:              40000
-    #     height:             50000
-    #     deviceScaleFactor:  1
-    #     isMobile:           true
-    #     hasTouch:           false
-    #     isLandscape:        true }
-    #.......................................................................................................
-    # await take_screenshot page
-    #.......................................................................................................
     urge "write PDF"
     pdf   = await page.pdf settings.pdf
     path  = '/tmp/test.pdf'
@@ -259,6 +212,67 @@ demo_2 = ->
   urge "done"
   return null
 
+#-----------------------------------------------------------------------------------------------------------
+demo_insert_slabs = ( page ) ->
+  text  = """Letterpress printing is a technique of relief printing using a printing press."""
+  slabs = LINEMAKER.slabs_from_text text
+  debug '^222111^', slabs
+  await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
+  return null
+
+
+
+  # # page.click '#writehere'
+  # debug '^22762^', "sending keys"
+  # text = "this text courtesy of Puppeteer"
+  # await page.type '#writehere', text #, { delay: 10, }
+  # # await page.keyboard.down 'Shift'
+  # # for chr in text
+  # #   await page.keyboard.down 'ArrowLeft'
+  # #   await page.keyboard.up 'ArrowLeft'
+  # # await page.keyboard.up 'Shift'
+  # # await sleep 1
+  # # await page.keyboard.down 'Tab'
+  # # await page.keyboard.up 'Tab'
+  # # await page.keyboard.down 'Shift'
+  # # for _ in [ 1 .. 60 ]
+  # #   rectangle = await page.evaluate -> OPS.rectangle_from_selection()
+  # #   info '^34736^', "selection x:", rectangle.x - delta
+  # #   await page.keyboard.press 'ArrowRight'
+  #   # await page.keyboard.down 'ArrowRight'
+  #   # await page.keyboard.up 'ArrowRight'
+  #   # info '^34736^', "selection width:", jr rectangle.width
+  # # await page.keyboard.press('KeyA');
+  # # await page.keyboard.up('Shift');
+  # # await page.keyboard.press('KeyA');
+  # # await page.focus target_selector # doesn't work??
+  # # after 10, ->
+  #   # debug '^22762^', "page.select", page.select 'stick#xe761'
+  #   # page.keyboard.press 'ShiftRight'
+  #   # page.keyboard.press 'ShiftRight'
+  #   # page.keyboard.press 'ShiftRight'
+  # #.........................................................................................................
+  # # info '^33987^', jr await page.evaluate OPS.demo_ranges_and_coordinates()
+  # # info '^33987^', jr await page.evaluate OPS.demo_jquery_test()
+  # # info '^33987^', "OPS.demo_insert_html_fragment()  ", jr await page.evaluate -> OPS.demo_insert_html_fragment()
+  # # info '^33987^', "OPS.demo_find_end_of_line()      ", jr await page.evaluate -> OPS.demo_find_end_of_line()
+  # #.........................................................................................................
+  # ### thx to https://github.com/puppeteer/puppeteer/issues/4419 ###
+  # # session = await page.target().createCDPSession()
+  # # await session.send 'Emulation.setPageScaleFactor', { pageScaleFactor: 0.1, }
+  #   # await page.emulate {
+  #   #   name: 'MingKwai Typesetter / InterPlot',
+  #   #   userAgent: 'Mozilla/5.0 (Linux; Android 7.1.1; Nexus 6 Build/N6F26U) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3765.0 Mobile Safari/537.36',
+  #   #   viewport:
+  #   #     width:              40000
+  #   #     height:             50000
+  #   #     deviceScaleFactor:  1
+  #   #     isMobile:           true
+  #   #     hasTouch:           false
+  #   #     isLandscape:        true }
+  #   #.......................................................................................................
+  #   # await take_screenshot page
+  #   #.......................................................................................................
 
 
 ############################################################################################################
