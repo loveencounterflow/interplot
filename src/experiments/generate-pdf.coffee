@@ -218,7 +218,7 @@ demo_insert_slabs = ( page ) ->
   text  = """Yaffir pasteact."""
   text  = """Yaffir pasteact. Letterpress printing is a technique of relief printing using a printing press."""
   slabs = LINEMAKER.slabs_from_text text
-  debug '^222111^', slabs
+  # debug '^222111^', slabs
   await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
   return null
   ### ((畢昇發明活字印刷術))

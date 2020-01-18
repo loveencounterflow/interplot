@@ -7,33 +7,25 @@
 
 
 body {
-  /*font-family:            'Noto Serif';*/
-  font-size:              9mm;
-  line-height:            10mm;
   padding-top:            10mm;
   padding-left:           10mm;
+  font-family:            'flow';
   font-feature-settings:  'liga', 'clig', 'dlig', 'hlig', 'calt', 'swsh', 'cv11', 'tnum';
-  /* centimeter grid */
-  /* thx to https://stackoverflow.com/a/32861765/7568091 */
-  background-size:  10mm 10mm;
-  background-image:
-    /* ### TAINT use CSS variables */
-    linear-gradient( to right,  rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px ),
-    linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px);
 }
 
 slug {
   display:                block;
-  outline:                1px dotted red;
   margin:                 0mm;
-  height:                 1.5em;
+  font-size:              9mm;
+  line-height:            10mm;
+  height:                 10mm;
   text-align:             justify;  /* or `right` in RTL? */
   text-align-last:        justify;  /* or `right` in RTL? */
   overflow-x:             visible;
   white-space:            nowrap; }
+
 trim {
   display:                inline;
-  outline:                1px dashed blue;
   margin:                 0mm; }
 
 sp { /* EXPERIMENTAL: space as DOM element */;
@@ -45,22 +37,32 @@ sp { /* EXPERIMENTAL: space as DOM element */;
   height:                 1em; }
 
 galley { /* Setzschiff */
-  /*display:                block;*/
-  display:                none;
-  margin-left:            10mm;
-  outline:                1px solid rgba( 0, 0, 100, 0.5 ); }
-
-/*rubberband {
-  display:                inline;
-  outline:                1px solid red; }
-*/
+  display:                block;
+  margin-left:            10mm; }
 
 flag {
   display:                inline-block;
   vertical-align:         text-bottom;
-  outline:                3px solid red;
+
   height:                 1mm; /* NOTE flag must always have a nominal height of 1mm */
   width:                  0mm; }
 
+body.debug {
+  /* centimeter grid */
+  /* thx to https://stackoverflow.com/a/32861765/7568091 */
+  background-size:  10mm 10mm;
+  background-image:
+    /* ### TAINT use CSS variables */
+    linear-gradient( to right,  rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px ),
+    linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px); }
 
+.debug galley  { outline: medium double fuchsia; }
+.debug slug    { outline: 1px dotted red;        }
+.debug flag    { outline: 3px solid  red;        }
+.debug trim    { outline: 1px dashed blue;       }
+
+#debugonoff {
+  position:       absolute;
+  top:            1mm;
+  left:           1mm; }
 

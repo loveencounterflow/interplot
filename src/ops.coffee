@@ -155,7 +155,7 @@ provide_ops = ->
     #.........................................................................................................
     for line_nr in [ 1.. slug_count ]
       slab_lnr  = 0
-      slab_rnr  = -line_nr
+      slab_rnr  = - ( line_nr + 1 )
       #.......................................................................................................
       slug_id         = "slug#{line_nr}"
       trim_id         = "trim#{line_nr}"
@@ -168,10 +168,13 @@ provide_ops = ->
       unless trim_dom? and left_flag_dom? and right_flag_dom?
         throw new Error "^OPS@9872^ no such element ##{trim_id}" ### TAINT use sth like `rpr` ###
       slug_width      = slug_dom.getBoundingClientRect().width
+      line_text       = ''
+      line_slab_count = 0
       #.......................................................................................................
       for slab in slabs.$value
         slab_lnr++
         slab_rnr++
+        line_slab_count++
         break if slab_rnr >= 0
         #.....................................................................................................
         is_first_slab = slab_lnr is +1
@@ -204,15 +207,25 @@ provide_ops = ->
       ### NOTE join adjacent text nodes, remove empty ones ###
       ### TAINT better to first join texts ###
       trim_dom.normalize()
-      left_rect   = left_flag_dom.getBoundingClientRect()
-      right_rect  = right_flag_dom.getBoundingClientRect()
-      delta_px    = right_rect.x - left_rect.x
+      line_text    += txt
+      left_rect     = left_flag_dom.getBoundingClientRect()
+      right_rect    = right_flag_dom.getBoundingClientRect()
+      delta_px      = right_rect.x - left_rect.x
       ### NOTE flag must always have a nominal height of 1mm ###
       ### NOTE precision only applied for readability ###
-      delta_mm    = get_approximate_ratio delta_px, left_rect.height, 100
-      delta_rel   = get_approximate_ratio delta_px, slug_width,       100
-      delta_pct   = ( get_approximate_ratio delta_px, slug_width,     100 ) * 100
-      log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{delta_pct} %"
+      delta_mm      = get_approximate_ratio delta_px, left_rect.height, 100
+      delta_rel     = get_approximate_ratio delta_px, slug_width,       100
+      # delta_pct     = ( get_approximate_ratio delta_px, slug_width,     100 ) * 100
+      epsilon       = 0.01
+      line_too_long = delta_rel > ( 1 + epsilon )
+      log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{jr line_text}, #{line_too_long}"
+      continue unless line_too_long
+      log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{jr line_text}"
+      break if line_slab_count < 2
+      slab_lnr--
+      slab_rnr--
+      line_slab_count--
+      trim_dom.removeChild trim_dom.firstChild
     return null
 
 

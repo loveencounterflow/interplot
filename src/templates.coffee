@@ -65,14 +65,11 @@ _.SLUG = _.new_tag ( nr, width ) ->
     _.TRIM { id: trim_id, contenteditable: 'true', }
     _.FLAG { id: right_flag_id, }
 #...........................................................................................................
-_.GALLEY = _.new_tag ( width, P... ) ->
-  _.STYLE """galley#x4b8d {
-    text-align:               justify;
-    text-align-last:          justify;
-    width:                    #{width};
-    max-width:                #{width}; }
-    """
-  _.TAG 'galley', { id: 'x4b8d', contenteditable: 'true', }, P...
+_.GALLEY = _.new_tag ( width ) ->
+  style = "max-width:#{width};"
+  _.TAG 'galley', { id: 'galley1', style, }, ->
+    for nr in [ 1 .. 100 ]
+      _.SLUG nr, '150mm'
 
 #-----------------------------------------------------------------------------------------------------------
 insert = ( layout, content ) -> layout.replace /%content%/g, content
@@ -160,24 +157,15 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
   # tabletop      = insert layout, @tabletop 4
   content       = _.render =>
     _.CSS './galley.css'
-    for nr in [ 1 .. 100 ]
-      _.SLUG nr, '150mm'
-    _.GALLEY '150mm', => _.RAW """
-
-        <strong>galley</strong> <em>(n.)</em>
-        13c., "sea&shy;going ves&shy;sel ha&shy;ving both sails and oars," from Old French ga&shy;lie,
-        ga&shy;lee "boat, war&shy;ship, gal&shy;ley," from Medi&shy;eval Latin ga&shy;lea or
-        Ca&shy;ta&shy;lan ga&shy;lea, from Late Greek ga&shy;lea, of un&shy;known ori&shy;gin. The word has
-        made its way into most Wes&shy;tern Eu&shy;ro&shy;pe&shy;an lan&shy;gua&shy;ges.
-        Ori&shy;gi&shy;nal&shy;ly "low, flat-built sea&shy;going ves&shy;sel of one deck," once a
-        com&shy;mon type in the Me&shy;di&shy;ter&shy;ra&shy;ne&shy;an. Mean&shy;ing "cook&shy;ing range or
-        cook&shy;ing room on a ship" dates from 1750. The prin&shy;t&shy;ing sense of gal&shy;ley,
-        "ob&shy;long tray that holds the type once set," is from 1650s, from French ga&shy;lée in the same
-        sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of galley-proof it
-        is at&shy;tes&shy;ted from 1890."""
-
+    _.BUTTON '#debugonoff', "dbg"
+    _.COFFEESCRIPT ->
+      ( $ document ).ready ->
+        ( $ '#debugonoff' ).on 'click', -> ( $ 'body' ).toggleClass 'debug'
+    _.GALLEY '150mm'
   return insert layout, content
 
 
 
+
+# debug ( k for k of _ ).sort().join ' '; process.exit 1
 
