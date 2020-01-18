@@ -51,12 +51,19 @@ _.CSS                  = _.new_tag ( route ) -> _.LINK   rel:  'stylesheet',    
 # _.STYLUS               = ( source ) -> _.STYLE {}, _STYLUS.render source
 #...........................................................................................................
 _.FLAG                 = _.new_tag ( P... ) -> _.TAG 'flag', P...
-_.STICK = _.new_tag ( width, P... ) ->
-  _.STYLE """stick#xe761 {
-    width:                    #{width};
-    max-width:                #{width}; }
-    """
-  _.TAG 'stick', { id: 'xe761', contenteditable: 'true', }, P...
+_.TRIM                 = _.new_tag ( P... ) -> _.TAG 'trim', P...
+#...........................................................................................................
+_.SLUG = _.new_tag ( nr, width ) ->
+  ### validate arity, nr, width ###
+  trim_id         = "trim#{nr}"
+  slug_id         = "slug#{nr}"
+  left_flag_id    = "lflag#{nr}"
+  right_flag_id   = "rflag#{nr}"
+  style = "max-width:#{width};"
+  _.TAG 'slug', { id: slug_id, style, }, ->
+    _.FLAG { id: left_flag_id, }
+    _.TRIM { id: trim_id, contenteditable: 'true', }
+    _.FLAG { id: right_flag_id, }
 #...........................................................................................................
 _.GALLEY = _.new_tag ( width, P... ) ->
   _.STYLE """galley#x4b8d {
@@ -153,9 +160,8 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
   # tabletop      = insert layout, @tabletop 4
   content       = _.render =>
     _.CSS './galley.css'
-    _.DIV =>
-      _.INPUT '#writehere', { type: 'text', }
-    _.STICK '150mm'
+    for nr in [ 1 .. 100 ]
+      _.SLUG nr, '150mm'
     _.GALLEY '150mm', => _.RAW """
 
         <strong>galley</strong> <em>(n.)</em>
@@ -170,7 +176,6 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
         sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of galley-proof it
         is at&shy;tes&shy;ted from 1890."""
 
-    _.DIV { style: "border:1px solid red; width: 10mm; height: 10mm;", }, 'X'
   return insert layout, content
 
 

@@ -125,6 +125,7 @@ provide_ops = ->
     Keep in mind that some disparities as compared to regular rendering of a whole page may occur since some
     CSS rules such as `text-align-last` do apply in this situation that would not apply had the line be
     typeset in the middle of a paragraph. ###
+    xxx
     context         = "<p>"
     context         = context + "<spleft/>"
     zwsp            = String.fromCodePoint 0x200b
@@ -144,32 +145,74 @@ provide_ops = ->
   #-----------------------------------------------------------------------------------------------------------
   @demo_insert_slabs = ( slabs ) ->
     ### TAINT should validate slabs ###
+    margins =
+      'Y': { left: '-2mm', }
+      '-': { right: '-3mm', }
+      '.': { right: '-3mm', }
     #.........................................................................................................
-    target_id   = 'xe761'
-    target_dom  = document.getElementById target_id
-    unless target_dom?
-      throw new Error "^OPS@9872^ no such element ##{target_id}" ### TAINT use sth like `rpr` ###
+    slab_count  = slabs.$value.length
+    slug_count  = Math.min slab_count, 25
     #.........................................................................................................
-    for slab in slabs.$value
-      # log '^55545^', slab.rhs, slab.txt
-      rhs         = slab.rhs ? 'tight'
-      slab_dom    = document.createElement 'slab'
-      if rhs is 'shy'
-        slab.txt += '-'
-      else if rhs is 'spc'
-        slab.txt += ' '
-      txt_dom     = document.createTextNode slab.txt
-      slab_dom.appendChild txt_dom
-      target_dom.insertAdjacentElement 'beforeend', slab_dom
+    for line_nr in [ 1.. slug_count ]
+      slab_lnr  = 0
+      slab_rnr  = -line_nr
       #.......................................................................................................
-      switch rhs
-        when 'shy'
-          null
-        when 'spc'
-          null
-        when 'tight'
-          null
-        else throw new Error "^OPS@9871^ unknown value for slab.rhs: #{rhs}" ### TAINT use sth like `rpr` ###
+      slug_id         = "slug#{line_nr}"
+      trim_id         = "trim#{line_nr}"
+      left_flag_id    = "lflag#{line_nr}"
+      right_flag_id   = "rflag#{line_nr}"
+      slug_dom        = document.getElementById slug_id
+      trim_dom        = document.getElementById trim_id
+      left_flag_dom   = document.getElementById left_flag_id
+      right_flag_dom  = document.getElementById right_flag_id
+      unless trim_dom? and left_flag_dom? and right_flag_dom?
+        throw new Error "^OPS@9872^ no such element ##{trim_id}" ### TAINT use sth like `rpr` ###
+      slug_width      = slug_dom.getBoundingClientRect().width
+      #.......................................................................................................
+      for slab in slabs.$value
+        slab_lnr++
+        slab_rnr++
+        break if slab_rnr >= 0
+        #.....................................................................................................
+        is_first_slab = slab_lnr is +1
+        is_last_slab  = slab_rnr is -1
+        { txt, rhs, } = slab
+        rhs          ?= 'tight'
+        #.....................................................................................................
+        if rhs is 'shy'
+          if is_last_slab
+            txt += '-'
+        else if rhs is 'spc'
+          unless is_last_slab
+            txt += ' '
+        #.....................................................................................................
+        ### Apply optical margin correction: ###
+        ### TAINT just a demo, must adjust to font, size, etc; also depends on user preferences ###
+        ### TAINT adjust width of `<trim/>` element ###
+        chrs          = Array.from txt
+        first_chr     = chrs[ 0 ]
+        last_chr      = chrs[ chrs.length - 1 ]
+        if is_first_slab and ( margin = margins[ first_chr ]?.left  )?
+          trim_dom.style.marginLeft = margin
+        if is_last_slab  and ( margin = margins[ last_chr  ]?.right )?
+          trim_dom.style.marginRight = margin
+        #.....................................................................................................
+        txt_dom     = document.createTextNode txt
+        # trim_dom.appendChild txt_dom
+        trim_dom.insertAdjacentText 'beforeend', txt
+      #.......................................................................................................
+      ### NOTE join adjacent text nodes, remove empty ones ###
+      ### TAINT better to first join texts ###
+      trim_dom.normalize()
+      left_rect   = left_flag_dom.getBoundingClientRect()
+      right_rect  = right_flag_dom.getBoundingClientRect()
+      delta_px    = right_rect.x - left_rect.x
+      ### NOTE flag must always have a nominal height of 1mm ###
+      ### NOTE precision only applied for readability ###
+      delta_mm    = get_approximate_ratio delta_px, left_rect.height, 100
+      delta_rel   = get_approximate_ratio delta_px, slug_width,       100
+      delta_pct   = ( get_approximate_ratio delta_px, slug_width,     100 ) * 100
+      log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{delta_pct} %"
     return null
 
 
@@ -177,37 +220,37 @@ provide_ops = ->
 provide_ops.apply globalThis.OPS = {}
 
 
-# demo_d3()
-# demo_taucharts()
-# demo_plotly_1()
-# demo_plotly_ternary()
-if running_in_browser() then do =>
-  ( $ document ).ready =>
-    log "^333498^ document ready"
-    OPS.demo_insert_html_fragment()
-    # after 5, ->
-    log "focusing anchor"
-    ( $ 'a' ).focus()
-    ### thx to https://stackoverflow.com/a/987376/7568091 ###
-    id        = 'xe761'
-    element   = document.getElementById id
-    selection = window.getSelection()
-    range     = document.createRange()
-    range.selectNodeContents element
-    selection.removeAllRanges()
-    selection.addRange range
-    #.......................................................................................................
-    log '^343376^ element   ', element
-    log '^343376^ selection ', selection
-    log '^343376^ range     ', range
-    globalThis.element   = element
-    globalThis.selection = selection
-    globalThis.range     = range
-    #.......................................................................................................
-    galley = $ 'galley'
-    galley.prepend $ "<p>123</p>"
-    # ( $ 'a' ).trigger { type: 'keypress', which: 13, keyCode: 13, }
-log '^557576^', "running_in_browser:", @running_in_browser()
-# log '^557576^', ( k for k of globalThis )
+# # demo_d3()
+# # demo_taucharts()
+# # demo_plotly_1()
+# # demo_plotly_ternary()
+# if running_in_browser() then do =>
+#   ( $ document ).ready =>
+#     log "^333498^ document ready"
+#     OPS.demo_insert_html_fragment()
+#     # after 5, ->
+#     log "focusing anchor"
+#     ( $ 'a' ).focus()
+#     ### thx to https://stackoverflow.com/a/987376/7568091 ###
+#     id        = 'xe761'
+#     element   = document.getElementById id
+#     selection = window.getSelection()
+#     range     = document.createRange()
+#     range.selectNodeContents element
+#     selection.removeAllRanges()
+#     selection.addRange range
+#     #.......................................................................................................
+#     log '^343376^ element   ', element
+#     log '^343376^ selection ', selection
+#     log '^343376^ range     ', range
+#     globalThis.element   = element
+#     globalThis.selection = selection
+#     globalThis.range     = range
+#     #.......................................................................................................
+#     galley = $ 'galley'
+#     galley.prepend $ "<p>123</p>"
+#     # ( $ 'a' ).trigger { type: 'keypress', which: 13, keyCode: 13, }
+# log '^557576^', "running_in_browser:", @running_in_browser()
+# # log '^557576^', ( k for k of globalThis )
 
 

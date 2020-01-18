@@ -7,8 +7,12 @@
 
 
 body {
-  font-family:            'Noto Serif';
-  font-size:              125%;
+  /*font-family:            'Noto Serif';*/
+  font-size:              9mm;
+  line-height:            10mm;
+  padding-top:            10mm;
+  padding-left:           10mm;
+  font-feature-settings:  'liga', 'clig', 'dlig', 'hlig', 'calt', 'swsh', 'cv11', 'tnum';
   /* centimeter grid */
   /* thx to https://stackoverflow.com/a/32861765/7568091 */
   background-size:  10mm 10mm;
@@ -18,26 +22,20 @@ body {
     linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px);
 }
 
-stick { /* composing stick, Winkelhaken */
+slug {
   display:                block;
-  margin:                 auto;
-  margin-left:            10mm;
+  outline:                1px dotted red;
+  margin:                 0mm;
   height:                 1.5em;
-  width:                  100em; /* Adjust to line length = galley width */
   text-align:             justify;  /* or `right` in RTL? */
   text-align-last:        justify;  /* or `right` in RTL? */
   overflow-x:             visible;
-  white-space:            nowrap;
-  outline:                1px solid rgba( 0, 100, 0, 0.5 ); }
+  white-space:            nowrap; }
+trim {
+  display:                inline;
+  outline:                1px dashed blue;
+  margin:                 0mm; }
 
-
-ng { /* EXPERIMENTAL: 'n-gram' as DOM element */
-  display:                inline-block;
-  /*vertical-align:         text-bottom;*/
-  /*outline:                1px solid green;*/
-  margin-right:           24Q; /* ### TAINT compute from text size */ }
-
-/*==============================================================================*/
 sp { /* EXPERIMENTAL: space as DOM element */;
   display:                inline-block;
   /*vertical-align:         text-bottom;*/
@@ -46,16 +44,9 @@ sp { /* EXPERIMENTAL: space as DOM element */;
   width:                  0mm;
   height:                 1em; }
 
-spleft {
-  display:                inline-block;
-  /*vertical-align:         text-bottom;*/
-  /*outline:                1px solid green;*/
-  margin-right:           -1Q; /* ### TAINT compute from text size */
-  width:                  0mm;
-  height:                 1em; }
-
 galley { /* Setzschiff */
-  display:                block;
+  /*display:                block;*/
+  display:                none;
   margin-left:            10mm;
   outline:                1px solid rgba( 0, 0, 100, 0.5 ); }
 
@@ -67,8 +58,8 @@ galley { /* Setzschiff */
 flag {
   display:                inline-block;
   vertical-align:         text-bottom;
-  outline:                1px solid red;
-  height:                 1em;
+  outline:                3px solid red;
+  height:                 1mm; /* NOTE flag must always have a nominal height of 1mm */
   width:                  0mm; }
 
 
