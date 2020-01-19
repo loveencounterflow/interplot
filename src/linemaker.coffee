@@ -123,11 +123,10 @@ reconstitute_text = ( slab ) ->
       ### TAINT in the future, we might want to consider other breaking (fixed or variable) spaces ###
       slab.rhs      = 'spc'
       txt           = txt[ ... txt.length - 1 ]
-    debug '^876^', jr txt
+    # debug '^876^', jr txt
     slab.txt = txt
     slabs.push slab
   return new_datom '^slabs', slabs
-  return null
 
 #-----------------------------------------------------------------------------------------------------------
 @demo_linebreak = ->
