@@ -150,8 +150,9 @@ provide_ops = ->
       '-': { right: '-3mm', }
       '.': { right: '-3mm', }
     #.........................................................................................................
-    slab_count  = slabs.$value.length
-    slug_count  = Math.min slab_count, 25
+    slab_count      = slabs.$value.length
+    slug_count      = Math.min slab_count, 25
+    slab_lnr_start  = null
     #.........................................................................................................
     for line_nr in [ 1.. slug_count ]
       slab_lnr  = 0
@@ -169,12 +170,15 @@ provide_ops = ->
         throw new Error "^OPS@9872^ no such element ##{trim_id}" ### TAINT use sth like `rpr` ###
       slug_width      = slug_dom.getBoundingClientRect().width
       line_text       = ''
+      prv_line_text   = null
       line_slab_count = 0
       #.......................................................................................................
       for slab in slabs.$value
+        prv_line_text = line_text
         slab_lnr++
         slab_rnr++
         line_slab_count++
+        slab_lnr_start ?= slab_lnr
         break if slab_rnr >= 0
         #.....................................................................................................
         is_first_slab = slab_lnr is +1
@@ -218,14 +222,33 @@ provide_ops = ->
       # delta_pct     = ( get_approximate_ratio delta_px, slug_width,     100 ) * 100
       epsilon       = 0.01
       line_too_long = delta_rel > ( 1 + epsilon )
-      log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{jr line_text}, #{line_too_long}"
+      ### TAINT must implement handling single line, last line ###
       continue unless line_too_long
-      log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{jr line_text}"
-      break if line_slab_count < 2
-      slab_lnr--
-      slab_rnr--
-      line_slab_count--
-      trim_dom.removeChild trim_dom.firstChild
+      # log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{jr line_text}"
+      if line_slab_count >= 2
+        line_nr--
+        slab_lnr--
+        slab_rnr--
+        line_slab_count--
+        line_text = prv_line_text
+        trim_dom.removeChild trim_dom.firstChild
+      ### TAINT rewrite using DOM methods if faster ###
+      slug_jq         = $ "#slug#{line_nr}"
+      trim_jq         = slug_jq.find 'trim'
+      margin_left     = ( trim_jq[ 0 ].style.marginLeft   ) ? null
+      margin_right    = ( trim_jq[ 0 ].style.marginRight  ) ? null
+      start           = slab_lnr_start - 1
+      stop            = slab_lnr - 2
+      log '^33321^', jr slabs
+      log '^33321^', jr [ slabs.$value[ start ].txt, slabs.$value[ stop ].txt, ]
+      slug_jq.removeAttr 'id'
+      trim_jq.removeAttr 'id contenteditable'
+      ( slug_jq.find 'flag' ).remove()
+      html            = slug_jq[ 0 ].outerHTML
+      R               = { $key: '$slug', start, stop, html, text: line_text, }
+      R.margin_left   = margin_left   if margin_left?
+      R.margin_right  = margin_right  if margin_right?
+      return R
     return null
 
 
