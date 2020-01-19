@@ -107,7 +107,8 @@ settings =
 echo_browser_console = ( c ) =>
   # unless c._type in [ 'log', ]
   # whisper '^33489^', ( rpr c ) # [ .. 100 ]
-  text = ( ( c._text ? '???' ).replace /\s+/, ' ' )[ ... 108 ]
+  # text = ( ( c._text ? '???' ).replace /\s+/, ' ' )[ ... 108 ]
+  text = c._text ? '???'
   if c._type is 'error'
     settings.has_error = true
     warn 'µ37763', 'console:', text
