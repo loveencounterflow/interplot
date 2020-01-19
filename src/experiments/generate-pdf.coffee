@@ -216,11 +216,11 @@ demo_2 = ->
 #-----------------------------------------------------------------------------------------------------------
 demo_insert_slabs = ( page ) ->
   text  = """其法用膠泥刻字，薄如錢唇，每字為一印，火燒令堅。先設一鐵版，其上以松脂臘和紙灰之類冒之。"""
-  text  = """Yaffir pasteact."""
-  text  = """Yaffir pasteact. Letterpress printing is a technique of relief printing using a printing press."""
+  text  = """Yaffir rectangle apostolary. Letterpress printing is a technique of relief printing using a printing press."""
   slabs = LINEMAKER.slabs_from_text text
   # debug '^222111^', slabs
-  await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
+  html  = await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
+  info '^53566^', html
   return null
   ### ((畢昇發明活字印刷術))
 
