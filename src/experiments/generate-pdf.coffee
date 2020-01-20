@@ -194,8 +194,6 @@ demo_2 = ->
   #.........................................................................................................
   urge "waitForSelector"
   await page.waitForSelector target_selector
-  # delta = parseFloat await page.evaluate -> ( $ 'p' ).offset().left
-  info '^33987^', "number of DOM elements:          ", jr await page.evaluate -> OPS.demo_jquery_test()
   #.........................................................................................................
   await demo_insert_slabs page
   #.........................................................................................................
@@ -214,12 +212,20 @@ demo_2 = ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+### TAINT use OPS proxy or `require` OPS into this context ###
+OPS_slug_from_slabs = ( page, P... ) -> await page.evaluate ( ( P... ) -> OPS.slug_from_slabs P... ), P...
+
+#-----------------------------------------------------------------------------------------------------------
 demo_insert_slabs = ( page ) ->
   text  = """其法用膠泥刻字，薄如錢唇，每字為一印，火燒令堅。先設一鐵版，其上以松脂臘和紙灰之類冒之。"""
-  text  = """Yaffir rectangle apostolary. Letterpress printing is a technique of relief printing using a printing press."""
+  text  = """Yaffir rectangle刻文字apostolary. Letterpress printing is a technique of relief printing using a printing press."""
+  text  = """III刻文字III每字印\u3000III"""
+  text  = """自馮瀛王始印五經已後典籍皆為版本其法用膠泥刻字"""
   slabs = LINEMAKER.slabs_from_text text
   # debug '^222111^', slabs
-  html  = await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
+  # html    = await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
+  XXX_settings  = { min_slab_idx: 0, }
+  html          = await OPS_slug_from_slabs page, slabs, XXX_settings
   info '^53566^', html
   return null
   ### ((畢昇發明活字印刷術))

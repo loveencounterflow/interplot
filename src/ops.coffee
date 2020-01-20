@@ -1,42 +1,5 @@
 
 provide_ops = ->
-  #-----------------------------------------------------------------------------------------------------------
-  @demo_ranges_and_coordinates = ->
-    log = console.log;
-    log document.querySelector 'p'
-    # d = document.getSelection();
-    # d = window.getSelection();
-    # d.empty();
-    # d.addRange( range );
-    selectors = 'div p'.split /\s+/
-    for selector in selectors
-      for element in $ selector
-        # log Object::toString.call element
-    # first_p = document.querySelector 'p'
-    # log 'bounding box', first_p.getClientRects()
-        for d from element.getClientRects()
-          # Rectangle attributes: x, y, width, height, top, right, bottom, left, toJSON()
-          # log '^37365^', "Rectangle ( #{d.x}, #{d.y} ) .. ( #{d.right}, #{d.bottom} )"
-          rectangle = $ "<div class='dbg domrectangle'></div>"
-          rectangle.offset d
-          rectangle.width  d.width
-          rectangle.height d.height
-          ( $ 'body' ).append rectangle
-    # range = document.createRange()
-    # range.selectNode first_p
-    # log range
-    # newNode = document.createElement 'p'
-    # newNode.appendChild document.createTextNode "New Node Inserted Here"
-    # range.insertNode newNode
-
-  #-----------------------------------------------------------------------------------------------------------
-  @demo_jquery_test = ->
-    # log '^77763^', 'demo_jquery_test'
-    element = $ 'stick#xe761'
-    log '^33987^', element
-    # info '^33987^', element
-    # element.text "change to something"
-    return ( $ '*' ).length
 
   #-----------------------------------------------------------------------------------------------------------
   @demo_wait_for_dom_ready = ->
@@ -69,224 +32,124 @@ provide_ops = ->
     return null
 
   #-----------------------------------------------------------------------------------------------------------
-  @demo_find_end_of_line = ->
-    return null
+  @_context_from_linenr = ( line_nr ) ->
+    R                 = {}
+    R.slug_id         = "slug#{line_nr}"
+    R.trim_id         = "trim#{line_nr}"
+    R.left_flag_id    = "lflag#{line_nr}"
+    R.right_flag_id   = "rflag#{line_nr}"
+    R.slug_dom        = document.getElementById R.slug_id
+    R.trim_dom        = document.getElementById R.trim_id
+    R.lflag_dom       = document.getElementById R.left_flag_id
+    R.rflag_dom       = document.getElementById R.right_flag_id
+    R.slug_rect       = as_plain_object R.slug_dom.getBoundingClientRect()
+    return R
 
   #-----------------------------------------------------------------------------------------------------------
-  @xxx = ->
-    ###
-    selection:
-      anchorNode, anchorOffset, focusNode, focusOffset, isCollapsed, rangeCount, type, baseNode, baseOffset,
-      extentNode, extentOffset, getRangeAt, addRange, removeRange, removeAllRanges, empty, collapse,
-      setPosition, collapseToStart, collapseToEnd, extend, setBaseAndExtent, selectAllChildren,
-      deleteFromDocument, containsNode, modify
-    range:
-      startContainer, startOffset, endContainer, endOffset, collapsed, commonAncestorContainer, setStart,
-      setEnd, setStartBefore, setStartAfter, setEndBefore, setEndAfter, collapse, selectNode,
-      selectNodeContents, compareBoundaryPoints, deleteContents, extractContents, cloneContents, insertNode,
-      surroundContents, cloneRange, detach, isPointInRange, comparePoint, intersectsNode, getClientRects,
-      getBoundingClientRect, createContextualFragment, expand
-    ###
-
-  #-----------------------------------------------------------------------------------------------------------
-  @rectangle_from_selection = ( selection = null ) ->
-    selection  ?= window.getSelection()
-    range       = selection.getRangeAt 0
-    text        = selection.anchorNode.wholeText
-    log '^3334^', selection.anchorNode.parentNode.id, selection.anchorOffset, jr text[ ... selection.anchorOffset ]
-    # log '^33452^', selection.anchorNode.nodeType
-    # log '^33452^', ( k for k of selection.anchorNode ); xxx
-    # log '^3334^', selection.focusNode.parentNode.id, selection.focusOffset
-    # log '^3334^', selection.baseNode.parentNode.id, selection.baseOffset
-    ### TAINT use method to convert to JSON-compatible value ###
-    { x
-      y
-      width
-      height
-      top
-      right
-      bottom
-      left  } = range.getBoundingClientRect()
-    return { x, y, width, height, top, right, bottom, left, }
-
-  #-----------------------------------------------------------------------------------------------------------
-  @demo_insert_html_fragment = ->
-    log '^OPS/demo_insert_html_fragment@34341^', stick = $ 'stick'
-    ### NOTE
-
-    Here we parse and insert an HTML fragment. We have to represent the *context* of the fragment—that is, the
-    sequence of open HTML tags at that point—so the browser can know what CSS rules to apply to the line. We
-    wrap the line into a generic `<div>` tag which will cause both jQuery (I guess) and the browser to close
-    all open tags at the end of the line. Without that tag, the last open `<em>` and its text would be missing
-    from the page (I guess jQuery does that, but not sure).
-
-    Observe that with this technique, we do *not* have to reproduce syntactically complete HTML fragments but
-    can let the browser do that for us; this appears to work with both inline and block tags such as `<p>`.
-    Keep in mind that some disparities as compared to regular rendering of a whole page may occur since some
-    CSS rules such as `text-align-last` do apply in this situation that would not apply had the line be
-    typeset in the middle of a paragraph. ###
-    xxx
-    context         = "<p>"
-    context         = context + "<spleft/>"
-    zwsp            = String.fromCodePoint 0x200b
-    zwnj            = String.fromCodePoint 0x200c
-    # content         = context + "This<f/> is<f/> a<f/> <em>first<f/> bit<f/></em> of<f/> text.<f/> It<f/> is<f/> <strong>not<f/></strong> a<f/> <em>very<f/> long<f/> one.<f/>"
-    # content         = context + "This is a <em>first f#{zwnj}irst bit</em> of text. Yaffir stood high. (1) Yaf&shy;f&shy;ir (2) Yaf#{zwnj}f#{zwnj}ir. It is <strong>not</strong> a <em>very long one."
-    # content         = context + "This is a <em>first f#{zwnj}irst bit</em> of text. <i>Yaffir stood high."
-    # content         = context + "This<sp/>is<sp/>a<sp/><em>first<sp/>f#{zwnj}irst<sp/>bit</em><sp/>of<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
-    # content         = context + "This<sp/>is<sp/>a<sp/>text.<sp/><i>Yaffir<sp/>stood<sp/>high."
-    content         = context + "<ng style='margin-left:-6Q;'>This</ng><ng>guy</ng><ng>called</ng><ng><em>Yaffir</em>,</ng><ng>he</ng><ng><strong>stood</strong></ng><ng><strong>high</strong>.</ng><ng>Hyphen-</ng><ng>able</ng>"
-    # content         = context + "<txt id=nr1>This is a </txt><em><txt id=nr2>first bit</txt></em><txt id=nr3> of text & a test. It is </txt><strong><txt id=nr4>not</txt></strong><txt id=nr5> a </txt><em><txt id=nr6>very long one.</txt>"
-    wrapped_content = "<div><span id=innerwrap>#{content}</span><flag/></div>"
-    # content         = context + "<a href='http://example.com'>This<flag/> is a <em>first bit</em> of text. It is <strong>not</strong> a <em>very long one.</a>"
-    stick.append $ wrapped_content
-    return "inserted #{content}"
-
-  #-----------------------------------------------------------------------------------------------------------
-  @demo_insert_slabs = ( slabs ) ->
-    ### TAINT should validate slabs ###
-    margins =
-      'Y': { left: '-2mm', }
-      '-': { right: '-3mm', }
-      '.': { right: '-3mm', }
-    #.........................................................................................................
-    slab_count      = slabs.$value.length
-    slug_count      = Math.min slab_count, 25
-    slab_lnr_start  = null
-    #.........................................................................................................
-    for line_nr in [ 1.. slug_count ]
-      slab_lnr  = 0
-      slab_rnr  = - ( line_nr + 1 )
+  @_get_partial_slug = ( slabs, min_slab_idx, max_slab_idx ) ->
+    ### TAINT also return text usable on next invocation so that part will not have to be computed again ###
+    text      = ''
+    spc_count = 0
+    for slab_idx in [ min_slab_idx .. max_slab_idx ]
+      is_first_slab = slab_idx is min_slab_idx
+      is_last_slab  = slab_idx is max_slab_idx
+      slab          = slabs[ slab_idx ]
+      { txt, rhs, } = slab
       #.......................................................................................................
-      slug_id         = "slug#{line_nr}"
-      trim_id         = "trim#{line_nr}"
-      left_flag_id    = "lflag#{line_nr}"
-      right_flag_id   = "rflag#{line_nr}"
-      slug_dom        = document.getElementById slug_id
-      trim_dom        = document.getElementById trim_id
-      left_flag_dom   = document.getElementById left_flag_id
-      right_flag_dom  = document.getElementById right_flag_id
-      unless trim_dom? and left_flag_dom? and right_flag_dom?
-        throw new Error "^OPS@9872^ no such element ##{trim_id}" ### TAINT use sth like `rpr` ###
-      slug_width      = slug_dom.getBoundingClientRect().width
-      line_text       = ''
-      prv_line_text   = null
-      line_slab_count = 0
-      #.......................................................................................................
-      for slab in slabs.$value
-        prv_line_text = line_text
-        slab_lnr++
-        slab_rnr++
-        line_slab_count++
-        slab_lnr_start ?= slab_lnr
-        break if slab_rnr >= 0
+      switch rhs ? null
+        when null then null
         #.....................................................................................................
-        is_first_slab = slab_lnr is +1
-        is_last_slab  = slab_rnr is -1
-        { txt, rhs, } = slab
-        rhs          ?= 'tight'
-        #.....................................................................................................
-        if rhs is 'shy'
+        when 'shy'
           if is_last_slab
             txt += '-'
-        else if rhs is 'spc'
+        #.....................................................................................................
+        when 'spc'
           unless is_last_slab
+            spc_count++
             txt += ' '
         #.....................................................................................................
-        ### Apply optical margin correction: ###
-        ### TAINT just a demo, must adjust to font, size, etc; also depends on user preferences ###
-        ### TAINT adjust width of `<trim/>` element ###
-        chrs          = Array.from txt
-        first_chr     = chrs[ 0 ]
-        last_chr      = chrs[ chrs.length - 1 ]
-        if is_first_slab and ( margin = margins[ first_chr ]?.left  )?
-          trim_dom.style.marginLeft = margin
-        if is_last_slab  and ( margin = margins[ last_chr  ]?.right )?
-          trim_dom.style.marginRight = margin
-        #.....................................................................................................
-        txt_dom     = document.createTextNode txt
-        # trim_dom.appendChild txt_dom
-        trim_dom.insertAdjacentText 'beforeend', txt
+        ### TAINT may wanrt to throw error or inform parent process ###
+        else warn '^interplot/OPS/_get_partial_slug@8012', "ignoring slab.rhs #{jr rhs}"
       #.......................................................................................................
-      ### NOTE join adjacent text nodes, remove empty ones ###
-      ### TAINT better to first join texts ###
-      trim_dom.normalize()
-      line_text    += txt
-      left_rect     = left_flag_dom.getBoundingClientRect()
-      right_rect    = right_flag_dom.getBoundingClientRect()
-      delta_px      = right_rect.x - left_rect.x
-      ### NOTE flag must always have a nominal height of 1mm ###
-      ### NOTE precision only applied for readability ###
-      delta_mm      = get_approximate_ratio delta_px, left_rect.height, 100
-      delta_rel     = get_approximate_ratio delta_px, slug_width,       100
-      # delta_pct     = ( get_approximate_ratio delta_px, slug_width,     100 ) * 100
-      epsilon       = 0.01
-      line_too_long = delta_rel > ( 1 + epsilon )
-      ### TAINT must implement handling single line, last line ###
-      continue unless line_too_long
-      # log '^2298^', "delta: #{delta_mm} mm, #{delta_rel} rel, #{jr line_text}"
-      if line_slab_count >= 2
-        line_nr--
-        slab_lnr--
-        slab_rnr--
-        line_slab_count--
-        line_text = prv_line_text
-        trim_dom.removeChild trim_dom.firstChild
-      ### TAINT rewrite using DOM methods if faster ###
-      slug_jq         = $ "#slug#{line_nr}"
-      trim_jq         = slug_jq.find 'trim'
-      margin_left     = ( trim_jq[ 0 ].style.marginLeft   ) ? null
-      margin_right    = ( trim_jq[ 0 ].style.marginRight  ) ? null
-      start           = slab_lnr_start - 1
-      stop            = slab_lnr - 2
-      log '^33321^', jr slabs
-      log '^33321^', jr [ slabs.$value[ start ].txt, slabs.$value[ stop ].txt, ]
-      slug_jq.removeAttr 'id'
-      trim_jq.removeAttr 'id contenteditable'
-      ( slug_jq.find 'flag' ).remove()
-      html            = slug_jq[ 0 ].outerHTML
-      R               = { $key: '$slug', start, stop, html, text: line_text, }
-      R.margin_left   = margin_left   if margin_left?
-      R.margin_right  = margin_right  if margin_right?
-      return R
+      text += txt
+    #.........................................................................................................
+    return { text, spc_count, min_slab_idx, max_slab_idx, }
+
+  #-----------------------------------------------------------------------------------------------------------
+  @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
+    # ### TAINT may keep left margin from previous call ###
+    # ### Apply optical margin correction: ###
+    # ### TAINT just a demo, must adjust to font, size, etc; also depends on user preferences ###
+    # ### TAINT adjust width of `<trim/>` element ###
+    # chrs          = Array.from txt
+    # first_chr     = chrs[ 0 ]
+    # last_chr      = chrs[ chrs.length - 1 ]
+    # if is_first_slab and ( margin = margins[ first_chr ]?.left  )?
+    #   trim_dom.style.marginLeft = margin
+    # if is_last_slab  and ( margin = margins[ last_chr  ]?.right )?
+    #   trim_dom.style.marginRight = margin
+    #.........................................................................................................
+    # txt_dom     = document.createTextNode txt
+    # trim_dom.appendChild txt_dom
+    ctx.trim_dom.insertAdjacentText 'beforeend', partial_slug.text
+    lflag_rect      = ctx.lflag_dom.getBoundingClientRect()
+    rflag_rect      = ctx.rflag_dom.getBoundingClientRect()
+    ### NOTE flag must always have a nominal height of 1mm ###
+    ### NOTE precision only applied for readability ###
+    precision       = 100
+    epsilon         = 1 / precision
+    #..........................................................................................................
+    text_width_px   = rflag_rect.x - lflag_rect.x
+    text_width_mm   = get_approximate_ratio text_width_px, lflag_rect.height,     precision
+    text_width_rel  = get_approximate_ratio text_width_px, ctx.slug_rect.width,   precision
+    #..........................................................................................................
+    free_width_px   = ctx.slug_rect.width - text_width_px
+    free_width_mm   = get_approximate_ratio free_width_px, lflag_rect.height,     precision
+    free_width_rel  = get_approximate_ratio free_width_px, ctx.slug_rect.width,   precision
+    #..........................................................................................................
+    ### TAINT consider how to handle zero space lines ###
+    spc_width_px    = free_width_px / partial_slug.spc_count
+    spc_width_mm    = get_approximate_ratio spc_width_px,  lflag_rect.height,     precision
+    #..........................................................................................................
+    line_too_long   = text_width_rel > ( 1 + epsilon )
+    return {
+      slug_id:        ctx.slug_id,
+      spc_count:      partial_slug.spc_count,
+      text_width_px,
+      text_width_mm,
+      text_width_rel,
+      free_width_px,
+      free_width_mm,
+      free_width_rel,
+      spc_width_px,
+      spc_width_mm,
+      line_too_long, }
+
+  #-----------------------------------------------------------------------------------------------------------
+  @slug_from_slabs = ( slab_dtm, settings ) ->
+    ### TAINT use intertype for defaults ###
+    defaults            = { min_slab_idx: 0, }
+    settings            = { defaults..., settings..., }
+    slabs               = slab_dtm.$value
+    { min_slab_idx, }   = settings
+    last_slab_idx       = slabs.length - 1
+    max_slab_idx        = min_slab_idx - 1
+    line_nr             = 0 ### TAINT use alternating slugs ###
+    loop
+      max_slab_idx++
+      break if max_slab_idx > last_slab_idx
+      partial_slug      = @_get_partial_slug slabs, min_slab_idx, max_slab_idx
+      ### TAINT re-use out of two alternating slug templates; cache DOM nodes ###
+      line_nr++
+      ctx               = @_context_from_linenr line_nr
+      slug_metrics      = @_metrics_from_partial_slug ctx, partial_slug
+      log '^3389^', jr slug_metrics
+      # log '^3389^', jr partial_slug
+      # log '^3887^', jr ctx
     return null
 
 
 ############################################################################################################
 provide_ops.apply globalThis.OPS = {}
-
-
-# # demo_d3()
-# # demo_taucharts()
-# # demo_plotly_1()
-# # demo_plotly_ternary()
-# if running_in_browser() then do =>
-#   ( $ document ).ready =>
-#     log "^333498^ document ready"
-#     OPS.demo_insert_html_fragment()
-#     # after 5, ->
-#     log "focusing anchor"
-#     ( $ 'a' ).focus()
-#     ### thx to https://stackoverflow.com/a/987376/7568091 ###
-#     id        = 'xe761'
-#     element   = document.getElementById id
-#     selection = window.getSelection()
-#     range     = document.createRange()
-#     range.selectNodeContents element
-#     selection.removeAllRanges()
-#     selection.addRange range
-#     #.......................................................................................................
-#     log '^343376^ element   ', element
-#     log '^343376^ selection ', selection
-#     log '^343376^ range     ', range
-#     globalThis.element   = element
-#     globalThis.selection = selection
-#     globalThis.range     = range
-#     #.......................................................................................................
-#     galley = $ 'galley'
-#     galley.prepend $ "<p>123</p>"
-#     # ( $ 'a' ).trigger { type: 'keypress', which: 13, keyCode: 13, }
-# log '^557576^', "running_in_browser:", @running_in_browser()
-# # log '^557576^', ( k for k of globalThis )
 
 

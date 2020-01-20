@@ -16,61 +16,140 @@ info                      = CND.get_logger 'info',      badge
 jr                        = JSON.stringify
 Intertype                 = ( require 'intertype' ).Intertype
 intertype                 = new Intertype module.exports
+L                         = @
 
 #-----------------------------------------------------------------------------------------------------------
 @declare 'interplot_shy',
   tests:
-    "x is a text":                   					( x ) -> @isa.text                      x
-    "x ends with soft hyphen":       					( x ) -> x[ x.length - 1 ] is '\u00ad'
+    "x is a text":                            ( x ) -> @isa.text                      x
+    "x ends with soft hyphen":                ( x ) -> x[ x.length - 1 ] is '\u00ad'
 
 #-----------------------------------------------------------------------------------------------------------
 @declare 'interplot_template_name',
   tests:
-    "x is a nonempty_text":                   ( x ) -> @isa.nonempty_text                      x
+    "x is a nonempty_text":                   ( x ) -> @isa.nonempty_text                       x
     "x is name of template":                  ( x ) -> @isa.function ( require './templates' )[ x ]
 
-# #-----------------------------------------------------------------------------------------------------------
-# @declare 'datom_nonempty_list_of_positive_integers', ( x ) ->
-#   return false unless @isa.nonempty_list x
-#   return x.every ( xx ) => @isa.positive_integer xx
+#-----------------------------------------------------------------------------------------------------------
+### TAINT consider to use JS regex unicode properties:
+
+```
+/\p{Script_Extensions=Latin}/u
+/\p{Script=Latin}/u
+/\p{Script_Extensions=Cyrillic}/u
+/\p{Script_Extensions=Greek}/u
+/\p{Unified_Ideograph}/u
+/\p{Script=Han}/u
+/\p{Script_Extensions=Han}/u
+/\p{Ideographic}/u
+/\p{IDS_Binary_Operator}/u
+/\p{IDS_Trinary_Operator}/u
+/\p{Radical}/u
+/\p{White_Space}/u
+/\p{Script_Extensions=Hiragana}/u
+/\p{Script=Hiragana}/u
+/\p{Script_Extensions=Katakana}/u
+/\p{Script=Katakana}/u
+```
+
+
+
+
+
+###
+regex_cid_ranges =
+  hiragana:     '[\u3041-\u3096]'
+  katakana:     '[\u30a1-\u30fa]'
+  kana:         '[\u3041-\u3096\u30a1-\u30fa]'
+  ideographic:  '[\u3006-\u3007\u3021-\u3029\u3038-\u303a\u3400-\u4db5\u4e00-\u9fef\uf900-\ufa6d\ufa70-\ufad9\u{17000}-\u{187f7}\u{18800}-\u{18af2}\u{1b170}-\u{1b2fb}\u{20000}-\u{2a6d6}\u{2a700}-\u{2b734}\u{2b740}-\u{2b81d}\u{2b820}-\u{2cea1}\u{2ceb0}-\u{2ebe0}\u{2f800}-\u{2fa1d}]'
+
+
+#-----------------------------------------------------------------------------------------------------------
+### TAINT kludge; this will be re-implemented in InterText ###
+@interplot_regex_cjk_property_terms = [
+  'Ideographic'                     ### https://unicode.org/reports/tr44/#Ideographic ###
+  'Radical'
+  'IDS_Binary_Operator'
+  'IDS_Trinary_Operator'
+  'Script_Extensions=Hiragana'
+  'Script_Extensions=Katakana'
+  'Script_Extensions=Hangul'
+  'Script_Extensions=Han'
+  ]
+
+#-----------------------------------------------------------------------------------------------------------
+@_regex_any_of_cjk_property_terms = ->
+  return '[' + ( ( "\\p{#{t}}" for t in @interplot_regex_cjk_property_terms ).join '' ) + ']'
+
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_with_hiragana',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? has hiragana':           ( x ) -> ( x.match ///#{regex_cid_ranges.hiragana}///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_with_katakana',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? has katakana':           ( x ) -> ( x.match ///#{regex_cid_ranges.katakana}///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_with_kana',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? has kana':               ( x ) -> ( x.match ///#{regex_cid_ranges.kana}///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_with_ideographic',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? has ideographic':        ( x ) -> ( x.match ///#{regex_cid_ranges.ideographic}///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_hiragana',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? is hiragana':            ( x ) -> ( x.match ///^#{regex_cid_ranges.hiragana}+$///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_katakana',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? is katakana':            ( x ) -> ( x.match ///^#{regex_cid_ranges.katakana}+$///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_kana',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? is kana':                ( x ) -> ( x.match ///^#{regex_cid_ranges.kana}+$///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_ideographic',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? is ideographic':         ( x ) -> ( x.match ///^#{regex_cid_ranges.ideographic}+$///u )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_cjk',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? is cjk':                 ( x ) -> ( x.match /// ^ #{L._regex_any_of_cjk_property_terms()}+ $ /// )?
+
+#-----------------------------------------------------------------------------------------------------------
+@declare 'interplot_text_with_cjk',
+  tests:
+    '? is a text':              ( x ) -> @isa.text x
+    '? has cjk':                ( x ) -> ( x.match ///   #{L._regex_any_of_cjk_property_terms()}+   /// )?
+
+
 
 # #-----------------------------------------------------------------------------------------------------------
-# @declare 'datom_sigil',
+# @declare 'blank_text',
 #   tests:
-#     "x is a chr":                             ( x ) -> @isa.chr x
-#     "x has sigil":                            ( x ) -> x in '^<>~[]'
+#     '? is a text':              ( x ) -> @isa.text x
+#     '? is blank':               ( x ) -> ( x.match ///^\s*$///u )?
 
-# #-----------------------------------------------------------------------------------------------------------
-# @declare 'datom_key',
-#   tests:
-#     "x is a nonempty text":                   ( x ) -> @isa.nonempty_text   x
-#     "x has sigil":                            ( x ) -> @isa.datom_sigil  x[ 0 ]
-
-# #-----------------------------------------------------------------------------------------------------------
-# @declare 'datom_datom',
-#   tests:
-#     "x is a object":                          ( x ) -> @isa.object          x
-#     "x has key 'key'":                        ( x ) -> @has_key             x, 'key'
-#     "x.key is a datom_key":                   ( x ) -> @isa.datom_key    x.key
-#     "x.$stamped is an optional boolean":      ( x ) -> ( not x.$stamped? ) or ( @isa.boolean x.$stamped )
-#     "x.$dirty is an optional boolean":        ( x ) -> ( not x.$dirty?   ) or ( @isa.boolean x.$dirty   )
-#     "x.$fresh is an optional boolean":        ( x ) -> ( not x.$fresh?   ) or ( @isa.boolean x.$fresh   )
-#     #.......................................................................................................
-#     "x.$vnr is an optional nonempty list of positive integers": ( x ) ->
-#       ( not x.$vnr? ) or @isa.datom_nonempty_list_of_positive_integers x.$vnr
-
-    # "?..$vnr is a ?positive":            ( x ) -> ( not x.$vnr? ) or @isa.positive x.$vnr
-#     "? has key 'vlnr_txt'":                   ( x ) -> @has_key             x, 'vlnr_txt'
-#     "? has key 'value'":                      ( x ) -> @has_key             x, 'value'
-#     "?.vlnr_txt is a nonempty text":          ( x ) -> @isa.nonempty_text   x.vlnr_txt
-#     "?.vlnr_txt starts, ends with '[]'":      ( x ) -> ( x.vlnr_txt.match /^\[.*\]$/ )?
-#     "?.vlnr_txt is a JSON array of integers": ( x ) ->
-#       # debug 'µ55589', x
-#       ( @isa.list ( lst = JSON.parse x.vlnr_txt ) ) and \
-#       ( lst.every ( xx ) => ( @isa.integer xx ) and ( @isa.positive xx ) )
-
-# #-----------------------------------------------------------------------------------------------------------
-# @declare 'true', ( x ) -> x is true
 
 @defaults =
   settings:

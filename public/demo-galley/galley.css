@@ -19,8 +19,8 @@ slug {
   font-size:              9mm;
   line-height:            10mm;
   height:                 10mm;
-  text-align:             justify;  /* or `right` in RTL? */
-  text-align-last:        justify;  /* or `right` in RTL? */
+  text-align:             left;  /* or `right` in RTL? */
+  text-align-last:        left;  /* or `right` in RTL? */
   overflow-x:             visible;
   white-space:            nowrap; }
 
@@ -36,6 +36,11 @@ sp { /* EXPERIMENTAL: space as DOM element */;
   width:                  0mm;
   height:                 1em; }
 
+g { /* glue */
+  display:                inline;
+  width:                  100%;
+  min-width:              1ex; }
+
 galley { /* Setzschiff */
   display:                block;
   margin-left:            10mm; }
@@ -43,7 +48,6 @@ galley { /* Setzschiff */
 flag {
   display:                inline-block;
   vertical-align:         text-bottom;
-
   height:                 1mm; /* NOTE flag must always have a nominal height of 1mm */
   width:                  0mm; }
 
@@ -60,6 +64,7 @@ body.debug {
 .debug slug    { outline: 1px dotted red;        }
 .debug flag    { outline: 3px solid  red;        }
 .debug trim    { outline: 1px dashed blue;       }
+.debug g       { outline: 1px dashed green;       }
 
 #debugonoff {
   position:       absolute;

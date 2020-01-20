@@ -83,17 +83,23 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
 #   return @render => _.DIV "#candidate-#{cdtsel_nr}.glyph#{selector}", term
 
 #-----------------------------------------------------------------------------------------------------------
-@layout = ( title, base_path ) ->
-  public_path = PATH.resolve PATH.join __dirname, '../public'
-  base_path  ?= public_path
-  base_path   = PATH.resolve base_path
-  resolve = ( path ) => PATH.relative base_path, PATH.join public_path, path
+@layout = ( settings ) ->
+  ### TAINT use intertype for defaults ###
+  public_path         = PATH.resolve PATH.join __dirname, '../public'
+  defaults            =
+    title:        'INTERPLOT'
+    base_path:    public_path
+    body_def:     '' # may contain CSS-selector-like string, e.g. '.default', '#bodyid42.foo.bar'
+  settings            = { defaults..., settings..., }
+  settings.base_path  = PATH.resolve settings.base_path
+  resolve             = ( path ) => PATH.relative settings.base_path, PATH.join public_path, path
+  #.........................................................................................................
   return _.render =>
     _.DOCTYPE 5
     _.META charset: 'utf-8'
     # _.META 'http-equiv': "Content-Security-Policy", content: "default-src 'self'"
     # _.META 'http-equiv': "Content-Security-Policy", content: "script-src 'unsafe-inline'"
-    _.TITLE title ? 'INTERPLOT'
+    _.TITLE settings.title
     ### ------------------------------------------------------------------------------------------------ ###
     _.JS  resolve './jquery-3.3.1.js'
     _.JS  resolve './ops-globals.js'
@@ -111,8 +117,9 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     # _.CSS './c3-0.6.14/c3.css'
     # _.JS  './c3-0.6.14/c3.min.js'
     #=======================================================================================================
-    _.RAW '\n\n%content%\n\n'
-    _.SPAN '#page-ready'
+    _.BODY settings.body_def, ->
+      _.RAW '\n\n%content%\n\n'
+      _.SPAN '#page-ready'
     return null
 
 #-----------------------------------------------------------------------------------------------------------
@@ -141,7 +148,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     throw new Error "^33211^ expected 0 arguments, got #{arity}"
   demo_path     = PATH.resolve PATH.join __dirname, '../public/demo-columns'
   content_path  = PATH.join demo_path, 'content.html'
-  layout        = @layout 'Columns Demo', PATH.resolve demo_path
+  layout        = @layout { title: 'Columns Demo', base_path: ( PATH.resolve demo_path ), }
   tabletop      = insert layout, @tabletop 4
   extras        = _.render =>
     _.CSS './styles.css'
@@ -152,15 +159,50 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
 @demo_galley = ->
   unless ( arity = arguments.length ) is 0
     throw new Error "^33211^ expected 0 arguments, got #{arity}"
-  demo_path     = PATH.resolve PATH.join __dirname, '../public/demo-columns'
-  layout        = @layout 'Galley Demo', PATH.resolve demo_path
-  # tabletop      = insert layout, @tabletop 4
-  content       = _.render =>
+  base_path       = PATH.resolve PATH.join __dirname, '../public/demo-galley'
+  title           = 'Galley Demo'
+  body_def      = '.debug'
+  layout_settings = { title, base_path, body_def, }
+  layout          = @layout layout_settings
+  # tabletop        = insert layout, @tabletop 4
+  content         = _.render =>
     _.CSS './galley.css'
+    #.......................................................................................................
     _.BUTTON '#debugonoff', "dbg"
     _.COFFEESCRIPT ->
       ( $ document ).ready ->
         ( $ '#debugonoff' ).on 'click', -> ( $ 'body' ).toggleClass 'debug'
+    #.......................................................................................................
+    _.TAG 'galley', { style: "max-width: 150mm", }, ->
+      _.TAG 'slug', { style: "max-width: 150mm", }, ->
+        _.TAG 'trim', { style: "display:flex;", contenteditable: 'true', }, ->
+          _.RAW '自'
+          _.TAG 'g'
+          _.RAW '馮'
+          _.TAG 'g'
+          _.RAW '瀛'
+          _.TAG 'g'
+          _.RAW '王'
+          # _.RAW '始'
+          # _.RAW '印'
+          # _.RAW '五'
+          # _.RAW '經'
+          # _.RAW '已'
+          # _.RAW '後'
+          # _.RAW '典'
+          # _.RAW '籍'
+          # _.RAW '皆'
+          # _.RAW '為'
+          # _.RAW '版'
+          # _.RAW '本'
+          # _.RAW '其'
+          # _.RAW '法'
+          # _.RAW '用'
+          # _.RAW '膠'
+          # _.RAW '泥'
+          # _.RAW '刻'
+          # _.RAW '字'
+    #.......................................................................................................
     _.GALLEY '150mm'
   return insert layout, content
 
