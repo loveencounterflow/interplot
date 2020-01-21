@@ -2,28 +2,55 @@
 
 /*@font-face { font-family: 'flow';  src: url( './fonts/kps-fonts.ch/1455_gutenberg_b42.otf'   ); unicode-range: U+00000-10ffff; }*/
 @font-face { font-family: 'flow';  src: url( './fonts/EBGaramond12-Regular.otf'   ); unicode-range: U+00000-10ffff; }
-@font-face { font-family: 'flow';  src: url( './fonts/sunflower-exta-201903.ttf'  ); unicode-range: U+03400-09fff; }
+/*@font-face { font-family: 'flow';  src: url( './fonts/sunflower-exta-201903.ttf'  ); unicode-range: U+03400-09fff; }*/
 /*@font-face { font-family: 'flow';  src: url( './fonts/iosevka-slab-regular.ttf'   ); unicode-range: U+00000-04dff; }*/
 @font-face { font-family: 'flow';  src: url( './fonts/jizura3b.ttf'               ); unicode-range: U+0e000-0efff; }
-@font-face { font-family: 'flow';  src: url( './fonts/sunflower-u-cjk-xb.ttf'     ); unicode-range: U+20000-2ffff; }
 @font-face { font-family: 'flow';  src: url( './fonts/HanaMinA.ttf'               ); unicode-range: U+2a700-2b73f; }
 @font-face { font-family: 'flow';  src: url( './fonts/mktwx.ttf'                  ); unicode-range: U+0f002-0f002; }
 @font-face { font-family: 'flow';  src: url( './fonts/mktwx.ttf'                  ); unicode-range: U+0f003-0f003; }
+@font-face { font-family: 'fallback'; src: url( './fonts/AND-Regular.otf' ); }
+@font-face { font-family: 'fallback'; src: url( './fonts/LastResort.ttf' ); }
 
 @font-face {
- font-family:    'flow';
- src:            url( './fonts/NotoSerifCJK-Regular.ttc'   );
- unicode-range:
-   U+03040-0309f, /* Hiragana */
-   U+1b000-1b0ff, /* Kana Supplement */
-   U+1b100-1b12f, /* Kana Extended-A */
-   U+030a0-030ff, /* Katakana */
-   U+031f0-031ff, /* Katakana Phonetic Extensions */
-   U+03200-032ff, /* Enclosed CJK Letters and Months */
-   U+0ff00-0ffef, /* Halfwidth and Fullwidth Forms */
-   U+1b000-1b0ff, /* Kana Supplement */
-   U+1b130-1b16f; /* Small Kana Extension */
- }
+  font-family:            'flow';
+  src:                    url( './fonts/sunflower-exta-201903.ttf' );
+  unicode-range:
+    U+3006-3007,
+    U+3021-3029,
+    U+3038-303a,
+    U+3400-4db5,
+    U+4e00-9fef,
+    U+f900-fa6d,
+    U+fa70-fad9,
+    U+17000-187f7,
+    U+18800-18af2,
+    U+1b170-1b2fb,
+    U+20000-2a6d6,
+    U+2a700-2b734,
+    U+2b740-2b81d,
+    U+2b820-2cea1,
+    U+2ceb0-2ebe0,
+    U+2f800-2fa1d; }
+
+@font-face {
+  font-family:            'flow';
+  src:                    url( './fonts/sunflower-u-cjk-xb.ttf'     );
+  unicode-range: U+20000-2ffff; }
+
+@font-face {
+  font-family:        'flow';
+   src:            url( './fonts/NotoSerifJP/NotoSerifJP-Regular.otf'   );
+   unicode-range:
+     U+03040-0309f, /* Hiragana */
+     U+1b000-1b0ff, /* Kana Supplement */
+     U+1b100-1b12f, /* Kana Extended-A */
+     U+030a0-030ff, /* Katakana */
+     U+031f0-031ff, /* Katakana Phonetic Extensions */
+     U+03200-032ff, /* Enclosed CJK Letters and Months */
+     U+0ff00-0ffef, /* Halfwidth and Fullwidth Forms */
+     U+1b000-1b0ff, /* Kana Supplement */
+     U+1b130-1b16f; /* Small Kana Extension */
+   }
 
 html, body {
   /*background-color:       #9eaeb5;*/
@@ -33,7 +60,7 @@ html, body {
   margin:                 0mm;
   position:               absolute;
   overflow:               hidden;*/
-  font-family:            'flow';
+  font-family:            'flow', 'fallback';
 }
 
 /* thx to https://developer.mozilla.org/en-US/docs/Web/CSS/line-height-step */

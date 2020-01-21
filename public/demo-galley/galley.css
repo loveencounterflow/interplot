@@ -7,11 +7,13 @@
 
 
 body {
-  padding-top:            10mm;
-  padding-left:           10mm;
-  font-family:            'flow';
+  text-rendering:         geometricPrecision;
+  text-rendering:         optimizeLegibility;
+  text-rendering:         optimizeSpeed;
+  font-family:            'flow', 'fallback';
   font-feature-settings:  'liga', 'clig', 'dlig', 'hlig', 'calt', 'swsh', 'cv11', 'tnum';
-}
+  padding-top:            10mm;
+  padding-left:           10mm; }
 
 slug {
   display:                block;
@@ -19,8 +21,8 @@ slug {
   font-size:              9mm;
   line-height:            10mm;
   height:                 10mm;
-  text-align:             left;  /* or `right` in RTL? */
-  text-align-last:        left;  /* or `right` in RTL? */
+  text-align:             justify;
+  text-align-last:        justify;
   overflow-x:             visible;
   white-space:            nowrap; }
 
@@ -36,10 +38,15 @@ sp { /* EXPERIMENTAL: space as DOM element */;
   width:                  0mm;
   height:                 1em; }
 
-g { /* glue */
+g,    /* glue for anything that does not have a dedicated `/g[a-z]/` glue as defined below */
+gc {  /* glue for gaps that have CJK on both sides */
   display:                inline;
   width:                  100%;
   min-width:              1ex; }
+
+gc {
+  min-width:              0ex; }
+
 
 galley { /* Setzschiff */
   display:                block;
@@ -70,4 +77,24 @@ body.debug {
   position:       absolute;
   top:            1mm;
   left:           1mm; }
+
+demo-paragraph {
+  display:                block;
+  width:                  150mm;
+  max-width:              150mm;
+  outline:                1px dotted red;
+  text-align:             justify;
+  text-align-last:        justify;
+  font-size:              9mm;
+  line-height:            10mm;
+  margin:                 10mm; }
+
+.has-fallback-glyphs {
+  background-color:       #ff000081;
+  border-left:            3mm solid red;
+  border-right:           3mm solid red;
+}
+
+
+
 

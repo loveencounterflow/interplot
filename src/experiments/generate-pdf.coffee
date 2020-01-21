@@ -44,13 +44,16 @@ PUPPETEER                 = require 'puppeteer'
 
 #-----------------------------------------------------------------------------------------------------------
 settings =
-  has_error:    false
+  fallback_font_names:  [ 'Adobe NotDef', 'LastResort', ]
+  has_error:            false
+  #.........................................................................................................
   close:
     on_finish:  true
     on_error:   false
+  #.........................................................................................................
   puppeteer:
     headless:           false
-    # headless:           true
+    headless:           true
     defaultViewport:    null
     pipe:               true ### use pipe instead of web sockets for communication ###
     # slowMo:             250 # slow down by 250ms
@@ -82,6 +85,7 @@ settings =
   #   width:                  1000
   #   height:                 500
   #   deviceScaleFactor:      15
+  #.........................................................................................................
   pdf:
     ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagepdfoptions ###
     displayHeaderFooter:    false
@@ -95,6 +99,7 @@ settings =
       right:                '0mm'
       bottom:               '0mm'
       left:                 '0mm'
+  #.........................................................................................................
   screenshot:
     target_selector:  '#chart' ### only used when screenshot.puppeteer.fullPage is false ###
     # target_selector:  'div' ### only used when screenshot.puppeteer.fullPage is false ###
@@ -159,6 +164,63 @@ take_screenshot = ( page ) ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+_raw_font_stats_from_selector = ( page, doc, selector ) ->
+  node        = await page._client.send 'DOM.querySelector', { nodeId: doc.root.nodeId, selector, }
+  description = await page._client.send 'CSS.getPlatformFontsForNode', { nodeId: node.nodeId, }
+  return description.fonts
+
+#-----------------------------------------------------------------------------------------------------------
+get_ppt_doc_object = ( page ) ->
+  await page._client.send 'DOM.enable'
+  await page._client.send 'CSS.enable'
+  return await page._client.send 'DOM.getDocument'
+
+#-----------------------------------------------------------------------------------------------------------
+mark_blocks_with_fallback_glyphs = ( page ) ->
+  block_selectors = await page.evaluate ->
+    all_nodes   = Array.from document.querySelectorAll 'body *'
+    block_nodes = all_nodes.filter ( d ) -> ( window.getComputedStyle d ).display is 'block'
+    return ( selector_of d for d in block_nodes )
+  #.........................................................................................................
+  doc             = await get_ppt_doc_object page
+  for selector in block_selectors
+    raw_font_stats  = await _raw_font_stats_from_selector page, doc, selector
+    for font in raw_font_stats
+      continue unless font.familyName in settings.fallback_font_names
+      debug '^112^', selector, ( jr font.familyName ), ( font.glyphCount )
+      await page.evaluate ( ( selector ) -> ( $ selector ).addClass 'has-fallback-glyphs' ), selector
+  #.........................................................................................................
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+show_global_font_stats = ( page ) ->
+  doc             = await get_ppt_doc_object page
+  ### thx to https://stackoverflow.com/a/47914111/7568091 ###
+  raw_font_stats  = await _raw_font_stats_from_selector page, doc, 'body'
+  R               = []
+  glyph_total     = raw_font_stats.reduce ( ( acc, d ) -> acc + d.glyphCount ), 0
+  raw_font_stats.sort ( a, b ) -> - ( a.glyphCount - b.glyphCount )
+  fallbacks       = []
+  echo CND.grey "—".repeat 108
+  echo CND.grey "^interplot/show_global_font_stats@55432^"
+  echo CND.steel "Font Statistics:"
+  for font in raw_font_stats
+    { familyName: font_name, glyphCount: glyph_count, } = font
+    font_name_txt   = CND.lime  ( jr font_name                                    ).padEnd   40
+    glyph_count_txt = CND.white ( format_integer glyph_count                      ).padStart 15
+    percentage_txt  = CND.gold  ( format_as_percentage glyph_count / glyph_total  ).padStart 10
+    echo font_name_txt, glyph_count_txt, percentage_txt
+    d               = { font_name, glyph_count, }
+    fallbacks.push font_name if font_name in settings.fallback_font_names
+    R.push d
+  #.........................................................................................................
+  unless isa.empty fallbacks
+    echo CND.red CND.reverse CND.bold " Fallback fonts detected: #{fallbacks.join ', '} "
+  #.........................................................................................................
+  echo CND.grey "—".repeat 108
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
 demo_2 = ->
   url             = 'https://de.wikipedia.org/wiki/Berlin'
   target_selector = '#content'
@@ -202,7 +264,9 @@ demo_2 = ->
   urge "waitForSelector"
   await page.waitForSelector target_selector
   #.........................................................................................................
-  await demo_insert_slabs page
+  await demo_insert_slabs                 page
+  await mark_blocks_with_fallback_glyphs  page
+  await show_global_font_stats            page
   #.........................................................................................................
   if settings.puppeteer.headless
     urge "write PDF"
