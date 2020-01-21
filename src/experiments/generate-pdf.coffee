@@ -13,11 +13,18 @@ warn                      = CND.get_logger 'warn',      badge
 help                      = CND.get_logger 'help',      badge
 urge                      = CND.get_logger 'urge',      badge
 info                      = CND.get_logger 'info',      badge
+echo                      = CND.echo.bind CND
 PATH                      = require 'path'
 FS                        = require 'fs'
 { jr, }                   = CND
 assign                    = Object.assign
 join_path                 = ( P... ) -> PATH.resolve PATH.join P...
+#...........................................................................................................
+### TAINT implement in InterText ###
+_format                   = require 'number-format.js'
+format_float              = ( x ) -> _format '#,##0.000', x
+format_integer            = ( x ) -> _format '#,##0.',    x
+format_as_percentage      = ( x ) -> _format '#,##0.00',  x * 100
 #...........................................................................................................
 types                     = require '../types'
 { isa
