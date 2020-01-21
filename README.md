@@ -1,3 +1,12 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+  - [InterPlot](#interplot)
+- [Related](#related)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 
 
@@ -19,3 +28,5 @@ sudo apt install librsvg2-bin
 
 http://jsxgraph.org/wp/about/index.html
 
+* [CSS and International Text](https://www.w3.org/International/articles/css3-text/)
+* [Styling vertical Chinese, Japanese, Korean and Mongolian text](https://www.w3.org/International/articles/vertical-text/)
