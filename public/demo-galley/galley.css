@@ -52,12 +52,6 @@ galley { /* Setzschiff */
   display:                block;
   margin-left:            10mm; }
 
-flag {
-  display:                inline-block;
-  vertical-align:         text-bottom;
-  height:                 1mm; /* NOTE flag must always have a nominal height of 1mm */
-  width:                  0mm; }
-
 body.debug {
   /* centimeter grid */
   /* thx to https://stackoverflow.com/a/32861765/7568091 */
@@ -67,11 +61,11 @@ body.debug {
     linear-gradient( to right,  rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px ),
     linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px); }
 
-.debug galley  { outline: medium double fuchsia; }
-.debug slug    { outline: 1px dotted red;        }
-.debug flag    { outline: 3px solid  red;        }
-.debug trim    { outline: 1px dashed blue;       }
-.debug g       { outline: 1px dashed green;       }
+.debug galley  { outline: 1px solid     #0000cc8d;  }
+.debug slug    { outline: 1px dotted    red;        }
+.debug trim    { outline: 1px dashed    blue;       }
+.debug g       { outline: 1px dashed    green;      }
+.debug cmgauge { outline: 1px dashed    green;      }
 
 #debugonoff {
   position:       absolute;
