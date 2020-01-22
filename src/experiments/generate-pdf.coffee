@@ -274,6 +274,11 @@ demo_2 = ->
   await demo_insert_slabs                 page
   await show_global_font_stats            page
   #.........................................................................................................
+  # debug '^190887^', ( k for k of page ).sort().join ' '
+  # urge  '^190887^', ( types.all_keys_of page ).sort().join ' '
+  await page.exposeFunction 'sha1', ( text ) =>
+    ( require 'crypto' ).createHash( 'sha1' ).update( text ).digest( 'hex' )[ .. 17 ]
+  #.........................................................................................................
   if settings.puppeteer.headless
     urge "write PDF"
     pdf   = await page.pdf settings.pdf
