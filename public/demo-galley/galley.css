@@ -32,24 +32,6 @@ trim {
   display:                inline;
   margin:                 0mm; }
 
-sp { /* EXPERIMENTAL: space as DOM element */;
-  display:                inline-block;
-  /*vertical-align:         text-bottom;*/
-  /*outline:                1px solid green;*/
-  margin-right:           4Q; /* ### TAINT compute from text size */
-  width:                  0mm;
-  height:                 1em; }
-
-g,    /* glue for anything that does not have a dedicated `/g[a-z]/` glue as defined below */
-gc {  /* glue for gaps that have CJK on both sides */
-  display:                inline;
-  width:                  100%;
-  min-width:              1ex; }
-
-gc {
-  min-width:              0ex; }
-
-
 galley { /* Setzschiff */
   display:                block;
   margin-left:            10mm; }
@@ -63,11 +45,10 @@ body.debug {
     linear-gradient( to right,  rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px ),
     linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px); }
 
-.debug galley  { outline: 1px solid     #0000cc8d;  }
-.debug slug    { outline: 1px dotted    red;        }
-.debug trim    { outline: 1px dashed    blue;       }
-.debug g       { outline: 1px dashed    green;      }
-.debug cmgauge { outline: 1px dashed    green;      }
+.debug galley   { outline: 1px solid     #0000cc8d;  }
+.debug slug     { outline: 1px dotted    red;        }
+.debug trim     { outline: 1px dashed    blue;       }
+.debug gauge    { outline: 1px dashed    green;      }
 
 #debugonoff {
   position:       absolute;

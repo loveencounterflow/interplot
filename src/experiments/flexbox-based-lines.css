@@ -1,0 +1,29 @@
+
+
+/*
+
+In flexbox layout, container has `display: flex`, content (glue and text) has `inline-block` (?), all float
+left, glue may expand to fill line; glue for Latin has `min-width` of around `1ex`; glue for CJK has
+zero `min-width`
+
+*/
+
+
+slug {
+	display:  flex;
+}
+
+
+
+g,    /* glue for anything that does not have a dedicated `/g[a-z]/` glue as defined below */
+gc {  /* glue for gaps that have CJK on both sides */
+  display:                inline;
+  width:                  100%;
+  min-width:              1ex; }
+
+gc {
+  min-width:              0ex; }
+
+.debug g       { outline: 1px dashed    green;      }
+
+
