@@ -90,6 +90,7 @@ settings =
     ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagepdfoptions ###
     displayHeaderFooter:    false
     landscape:              false
+    printBackground:        true
     # preferCSSPageSize:      true
     format:                 'A4' # takes precedence over width, height
     # width:                  '2000mm'
