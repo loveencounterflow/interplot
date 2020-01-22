@@ -32,6 +32,9 @@ trim {
   display:                inline;
   margin:                 0mm; }
 
+composer { /* Winkelhaken */
+  display:                block; }
+
 galley { /* Setzschiff */
   display:                block; }
 
@@ -44,6 +47,7 @@ body.debug {
     linear-gradient( to right,  rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px ),
     linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px); }
 
+.debug composer { outline: 1px solid     #5500cc8d;  }
 .debug galley   { outline: 1px solid     #0000cc8d;  }
 .debug slug     { outline: 1px dotted    red;        }
 .debug trim     { outline: 1px dashed    blue;       }

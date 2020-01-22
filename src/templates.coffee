@@ -73,6 +73,30 @@ _.SLUG = _.new_tag ( nr, width ) ->
     # _.FLAG { id: right_flag_id, }
 
 #-----------------------------------------------------------------------------------------------------------
+tag_registry = {}
+id_from_tagname = ( tagname ) ->
+  count = tag_registry[ tagname ] = ( tag_registry[ tagname ] ?= 0 ) + 1
+  return "#{tagname}#{count}"
+
+#-----------------------------------------------------------------------------------------------------------
+_._SLUGCONTAINER = _.new_tag ( tagname, settings ) ->
+  defaults =
+    width:      '150mm'
+    style:      null
+    slugcount:  2
+  ### TAINT validate settings ###
+  settings  = { defaults..., settings..., }
+  style     = "max-width:#{settings.width};" + ( settings.style ? '' )
+  id        = id_from_tagname tagname
+  _.TAG tagname, { id, style, }, ->
+    for nr in [ 1 .. settings.slugcount ]
+      _.SLUG nr, settings.width
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
+_.COMPOSER = _.new_tag ( settings ) -> _._SLUGCONTAINER 'composer', settings
+
+#-----------------------------------------------------------------------------------------------------------
 _.GALLEY = _.new_tag ( width ) ->
   style = "max-width:#{width};"
   _.TAG 'galley', { id: 'galley1', style, }, ->
@@ -210,6 +234,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.GAUGE()
     _.DEBUGONOFF()
     #.......................................................................................................
+    _.COMPOSER { width: '150mm', slugcount: 3, }
     _.GALLEY '150mm'
     #.......................................................................................................
     _.TAG 'demo-paragraph', { contenteditable: 'true', }, """
