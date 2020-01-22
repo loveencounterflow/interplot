@@ -105,6 +105,7 @@ _.selector_generator = ->
       globalThis.selector_of = ( node ) ->
         node = node[ 0 ] if ( typeof node?.jquery ) is 'string'
         sg.getSelector node
+      return null
 
 #-----------------------------------------------------------------------------------------------------------
 insert = ( layout, content ) -> layout.replace /%content%/g, content
