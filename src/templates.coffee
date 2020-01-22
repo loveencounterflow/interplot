@@ -81,20 +81,25 @@ _.GALLEY = _.new_tag ( width ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 _.GAUGE = _.new_tag ->
-  style = "display:block;position:absolute;width:10mm;min-width:10mm;max-width:10mm;height:10mm;min-height:10mm;max-height:10mm;"
+  style   = ''
+  style  += "display:block;position:absolute;top:10mm;left:0mm;"
+  style  += "width:10mm;min-width:10mm;max-width:10mm;"
+  style  += "height:10mm;min-height:10mm;max-height:10mm;"
+  style  += "background: repeating-linear-gradient(-45deg,#606dbc80,#606dbc80 10px,#46529880 10px,#46529880 20px);"
   _.COFFEESCRIPT ->
     ( $ document ).ready ->
       #.....................................................................................................
       f = ->
-        cmgauge_jq = $ 'interplot-gauge'
-        @px_per_mm = cmgauge_jq.width() / 10
-        @mm_per_px = 1 / @px_per_mm
-        @px_from_mm = ( mm ) -> mm * @px_per_mm
-        @mm_from_px = ( px ) -> px * @mm_per_px
+        cmgauge_jq    = $ 'gauge'
+        @px_per_mm    = cmgauge_jq.width() / 10
+        @mm_per_px    = 1 / @px_per_mm
+        @px_from_mm   = ( mm    ) -> mm * @px_per_mm
+        @mm_from_px   = ( px    ) -> px * @mm_per_px
+        @width_mm_of  = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().width
       #.....................................................................................................
       f.apply globalThis.GAUGE = {}
       return null
-  _.TAG 'interplot-gauge', { style, }
+  _.TAG 'gauge', { style, }
 
 #-----------------------------------------------------------------------------------------------------------
 _.selector_generator = ->
@@ -102,9 +107,7 @@ _.selector_generator = ->
   _.COFFEESCRIPT ->
     ( $ document ).ready ->
       sg = new CssSelectorGenerator;
-      globalThis.selector_of = ( node ) ->
-        node = node[ 0 ] if ( typeof node?.jquery ) is 'string'
-        sg.getSelector node
+      globalThis.selector_of = ( node ) -> sg.getSelector as_dom_node node
       return null
 
 #-----------------------------------------------------------------------------------------------------------

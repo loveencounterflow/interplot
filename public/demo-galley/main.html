@@ -10,10 +10,7 @@
         var sg;
         sg = new CssSelectorGenerator;
         globalThis.selector_of = function(node) {
-          if ((typeof (node != null ? node.jquery : void 0)) === 'string') {
-            node = node[0];
-          }
-          return sg.getSelector(node);
+          return sg.getSelector(as_dom_node(node));
         };
         return null;
       });
@@ -29,14 +26,17 @@
         //.....................................................................................................
         f = function() {
           var cmgauge_jq;
-          cmgauge_jq = $('interplot-gauge');
+          cmgauge_jq = $('gauge');
           this.px_per_mm = cmgauge_jq.width() / 10;
           this.mm_per_px = 1 / this.px_per_mm;
           this.px_from_mm = function(mm) {
             return mm * this.px_per_mm;
           };
-          return this.mm_from_px = function(px) {
+          this.mm_from_px = function(px) {
             return px * this.mm_per_px;
+          };
+          return this.width_mm_of = function(node) {
+            return this.mm_from_px((as_dom_node(node)).getBoundingClientRect().width);
           };
         };
         //.....................................................................................................
@@ -44,7 +44,7 @@
         return null;
       });
     })();
-})();</script><interplot-gauge style="display:block;position:absolute;width:10mm;min-width:10mm;max-width:10mm;height:10mm;min-height:10mm;max-height:10mm;"></interplot-gauge><button id="debugonoff">dbg</button><script type="text/javascript">(function() {
+})();</script><gauge style="display:block;position:absolute;top:10mm;left:0mm;width:10mm;min-width:10mm;max-width:10mm;height:10mm;min-height:10mm;max-height:10mm;background: repeating-linear-gradient(-45deg,#606dbc80,#606dbc80 10px,#46529880 10px,#46529880 20px);"></gauge><button id="debugonoff">dbg</button><script type="text/javascript">(function() {
   var __slice = [].slice,
       __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
       __hasProp = {}.hasOwnProperty,

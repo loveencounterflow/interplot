@@ -33,8 +33,7 @@ trim {
   margin:                 0mm; }
 
 galley { /* Setzschiff */
-  display:                block;
-  margin-left:            10mm; }
+  display:                block; }
 
 body.debug {
   /* centimeter grid */

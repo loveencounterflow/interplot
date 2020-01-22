@@ -15,3 +15,9 @@ globalThis.js_type_of = ( x ) ->
 globalThis.get_approximate_ratio = ( length, gauge, precision = 100 ) ->
   return ( Math.floor ( length / gauge ) * precision + 0.5 ) / precision
 
+#-----------------------------------------------------------------------------------------------------------
+globalThis.as_dom_node = ( dom_or_jquery ) ->
+  return dom_or_jquery[ 0 ] if ( typeof dom_or_jquery?.jquery ) is 'string'
+  return dom_or_jquery
+
+

@@ -93,12 +93,14 @@ provide_ops = ->
     # txt_dom     = document.createTextNode txt
     # trim_dom.appendChild txt_dom
     ctx.trim_dom.insertAdjacentText 'beforeend', partial_slug.text
+    log '^12321^', ctx.trim_id, GAUGE.width_mm_of ctx.trim_dom
     # lflag_rect      = ctx.lflag_dom.getBoundingClientRect()
     # rflag_rect      = ctx.rflag_dom.getBoundingClientRect()
     ### NOTE flag must always have a nominal height of 1mm ###
     ### NOTE precision only applied for readability ###
     precision       = 100
     epsilon         = 1 / precision
+    return null # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     #..........................................................................................................
     text_width_px   = rflag_rect.x - lflag_rect.x
     text_width_mm   = get_approximate_ratio text_width_px, lflag_rect.height,     precision
@@ -144,7 +146,7 @@ provide_ops = ->
       line_nr++
       ctx               = @_context_from_linenr line_nr
       slug_metrics      = @_metrics_from_partial_slug ctx, partial_slug
-      log '^3389^', jr slug_metrics
+      # log '^3389^', jr slug_metrics
       # log '^3389^', jr partial_slug
       # log '^3887^', jr ctx
     return null
