@@ -1,15 +1,17 @@
 :root {
-  --interplot-font-size:       6mm;
-  --interplot-grid:            8mm;
-  --interplot-glyph-bgcolor:   rgba( 255, 255, 255, 0.75 );
-  font-size:              var(--interplot-font-size);
+  --interplot-font-size:                  6mm;
+  --interplot-grid:                       8mm;
+  --interplot-glyph-bgcolor:              rgba( 255, 255, 255, 0.75 );
+  --interplot-warn-missing-glyphs-bgcolor:  #ff000050;
+  --interplot-warn-missing-glyphs-olcolor:  orange;
+  font-size:                              var(--interplot-font-size);
 }
 
 
 body {
-  text-rendering:         geometricPrecision;
   text-rendering:         optimizeLegibility;
   text-rendering:         optimizeSpeed;
+  text-rendering:         geometricPrecision;
   font-family:            'flow', 'fallback';
   font-feature-settings:  'liga', 'clig', 'dlig', 'hlig', 'calt', 'swsh', 'cv11', 'tnum';
   padding-top:            10mm;
