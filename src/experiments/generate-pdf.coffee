@@ -53,7 +53,7 @@ settings =
   #.........................................................................................................
   puppeteer:
     headless:           false
-    headless:           true
+    # headless:           true
     defaultViewport:    null
     pipe:               true ### use pipe instead of web sockets for communication ###
     # slowMo:             250 # slow down by 250ms
@@ -167,6 +167,7 @@ take_screenshot = ( page ) ->
 #-----------------------------------------------------------------------------------------------------------
 _raw_font_stats_from_selector = ( page, doc, selector ) ->
   node        = await page._client.send 'DOM.querySelector', { nodeId: doc.root.nodeId, selector, }
+  ### see https://chromedevtools.github.io/devtools-protocol/tot/CSS#method-getPlatformFontsForNode ###
   description = await page._client.send 'CSS.getPlatformFontsForNode', { nodeId: node.nodeId, }
   return description.fonts
 
@@ -178,20 +179,23 @@ get_ppt_doc_object = ( page ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 mark_blocks_with_fallback_glyphs = ( page ) ->
+  ### TAINT could conceivably be faster because we first retrieve block nodes from the DOM, then try to find
+  a selector string for each node, then pass each selector back in to retrieve the respective node again ###
   block_selectors = await page.evaluate ->
     all_nodes   = Array.from document.querySelectorAll 'body *'
     block_nodes = all_nodes.filter ( d ) -> ( window.getComputedStyle d ).display is 'block'
     return ( selector_of d for d in block_nodes )
   #.........................................................................................................
-  doc             = await get_ppt_doc_object page
+  R   = []
+  doc = await get_ppt_doc_object page
   for selector in block_selectors
     raw_font_stats  = await _raw_font_stats_from_selector page, doc, selector
     for font in raw_font_stats
       continue unless font.familyName in settings.fallback_font_names
-      debug '^112^', selector, ( jr font.familyName ), ( font.glyphCount )
+      R.push selector
       await page.evaluate ( ( selector ) -> ( $ selector ).addClass 'has-fallback-glyphs' ), selector
   #.........................................................................................................
-  return null
+  return R
 
 #-----------------------------------------------------------------------------------------------------------
 show_global_font_stats = ( page ) ->
@@ -216,7 +220,9 @@ show_global_font_stats = ( page ) ->
     R.push d
   #.........................................................................................................
   unless isa.empty fallbacks
+    selectors = await mark_blocks_with_fallback_glyphs  page
     echo CND.red CND.reverse CND.bold " Fallback fonts detected: #{fallbacks.join ', '} "
+    echo CND.red "in DOM nodes: #{ ( jr d for d in selectors ).join ', '} "
   #.........................................................................................................
   echo CND.grey "—".repeat 108
   return R
@@ -266,7 +272,6 @@ demo_2 = ->
   await page.waitForSelector target_selector
   #.........................................................................................................
   await demo_insert_slabs                 page
-  await mark_blocks_with_fallback_glyphs  page
   await show_global_font_stats            page
   #.........................................................................................................
   if settings.puppeteer.headless
@@ -290,9 +295,9 @@ OPS_slug_from_slabs = ( page, P... ) -> await page.evaluate ( ( P... ) -> OPS.sl
 #-----------------------------------------------------------------------------------------------------------
 demo_insert_slabs = ( page ) ->
   text  = """其法用膠泥刻字，薄如錢唇，每字為一印，火燒令堅。先設一鐵版，其上以松脂臘和紙灰之類冒之。"""
-  text  = """Yaffir rectangle刻文字apostolary. Letterpress printing is a technique of relief printing using a printing press."""
   text  = """III刻文字III每字印\u3000III"""
   text  = """自馮瀛王始印五經已後典籍皆為版本其法用膠泥刻字"""
+  text  = """Yaffir rectangle刻文字apostolary. Letterpress printing is a technique of relief printing using a printing press."""
   slabs = LINEMAKER.slabs_from_text text
   # debug '^222111^', slabs
   # html    = await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs

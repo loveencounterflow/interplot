@@ -84,10 +84,8 @@ demo-paragraph {
   margin:                 10mm; }
 
 .has-fallback-glyphs {
-  background-color:       #ff000081;
-  border-left:            3mm solid red;
-  border-right:           3mm solid red;
-}
+  background-color:       var(--interplot-warn-missing-glyphs-bgcolor);
+  outline:                3mm solid var(--interplot-warn-missing-glyphs-olcolor); }
 
 
 
