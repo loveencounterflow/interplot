@@ -122,7 +122,6 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.JS  resolve './jquery-3.3.1.js'
     _.JS  resolve './ops-globals.js'
     _.JS  resolve './ops.js'
-    _.JS  resolve './ops-plotter.js'
     _.CSS resolve './reset.css'
     _.CSS resolve './styles.css'
     ### ------------------------------------------------------------------------------------------------ ###
@@ -146,6 +145,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     throw new Error "^33211^ expected 0 arguments, got #{arity}"
   layout  = @layout 'Triangular Chart'
   content = _.render =>
+    _.JS  resolve './ops-plotter.js' ### TAINT `resolve()` not defined here ###
     _.JS   'https://cdn.plot.ly/plotly-latest.min.js'
     _.CSS  './chart-styles.css'
     _.CSS  'https://fonts.googleapis.com/css?family=Lobster'
