@@ -36,13 +36,14 @@ provide_ops = ->
     R                 = {}
     R.slug_id         = "slug#{line_nr}"
     R.trim_id         = "trim#{line_nr}"
-    R.left_flag_id    = "lflag#{line_nr}"
-    R.right_flag_id   = "rflag#{line_nr}"
+    # R.left_flag_id    = "lflag#{line_nr}"
+    # R.right_flag_id   = "rflag#{line_nr}"
     R.slug_dom        = document.getElementById R.slug_id
     R.trim_dom        = document.getElementById R.trim_id
-    R.lflag_dom       = document.getElementById R.left_flag_id
-    R.rflag_dom       = document.getElementById R.right_flag_id
+    # R.lflag_dom       = document.getElementById R.left_flag_id
+    # R.rflag_dom       = document.getElementById R.right_flag_id
     R.slug_rect       = as_plain_object R.slug_dom.getBoundingClientRect()
+    R.trim_rect       = as_plain_object R.trim_dom.getBoundingClientRect()
     return R
 
   #-----------------------------------------------------------------------------------------------------------
@@ -92,8 +93,8 @@ provide_ops = ->
     # txt_dom     = document.createTextNode txt
     # trim_dom.appendChild txt_dom
     ctx.trim_dom.insertAdjacentText 'beforeend', partial_slug.text
-    lflag_rect      = ctx.lflag_dom.getBoundingClientRect()
-    rflag_rect      = ctx.rflag_dom.getBoundingClientRect()
+    # lflag_rect      = ctx.lflag_dom.getBoundingClientRect()
+    # rflag_rect      = ctx.rflag_dom.getBoundingClientRect()
     ### NOTE flag must always have a nominal height of 1mm ###
     ### NOTE precision only applied for readability ###
     precision       = 100
