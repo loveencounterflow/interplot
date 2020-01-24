@@ -38,41 +38,41 @@ composer { /* Winkelhaken */
 galley { /* Setzschiff */
   display:                block; }
 
-body.debug {
+@media screen { body.debug {
   /* centimeter grid */
   /* thx to https://stackoverflow.com/a/32861765/7568091 */
   background-size:  10mm 10mm;
   background-image:
     /* ### TAINT use CSS variables */
     linear-gradient( to right,  rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px ),
-    linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px); }
+    linear-gradient( to bottom, rgba( 188, 19, 57, 0.25 ) 0.1mm, transparent 1px); } }
 
-.debug composer { outline: 1px solid     #5500cc8d;  }
-.debug galley   { outline: 1px solid     #0000cc8d;  }
-.debug slug     { outline: 1px dotted    red;        }
-.debug trim     { outline: 1px dashed    blue;       }
-.debug gauge    { outline: 1px dashed    green;      }
+@media screen { .debug composer { outline: 1px solid     #5500cc8d;  } }
+@media screen { .debug galley   { outline: 1px solid     #0000cc8d;  } }
+@media screen { .debug slug     { outline: 1px dotted    red;        } }
+@media screen { .debug trim     { outline: 1px dashed    blue;       } }
+@media screen { .debug gauge    { outline: 1px dashed    green;      } }
 
 #debugonoff {
-  position:       absolute;
-  top:            1mm;
-  left:           1mm; }
+  position:               absolute;
+  top:                    1mm;
+  left:                   1mm; }
+@media print { #debugonoff { display: none; } }
+
 
 demo-paragraph {
   display:                block;
   width:                  150mm;
   max-width:              150mm;
-  outline:                1px dotted red;
   text-align:             justify;
   text-align-last:        justify;
   font-size:              9mm;
   line-height:            10mm;
   margin:                 10mm; }
+@media screen { .debug demo-paragraph { outline: 1px dotted red; } }
 
 .has-fallback-glyphs {
   background-color:       var(--interplot-warn-missing-glyphs-bgcolor);
   outline:                3mm solid var(--interplot-warn-missing-glyphs-olcolor); }
-
-
 
 
