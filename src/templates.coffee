@@ -59,17 +59,8 @@ _.DEBUGONOFF = ->
     ( $ document ).ready -> ( $ '#debugonoff' ).on 'click', -> ( $ 'body' ).toggleClass 'debug'
 
 #-----------------------------------------------------------------------------------------------------------
-_.SLUG = _.new_tag ( nr, width ) ->
-  ### validate arity, nr, width ###
-  trim_id         = "trim#{nr}"
-  slug_id         = "slug#{nr}"
-  # left_flag_id    = "lflag#{nr}"
-  # right_flag_id   = "rflag#{nr}"
-  style = "max-width:#{width};"
-  _.TAG 'slug', { id: slug_id, style, }, ->
-    # _.FLAG { id: left_flag_id, }
-    _.TRIM { id: trim_id, contenteditable: 'true', }
-    # _.FLAG { id: right_flag_id, }
+_.SLUG = @slug = _.new_tag ->
+  _.TAG 'slug', -> _.TRIM { contenteditable: 'true', }
 
 #-----------------------------------------------------------------------------------------------------------
 tag_registry = {}
