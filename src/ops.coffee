@@ -31,20 +31,20 @@ provide_ops = ->
     ###
     return null
 
-  #-----------------------------------------------------------------------------------------------------------
-  @_context_from_linenr = ( line_nr ) ->
-    R                 = {}
-    R.slug_id         = "slug#{line_nr}"
-    R.trim_id         = "trim#{line_nr}"
-    # R.left_flag_id    = "lflag#{line_nr}"
-    # R.right_flag_id   = "rflag#{line_nr}"
-    R.slug_dom        = document.getElementById R.slug_id
-    R.trim_dom        = document.getElementById R.trim_id
-    # R.lflag_dom       = document.getElementById R.left_flag_id
-    # R.rflag_dom       = document.getElementById R.right_flag_id
-    R.slug_rect       = as_plain_object R.slug_dom.getBoundingClientRect()
-    R.trim_rect       = as_plain_object R.trim_dom.getBoundingClientRect()
-    return R
+  # #-----------------------------------------------------------------------------------------------------------
+  # @_context_from_linenr = ( line_nr ) ->
+  #   R                 = {}
+  #   R.slug_id         = "slug#{line_nr}"
+  #   R.trim_id         = "trim#{line_nr}"
+  #   # R.left_flag_id    = "lflag#{line_nr}"
+  #   # R.right_flag_id   = "rflag#{line_nr}"
+  #   R.slug_dom        = document.getElementById R.slug_id
+  #   R.trim_dom        = document.getElementById R.trim_id
+  #   # R.lflag_dom       = document.getElementById R.left_flag_id
+  #   # R.rflag_dom       = document.getElementById R.right_flag_id
+  #   R.slug_rect       = as_plain_object R.slug_dom.getBoundingClientRect()
+  #   R.trim_rect       = as_plain_object R.trim_dom.getBoundingClientRect()
+  #   return R
 
   #-----------------------------------------------------------------------------------------------------------
   @_get_partial_slug = ( slabs, min_slab_idx, max_slab_idx ) ->
@@ -77,9 +77,25 @@ provide_ops = ->
     return { text, spc_count, min_slab_idx, max_slab_idx, }
 
   #-----------------------------------------------------------------------------------------------------------
-  @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
-    # ### TAINT may keep left margin from previous call ###
+  @_adapt_margins_to_hanging_punctuation = ( ctx, partial_slug ) ->
     # ### Apply optical margin correction: ###
+    ### a.k.a. margin kerning, optical margin alignment ###
+    ### see https://de.wikipedia.org/wiki/PdfTeX#Mikrotypographische_Erweiterungen ###
+    ### see https://en.wikipedia.org/wiki/Hanging_punctuation ###
+    ### see https://en.wikipedia.org/wiki/Optical_margin_alignment ###
+    ### Suggested Values for Optical Justification
+
+      These values may be suitable for common seriffed fonts like Times New Roman, Palatino, or Garamond.
+      Other fonts may need different values.
+
+      Characters  Value
+      " “ ” ' ‘ ’, .  100%
+      hyphen  75%
+      en-dash 50%
+      em-dash 25%
+      A T V W Y 20%
+      C O 10%
+    ###
     # ### TAINT just a demo, must adjust to font, size, etc; also depends on user preferences ###
     # ### TAINT adjust width of `<trim/>` element ###
     # chrs          = Array.from txt
@@ -89,11 +105,18 @@ provide_ops = ->
     #   trim_dom.style.marginLeft = margin
     # if is_last_slab  and ( margin = margins[ last_chr  ]?.right )?
     #   trim_dom.style.marginRight = margin
+
+  #-----------------------------------------------------------------------------------------------------------
+  @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
+    slug_jq   = $ await TEMPLATES_slug()
+    trim_jq   = slug_jq.find 'trim'
     #.........................................................................................................
-    # txt_dom     = document.createTextNode txt
-    # trim_dom.appendChild txt_dom
-    ctx.trim_dom.insertAdjacentText 'beforeend', partial_slug.text
-    log '^12321^', ctx.trim_id, GAUGE.width_mm_of ctx.trim_dom
+    trim_jq[ 0 ].insertAdjacentText 'beforeend', partial_slug.text
+    ctx.composer_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
+    width_mm = GAUGE.width_mm_of trim_jq
+    log '^778774^', "#{width_mm.toFixed 2}mm", ( as_html slug_jq )
+    return { slug_jq, width_mm, }
+    # log '^12321^', ctx.trim_id, GAUGE.width_mm_of ctx.trim_dom
     # lflag_rect      = ctx.lflag_dom.getBoundingClientRect()
     # rflag_rect      = ctx.rflag_dom.getBoundingClientRect()
     ### NOTE flag must always have a nominal height of 1mm ###
@@ -129,6 +152,12 @@ provide_ops = ->
       line_too_long, }
 
   #-----------------------------------------------------------------------------------------------------------
+  @_slug_template = null
+  @new_slug = ( nr ) ->
+    unless ( template = @_slug_template )?
+      template = @_slug_template = await TEMPLATES_slug nr
+
+  #-----------------------------------------------------------------------------------------------------------
   @slug_from_slabs = ( slab_dtm, settings ) ->
     ### TAINT use intertype for defaults ###
     defaults            = { min_slab_idx: 0, }
@@ -137,18 +166,23 @@ provide_ops = ->
     { min_slab_idx, }   = settings
     last_slab_idx       = slabs.length - 1
     max_slab_idx        = min_slab_idx - 1
-    line_nr             = 0 ### TAINT use alternating slugs ###
+    metrics_queue       = []
+    ctx                 =
+      composer_dom:         ( $ 'composer:first'  ).get 0
+      galley_dom:           ( $ 'galley:first'    ).get 0
+      composer_slugcount:   ( $ 'composer:first'  ).data 'slugcount'
+      galley_slugcount:     ( $ 'galley:first'    ).data 'slugcount'
     loop
       max_slab_idx++
       break if max_slab_idx > last_slab_idx
       partial_slug      = @_get_partial_slug slabs, min_slab_idx, max_slab_idx
       ### TAINT re-use out of two alternating slug templates; cache DOM nodes ###
-      line_nr++
-      ctx               = @_context_from_linenr line_nr
+      # ctx               = @_context_from_linenr line_nr
       slug_metrics      = @_metrics_from_partial_slug ctx, partial_slug
-      # log '^3389^', jr slug_metrics
-      # log '^3389^', jr partial_slug
-      # log '^3887^', jr ctx
+      log '^3389^', jr slug_metrics
+      metrics_queue.push slug_metrics
+      if metrics_queue.length > ctx.galley_slugcount
+        ( metrics_queue.shift() ).slug_jq.remove()
     return null
 
 
