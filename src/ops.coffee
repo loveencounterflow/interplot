@@ -83,7 +83,7 @@ provide_ops = ->
     ### see https://de.wikipedia.org/wiki/PdfTeX#Mikrotypographische_Erweiterungen ###
     ### see https://en.wikipedia.org/wiki/Hanging_punctuation ###
     ### see https://en.wikipedia.org/wiki/Optical_margin_alignment ###
-    ### Suggested Values for Optical Justification
+    ### "Suggested Values for Optical Justification" (https://en.wikipedia.org/wiki/Optical_margin_alignment)
 
       These values may be suitable for common seriffed fonts like Times New Roman, Palatino, or Garamond.
       Other fonts may need different values.
@@ -108,48 +108,22 @@ provide_ops = ->
 
   #-----------------------------------------------------------------------------------------------------------
   @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
-    slug_jq   = $ await TEMPLATES_slug()
-    trim_jq   = slug_jq.find 'trim'
+    slug_jq       = $ ctx.slug_template
+    trim_jq       = slug_jq.find 'trim'
     #.........................................................................................................
     trim_jq[ 0 ].insertAdjacentText 'beforeend', partial_slug.text
     ctx.composer_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
-    width_mm = GAUGE.width_mm_of trim_jq
-    log '^778774^', "#{width_mm.toFixed 2}mm", ( as_html slug_jq )
-    return { slug_jq, width_mm, }
-    # log '^12321^', ctx.trim_id, GAUGE.width_mm_of ctx.trim_dom
-    # lflag_rect      = ctx.lflag_dom.getBoundingClientRect()
-    # rflag_rect      = ctx.rflag_dom.getBoundingClientRect()
-    ### NOTE flag must always have a nominal height of 1mm ###
-    ### NOTE precision only applied for readability ###
-    precision       = 100
-    epsilon         = 1 / precision
-    return null # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    #..........................................................................................................
-    text_width_px   = rflag_rect.x - lflag_rect.x
-    text_width_mm   = get_approximate_ratio text_width_px, lflag_rect.height,     precision
-    text_width_rel  = get_approximate_ratio text_width_px, ctx.slug_rect.width,   precision
-    #..........................................................................................................
-    free_width_px   = ctx.slug_rect.width - text_width_px
-    free_width_mm   = get_approximate_ratio free_width_px, lflag_rect.height,     precision
-    free_width_rel  = get_approximate_ratio free_width_px, ctx.slug_rect.width,   precision
-    #..........................................................................................................
-    ### TAINT consider how to handle zero space lines ###
-    spc_width_px    = free_width_px / partial_slug.spc_count
-    spc_width_mm    = get_approximate_ratio spc_width_px,  lflag_rect.height,     precision
-    #..........................................................................................................
-    line_too_long   = text_width_rel > ( 1 + epsilon )
-    return {
-      slug_id:        ctx.slug_id,
-      spc_count:      partial_slug.spc_count,
-      text_width_px,
-      text_width_mm,
-      text_width_rel,
-      free_width_px,
-      free_width_mm,
-      free_width_rel,
-      spc_width_px,
-      spc_width_mm,
-      line_too_long, }
+    width_mm      = GAUGE.width_mm_of trim_jq
+    overshoot_mm  = width_mm - ctx.composer_width_mm
+    spc_delta_mm  = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
+    ### NOTE here we use a boolean quality assessment; a more refined algorithm should use points for
+    to differentiate between less and more desirable fittings based on delta space added to or subtracted
+    from all space characters, presence or absence of hyphen and so on ###
+    fitting_ok    = overshoot_mm <= ctx.epsilon_mm
+    if ctx.live_demo
+      await sleep 0
+    slug_jq.remove()
+    return { slug_jq, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
 
   #-----------------------------------------------------------------------------------------------------------
   @_slug_template = null
@@ -158,32 +132,65 @@ provide_ops = ->
       template = @_slug_template = await TEMPLATES_slug nr
 
   #-----------------------------------------------------------------------------------------------------------
-  @slug_from_slabs = ( slab_dtm, settings ) ->
+  @slugs_with_metrics_from_slabs = ( slabs_dtm, settings ) ->
+    ### TAINT how to use intertype in browser context? ###
+    # validate.interplot_slabs_datom slabs_dtm
     ### TAINT use intertype for defaults ###
     defaults            = { min_slab_idx: 0, }
     settings            = { defaults..., settings..., }
-    slabs               = slab_dtm.$value
+    slabs               = slabs_dtm.$value
     { min_slab_idx, }   = settings
     last_slab_idx       = slabs.length - 1
     max_slab_idx        = min_slab_idx - 1
-    metrics_queue       = []
+    prv_slug_metrics    = null
+    slug_metrics        = null
+    R                   = []
+    #.........................................................................................................
+    push_metrics = ( slug_metrics ) ->
+      R.push slug_metrics
+      slug_metrics.html = as_html slug_metrics.slug_jq
+      if ctx.live_demo
+        ctx.galley_dom.insertAdjacentElement 'beforeend', slug_metrics.slug_jq[ 0 ]
+        await sleep 0.1
+      delete slug_metrics.slug_jq
+      return null
+    #.........................................................................................................
     ctx                 =
+      slug_template:        await TEMPLATES_slug()
       composer_dom:         ( $ 'composer:first'  ).get 0
       galley_dom:           ( $ 'galley:first'    ).get 0
-      composer_slugcount:   ( $ 'composer:first'  ).data 'slugcount'
       galley_slugcount:     ( $ 'galley:first'    ).data 'slugcount'
+      composer_width_mm:    GAUGE.width_mm_of $ 'composer:first'
+      epsilon_mm:           0.2
+      live_demo:            false
+      live_demo:            true
+    #.........................................................................................................
     loop
       max_slab_idx++
-      break if max_slab_idx > last_slab_idx
-      partial_slug      = @_get_partial_slug slabs, min_slab_idx, max_slab_idx
-      ### TAINT re-use out of two alternating slug templates; cache DOM nodes ###
-      # ctx               = @_context_from_linenr line_nr
-      slug_metrics      = @_metrics_from_partial_slug ctx, partial_slug
-      log '^3389^', jr slug_metrics
-      metrics_queue.push slug_metrics
-      if metrics_queue.length > ctx.galley_slugcount
-        ( metrics_queue.shift() ).slug_jq.remove()
-    return null
+      ### TAINT add prv_slug_metrics to R where missing ###
+      if max_slab_idx > last_slab_idx
+        ### flush ###
+        if prv_slug_metrics?
+          push_metrics prv_slug_metrics
+          prv_slug_metrics  = null
+        break
+      partial_slug  = @_get_partial_slug slabs, min_slab_idx, max_slab_idx
+      slug_metrics  = await @_metrics_from_partial_slug ctx, partial_slug
+      #.......................................................................................................
+      unless slug_metrics.fitting_ok
+        ### flush ###
+        if prv_slug_metrics?
+          min_slab_idx = max_slab_idx # - 1
+          push_metrics prv_slug_metrics
+          prv_slug_metrics  = null
+          continue
+        min_slab_idx = max_slab_idx + 1
+        push_metrics slug_metrics
+        continue
+      #.......................................................................................................
+      prv_slug_metrics = slug_metrics
+    #.........................................................................................................
+    return R
 
 
 ############################################################################################################

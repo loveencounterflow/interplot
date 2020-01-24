@@ -60,7 +60,8 @@ _.DEBUGONOFF = ->
 
 #-----------------------------------------------------------------------------------------------------------
 _.SLUG = @slug = _.new_tag ->
-  _.TAG 'slug', -> _.TRIM { contenteditable: 'true', }
+  _.TAG 'slug', -> _.TRIM()
+  # _.TAG 'slug', -> _.TRIM { contenteditable: 'true', }
 
 #-----------------------------------------------------------------------------------------------------------
 tag_registry = {}
@@ -234,7 +235,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.GAUGE()
     _.DEBUGONOFF()
     #.......................................................................................................
-    _.COMPOSER  { width: '150mm', slugcount: 3,   empty: true, }
+    _.COMPOSER  { width: '150mm', slugcount: 1,   empty: true, }
     _.GALLEY    { width: '150mm', slugcount: 25,  empty: true, }
     #.......................................................................................................
     _.TAG 'demo-paragraph', { contenteditable: 'true', }, """

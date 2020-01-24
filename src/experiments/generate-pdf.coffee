@@ -304,21 +304,35 @@ demo_2 = ->
 
 #-----------------------------------------------------------------------------------------------------------
 ### TAINT use OPS proxy or `require` OPS into this context ###
-OPS_slug_from_slabs = ( page, P... ) -> await page.evaluate ( ( P... ) -> OPS.slug_from_slabs P... ), P...
+OPS_slugs_with_metrics_from_slabs = ( page, P... ) ->
+  return await page.evaluate ( ( P... ) -> OPS.slugs_with_metrics_from_slabs P... ), P...
 
 #-----------------------------------------------------------------------------------------------------------
 demo_insert_slabs = ( page ) ->
-  text  = """其法用膠泥刻字，薄如錢唇，每字為一印，火燒令堅。先設一鐵版，其上以松脂臘和紙灰之類冒之。"""
-  text  = """III刻文字III每字印\u3000III"""
-  text  = """Yaffir rectangle刻文字apostolary. Letterpress printing is a technique of relief printing using a printing press."""
-  text  = """自馮瀛王始印五經已後典籍皆為版本其法用膠泥刻字"""
-  text  = """Rectangle自馮瀛王始印五經apostolary已後典籍皆為版本其法用膠泥刻字"""
-  slabs = LINEMAKER.slabs_from_text text
-  # debug '^222111^', slabs
-  # html    = await page.evaluate ( ( slabs ) -> OPS.demo_insert_slabs slabs ), slabs
-  XXX_settings  = { min_slab_idx: 0, }
-  html          = await OPS_slug_from_slabs page, slabs, XXX_settings
-  info '^53566^', html
+  text                = """其法用膠泥刻字，薄如錢唇，每字為一印，火燒令堅。先設一鐵版，其上以松脂臘和紙灰之類冒之。"""
+  text                = """III刻文字III每字印\u3000III"""
+  text                = """自馮瀛王始印五經已後典籍皆為版本其法用膠泥刻字"""
+  text                = """Rectangle自馮瀛王始印五經apostolary已後典籍皆為版本其法用膠泥刻字"""
+  text                = """Yaffir rectangle刻文字apostolary. Letterpress printing."""
+
+  text                = """Letterpress printing is a technique of relief printing using a printing press, a
+  process by which many copies are produced by repeated direct impression of an inked, raised surface
+  against sheets or a continuous roll of paper. A worker composes and locks movable type into the "bed" or
+  "chase" of a press, inks it, and presses paper against it to transfer the ink from the type which creates
+  an impression on the paper. In typesetting by hand compositing, a sort or type is a piece of type
+  representing a particular letter or symbol, cast from a matrix mold and assembled with other sorts bearing
+  additional letters into lines of type to make up a form from which a page is printed."""
+
+  slabs_dtm           = LINEMAKER.slabs_from_text text
+  validate.interplot_slabs_datom slabs_dtm
+  # html    = await page.evaluate ( ( slabs_dtm ) -> OPS.demo_insert_slabs slabs_dtm ), slabs_dtm
+  XXX_settings        = { min_slab_idx: 0, }
+  t0 = Date.now()
+  slugs_with_metrics  = await OPS_slugs_with_metrics_from_slabs page, slabs_dtm, XXX_settings
+  dt = Date.now() - t0
+  for d in slugs_with_metrics
+    info '^53566^', "slugs_with_metrics", jr d
+  debug '^22332^', "dt: #{format_float dt / 1000} s"
   return null
   ### ((畢昇發明活字印刷術))
 
