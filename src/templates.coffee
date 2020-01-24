@@ -74,32 +74,41 @@ _._SLUGCONTAINER = _.new_tag ( tagname, settings ) ->
     width:      '150mm'
     style:      null
     slugcount:  2
+    empty:      false
   ### TAINT validate settings ###
   settings  = { defaults..., settings..., }
   style     = "max-width:#{settings.width};" + ( settings.style ? '' )
+  if settings.empty
+    ### TAINT lineheight false assumed to be 10mm ###
+    height  = "#{settings.slugcount * 10}mm"
+    style  += "height:#{height};max-height:#{height};"
   id        = id_from_tagname tagname
-  _.TAG tagname, { id, style, }, ->
-    for nr in [ 1 .. settings.slugcount ]
-      _.SLUG nr, settings.width
+  _.TAG tagname, { id, style, 'data-slugcount': settings.slugcount, }, ->
+    unless settings.empty
+      for nr in [ 1 .. settings.slugcount ] by +1
+        _.SLUG()
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-_.COMPOSER = _.new_tag ( settings ) -> _._SLUGCONTAINER 'composer', settings
-
-#-----------------------------------------------------------------------------------------------------------
-_.GALLEY = _.new_tag ( width ) ->
-  style = "max-width:#{width};"
-  _.TAG 'galley', { id: 'galley1', style, }, ->
-    for nr in [ 1 .. 100 ]
-      _.SLUG nr, '150mm'
+_.COMPOSER  = _.new_tag ( settings ) -> _._SLUGCONTAINER 'composer',  settings
+_.GALLEY    = _.new_tag ( settings ) -> _._SLUGCONTAINER 'galley',    settings
 
 #-----------------------------------------------------------------------------------------------------------
 _.GAUGE = _.new_tag ->
-  style   = ''
-  style  += "display:block;position:absolute;top:10mm;left:0mm;"
-  style  += "width:10mm;min-width:10mm;max-width:10mm;"
-  style  += "height:10mm;min-height:10mm;max-height:10mm;"
-  style  += "background: repeating-linear-gradient(-45deg,#606dbc80,#606dbc80 10px,#46529880 10px,#46529880 20px);"
+  _.STYLE """
+    gauge {
+      display:                block;
+      position:               absolute;
+      top:                    10mm;
+      left:                   0mm;
+      width:                  10mm;
+      min-width:              10mm;
+      max-width:              10mm;
+      height:                 10mm;
+      min-height:             10mm;
+      max-height:             10mm;
+      background:             repeating-linear-gradient(-45deg,#606dbc80,#606dbc80 10px,#46529880 10px,#46529880 20px); }
+    @media print{ gauge { display: none; } }\n"""
   _.COFFEESCRIPT ->
     ( $ document ).ready ->
       #.....................................................................................................
@@ -110,10 +119,11 @@ _.GAUGE = _.new_tag ->
         @px_from_mm   = ( mm    ) -> mm * @px_per_mm
         @mm_from_px   = ( px    ) -> px * @mm_per_px
         @width_mm_of  = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().width
+        @height_mm_of = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().height
       #.....................................................................................................
       f.apply globalThis.GAUGE = {}
       return null
-  _.TAG 'gauge', { style, }
+  _.TAG 'gauge'
 
 #-----------------------------------------------------------------------------------------------------------
 _.selector_generator = ->
@@ -224,8 +234,8 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.GAUGE()
     _.DEBUGONOFF()
     #.......................................................................................................
-    _.COMPOSER { width: '150mm', slugcount: 3, }
-    _.GALLEY '150mm'
+    _.COMPOSER  { width: '150mm', slugcount: 3,   empty: true, }
+    _.GALLEY    { width: '150mm', slugcount: 25,  empty: true, }
     #.......................................................................................................
     _.TAG 'demo-paragraph', { contenteditable: 'true', }, """
       自馮瀛王"""
