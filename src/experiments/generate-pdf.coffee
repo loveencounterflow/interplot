@@ -40,6 +40,8 @@ sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done
 page_html_path            = PATH.resolve PATH.join __dirname, '../../../public/main.html'
 LINEMAKER                 = require '../linemaker'
 PUPPETEER                 = require 'puppeteer'
+#...........................................................................................................
+cache                     = {}
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -188,9 +190,26 @@ _raw_font_stats_from_selector = ( page, doc, selector ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 get_ppt_doc_object = ( page ) ->
+  return R if ( R = cache.ppt_doc_object )?
   await page._client.send 'DOM.enable'
   await page._client.send 'CSS.enable'
-  return await page._client.send 'DOM.getDocument'
+  R = cache.ppt_doc_object = await page._client.send 'DOM.getDocument'
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
+get_base_style = ( page ) ->
+  ### NOTE observe that due to caching, page base style may not be up-to-date after page styles changed ###
+  return R if ( R = cache.base_style )?
+  return cache.base_style = await page.evaluate ->
+    style_obj = window.getComputedStyle document.querySelector 'unstyledelement'
+    R         = {}
+    # for idx in [ 0 ... style_obj.length ]
+    #   key       = style_obj[ idx ]
+    #   R[ key ]  = style_obj.getPropertyValue key
+    ### NOTE iterate as if object were a list, use API method with key instead of bracket syntax: ###
+    for key in style_obj
+      R[ key ]  = style_obj.getPropertyValue key
+    return R
 
 #-----------------------------------------------------------------------------------------------------------
 nodes_from_display_value = ( page, display_value ) ->
@@ -200,55 +219,55 @@ nodes_from_display_value = ( page, display_value ) ->
     return ( selector_of d for d in block_nodes )
 
 #-----------------------------------------------------------------------------------------------------------
-XXX_shown = false
-XXX_get_styles_for_blocks = ( page ) ->
-  return if XXX_shown
+computed_styles_from_selector = ( page, selector ) ->
+  styles          = await styles_from_selector page, 'slug'
+  base_style      = await get_base_style page
+  return { base_style..., styles.verdicts..., }
+
+#-----------------------------------------------------------------------------------------------------------
+styles_from_selector = ( page, selector ) ->
+  doc             = await get_ppt_doc_object page
+  node            = await _devtools_node_from_selector page, doc, selector
+  # debug '^33334^', jr description = await page._client.send 'DOM.describeNode', { nodeId: node.nodeId, }
+  return styles_from_nodeid page, node.nodeId
+
+#-----------------------------------------------------------------------------------------------------------
+styles_from_nodeid = ( page, nodeid ) ->
   sheets          = []
   locations       = []
   rulesets        = []
   R               = { sheets, locations, rulesets, }
-  block_selectors = await nodes_from_display_value page, 'block'
   doc             = await get_ppt_doc_object page
-  for selector in block_selectors
-    break if XXX_shown
-    node        = await _devtools_node_from_selector page, doc, selector
-    description = await page._client.send 'DOM.describeNode', { nodeId: node.nodeId, }
-    continue unless description.node.localName is 'slug'
-    description = await page._client.send 'CSS.getMatchedStylesForNode', { nodeId: node.nodeId, }
-    # description = await page._client.send 'CSS.getComputedStyleForNode', { nodeId: node.nodeId, }
-    path = '/tmp/slug-css.json'
-    FS.writeFileSync path, JSON.stringify description.matchedCSSRules, null, '  '
-    help "^4987^ styles written to #{path}"
-    for stylesheet in description.matchedCSSRules
-      # whisper '———————————————————————', "styleSheetId:", stylesheet.rule.styleSheetId
-      ### TAINT consider to add filepath, linenr etc. here ###
-      { cssProperties
-        shorthandEntries
-        range             } = stylesheet.rule.style
-      sheet                 = { styleSheetId: stylesheet.rule.styleSheetId, }
-      rules                 = {}
-      #.....................................................................................................
-      if range?
-        first_linenr  = range.startLine   + 1
-        first_colnr   = range.startColumn + 1
-        last_linenr   = range.endLine     + 1
-        last_colnr    = range.startColumn + 1
-        location      = { first:  { linenr: first_linenr, colnr: first_colnr, }, \
-                          last:   { linenr: last_linenr,  colnr: last_colnr,  }, }
-      #.....................................................................................................
-      else
-        location      = null
-      #.....................................................................................................
-      sheets.push     sheet
-      rulesets.push   rules
-      locations.push  location
-      #.....................................................................................................
-      debug '^777^', shorthand_entry_names = new Set ( d.name for d in shorthandEntries )
-      for property in cssProperties
-        continue if shorthand_entry_names.has property.name
-        rules[ property.name ] = property.value
-    XXX_shown = true
-    R.verdicts = Object.assign {}, R.rulesets...
+  description     = await page._client.send 'CSS.getMatchedStylesForNode', { nodeId: nodeid, }
+  #.........................................................................................................
+  for stylesheet in description.matchedCSSRules
+    sheet                 = { styleSheetId: stylesheet.rule.styleSheetId, }
+    rules                 = {}
+    shorthand_entry_names = new Set ( d.name for d in stylesheet.rule.style.shorthandEntries )
+    #.......................................................................................................
+    if ( range = stylesheet.rule.style.range )?
+      # debug '^33378^', range
+      first_linenr  = range.startLine   + 1
+      first_colnr   = range.startColumn + 1
+      last_linenr   = range.endLine     + 1
+      last_colnr    = range.startColumn + 1
+      location      = { first:  { linenr: first_linenr, colnr: first_colnr, }, \
+                        last:   { linenr: last_linenr,  colnr: last_colnr,  }, }
+    #.......................................................................................................
+    else
+      location      = null
+    #.......................................................................................................
+    sheets.push     sheet
+    rulesets.push   rules
+    locations.push  location
+    #.......................................................................................................
+    for property in stylesheet.rule.style.cssProperties
+      continue if shorthand_entry_names.has property.name
+      rules[ property.name ] = property.value
+  #.........................................................................................................
+  R.verdicts = Object.assign {}, R.rulesets...
+  # for key, value of R.verdicts
+  #   delete R.verdicts[ key ] if value is 'initial'
   return R
 
 #-----------------------------------------------------------------------------------------------------------
@@ -345,9 +364,19 @@ demo_2 = ->
   urge "waitForSelector"
   await page.waitForSelector target_selector
   #.........................................................................................................
-  await demo_insert_slabs                 page
-  await show_global_font_stats            page
-  info '^8887^', await XXX_get_styles_for_blocks         page
+  await demo_insert_slabs                   page
+  await show_global_font_stats              page
+  debug '^12221^', jr await computed_styles_from_selector page, 'slug'
+  styles          = await styles_from_selector page, 'slug'
+  base_style      = await get_base_style page
+  computed_style  = { base_style..., styles.verdicts..., }
+  info '^8887^', jr styles.verdicts
+  urge '^8887^', "border-left-color:    ", computed_style[ 'border-left-color'    ]
+  urge '^8887^', "outline-width:        ", computed_style[ 'outline-width'        ]
+  urge '^8887^', "background-color:     ", computed_style[ 'background-color'     ]
+  urge '^8887^', "background-repeat-x:  ", computed_style[ 'background-repeat-x'  ]
+  urge '^8887^', "foo:                  ", computed_style[ 'foo'                  ]
+  urge '^8887^', "dang:                 ", computed_style[ 'dang'                 ]
   #.........................................................................................................
   if settings.puppeteer.headless
     urge "write PDF"
