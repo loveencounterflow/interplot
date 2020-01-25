@@ -22,4 +22,13 @@ globalThis.as_dom_node = ( dom_or_jquery ) ->
   return dom_or_jquery[ 0 ] if ( typeof dom_or_jquery?.jquery ) is 'string'
   return dom_or_jquery
 
+#-----------------------------------------------------------------------------------------------------------
+globalThis.get_style = ( dom_or_jquery, pseudo_selector, attribute_name ) ->
+  unless attribute_name?
+    [ pseudo_selector, attribute_name, ] = [ undefined, pseudo_selector, ]
+  style = window.getComputedStyle ( as_dom_node dom_or_jquery ), pseudo_selector
+  ### TAINT why not `style[ attribute_name ]`? ###
+  return style.getPropertyValue attribute_name
+
+
 
