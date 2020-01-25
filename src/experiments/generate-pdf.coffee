@@ -118,13 +118,13 @@ settings =
 
 #-----------------------------------------------------------------------------------------------------------
 echo_browser_console = ( c ) =>
-  line_nr     = c._location?.lineNumber ? '?'
+  linenr      = c._location?.lineNumber ? '?'
   path        = c._location?.url        ? '???'
   short_path  = path
   if ( match = path.match /^file:\/\/(?<path>.+)$/ )?
     short_path = PATH.relative process.cwd(), PATH.resolve FS.realpathSync match.groups.path
   path        = short_path unless short_path.startsWith '../'
-  location    = "#{path}:#{line_nr}"
+  location    = "#{path}:#{linenr}"
   text        = c._text ? '???'
   # whisper '^33489^', ( types.all_keys_of c ).sort().join ' ' # [ .. 100 ]
   # whisper '^33489^', ( types.all_keys_of c.valueOf() ).sort().join ' ' # [ .. 100 ]
