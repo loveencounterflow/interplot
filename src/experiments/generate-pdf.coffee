@@ -175,9 +175,14 @@ take_screenshot = ( page ) ->
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+_devtools_node_from_selector = ( page, doc, selector ) ->
+  ### TAINT how are 'devtools nodes' different from DOM nodes? ###
+  return await page._client.send 'DOM.querySelector', { nodeId: doc.root.nodeId, selector, }
+
+#-----------------------------------------------------------------------------------------------------------
 _raw_font_stats_from_selector = ( page, doc, selector ) ->
-  node        = await page._client.send 'DOM.querySelector', { nodeId: doc.root.nodeId, selector, }
   ### see https://chromedevtools.github.io/devtools-protocol/tot/CSS#method-getPlatformFontsForNode ###
+  node        = await _devtools_node_from_selector page, doc, selector
   description = await page._client.send 'CSS.getPlatformFontsForNode', { nodeId: node.nodeId, }
   return description.fonts
 
@@ -188,16 +193,71 @@ get_ppt_doc_object = ( page ) ->
   return await page._client.send 'DOM.getDocument'
 
 #-----------------------------------------------------------------------------------------------------------
-mark_blocks_with_fallback_glyphs = ( page ) ->
-  ### TAINT could conceivably be faster because we first retrieve block nodes from the DOM, then try to find
-  a selector string for each node, then pass each selector back in to retrieve the respective node again ###
-  block_selectors = await page.evaluate ->
+nodes_from_display_value = ( page, display_value ) ->
+  return await page.evaluate ->
     all_nodes   = Array.from document.querySelectorAll 'body *'
     block_nodes = all_nodes.filter ( d ) -> ( window.getComputedStyle d ).display is 'block'
     return ( selector_of d for d in block_nodes )
-  #.........................................................................................................
-  R   = []
-  doc = await get_ppt_doc_object page
+
+#-----------------------------------------------------------------------------------------------------------
+XXX_shown = false
+XXX_get_styles_for_blocks = ( page ) ->
+  return if XXX_shown
+  sheets          = []
+  locations       = []
+  rulesets        = []
+  R               = { sheets, locations, rulesets, }
+  block_selectors = await nodes_from_display_value page, 'block'
+  doc             = await get_ppt_doc_object page
+  for selector in block_selectors
+    break if XXX_shown
+    node        = await _devtools_node_from_selector page, doc, selector
+    description = await page._client.send 'DOM.describeNode', { nodeId: node.nodeId, }
+    continue unless description.node.localName is 'slug'
+    description = await page._client.send 'CSS.getMatchedStylesForNode', { nodeId: node.nodeId, }
+    # description = await page._client.send 'CSS.getComputedStyleForNode', { nodeId: node.nodeId, }
+    path = '/tmp/slug-css.json'
+    FS.writeFileSync path, JSON.stringify description.matchedCSSRules, null, '  '
+    help "^4987^ styles written to #{path}"
+    for stylesheet in description.matchedCSSRules
+      # whisper '———————————————————————', "styleSheetId:", stylesheet.rule.styleSheetId
+      ### TAINT consider to add filepath, linenr etc. here ###
+      { cssProperties
+        shorthandEntries
+        range             } = stylesheet.rule.style
+      sheet                 = { styleSheetId: stylesheet.rule.styleSheetId, }
+      rules                 = {}
+      #.....................................................................................................
+      if range?
+        first_linenr  = range.startLine   + 1
+        first_colnr   = range.startColumn + 1
+        last_linenr   = range.endLine     + 1
+        last_colnr    = range.startColumn + 1
+        location      = { first:  { linenr: first_linenr, colnr: first_colnr, }, \
+                          last:   { linenr: last_linenr,  colnr: last_colnr,  }, }
+      #.....................................................................................................
+      else
+        location      = null
+      #.....................................................................................................
+      sheets.push     sheet
+      rulesets.push   rules
+      locations.push  location
+      #.....................................................................................................
+      debug '^777^', shorthand_entry_names = new Set ( d.name for d in shorthandEntries )
+      for property in cssProperties
+        continue if shorthand_entry_names.has property.name
+        rules[ property.name ] = property.value
+    XXX_shown = true
+    R.verdicts = Object.assign {}, R.rulesets...
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
+mark_blocks_with_fallback_glyphs = ( page ) ->
+  ### TAINT could conceivably be faster because we first retrieve block nodes from the DOM, then try to find
+  a selector string for each node, then pass each selector back in to retrieve the respective node again ###
+  R               = []
+  block_selectors = await nodes_from_display_value page, 'block'
+  doc             = await get_ppt_doc_object page
   for selector in block_selectors
     raw_font_stats  = await _raw_font_stats_from_selector page, doc, selector
     for font in raw_font_stats
@@ -287,6 +347,7 @@ demo_2 = ->
   #.........................................................................................................
   await demo_insert_slabs                 page
   await show_global_font_stats            page
+  info '^8887^', await XXX_get_styles_for_blocks         page
   #.........................................................................................................
   if settings.puppeteer.headless
     urge "write PDF"
