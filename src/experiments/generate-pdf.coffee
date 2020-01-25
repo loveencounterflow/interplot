@@ -365,7 +365,7 @@ demo_2 = ->
   await page.waitForSelector target_selector
   #.........................................................................................................
   await demo_insert_slabs                   page
-  await show_global_font_stats              page
+  #.........................................................................................................
   debug '^12221^', jr await computed_styles_from_selector page, 'slug'
   styles          = await styles_from_selector page, 'slug'
   base_style      = await get_base_style page
@@ -377,6 +377,8 @@ demo_2 = ->
   urge '^8887^', "background-repeat-x:  ", computed_style[ 'background-repeat-x'  ]
   urge '^8887^', "foo:                  ", computed_style[ 'foo'                  ]
   urge '^8887^', "dang:                 ", computed_style[ 'dang'                 ]
+  #.........................................................................................................
+  await show_global_font_stats              page
   #.........................................................................................................
   if settings.puppeteer.headless
     urge "write PDF"
