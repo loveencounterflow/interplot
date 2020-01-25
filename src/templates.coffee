@@ -238,10 +238,10 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.COMPOSER  { width: '150mm', slugcount: 1,   empty: true, }
     _.GALLEY    { width: '150mm', slugcount: 25,  empty: true, }
     #.......................................................................................................
-    _.TAG 'demo-paragraph', { contenteditable: 'true', }, """
+    _.TAG 'demo-paragraph', { id: 'd1', contenteditable: 'true', }, """
       自馮瀛王"""
     #.......................................................................................................
-    _.TAG 'demo-paragraph', { contenteditable: 'true', }, """
+    _.TAG 'demo-paragraph', { id: 'd2', contenteditable: 'true', }, """
       ䷼䷽䷾䷿䷼䷽䷾䷿䷼䷽おきみつおきかずこううんじおきひでこうえいおきながカキクケオイロハニオヘトキュウカッパダッテ
       亥核帝六今令户戶京立音言主文一丁丂國七丄種从虫䜌聲한국어조선말ABC123縉鄑戬戩虚虛嘘噓墟任廷呈程草花
       敬寬茍苟慈没殁沒歿芟投般咎昝晷倃卧臥虎微秃丸常當尚尙區陋沿匚匡亡匸匿龍祗萬禽宫宮侣營麻術述刹新案
@@ -286,7 +286,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
           # _.RAW '刻'
           # _.RAW '字'
     #.......................................................................................................
-    _.TAG 'demo-paragraph', { contenteditable: 'true', }, -> for [ 0 .. 3 ] then _.RAW """
+    _.TAG 'demo-paragraph', { id: 'd3', contenteditable: 'true', }, -> for [ 0 .. 3 ] then _.RAW """
       <strong style='color:red;'>galley</strong> <em>(n.)</em> 13c., "sea&shy;going ves&shy;sel ha&shy;ving
       both sails and oars," from Old French ga&shy;lie, ga&shy;lee "boat, war&shy;ship, gal&shy;ley," from
       Medi&shy;eval Latin ga&shy;lea or Ca&shy;ta&shy;lan ga&shy;lea, from Late Greek ga&shy;lea, of
