@@ -25,7 +25,7 @@ slug {
   height:                 10mm;
   word-spacing:           +0.25ex;
   foo:                    bar;
-  dang:                   24mm;
+  dang:                   var(--interplot-font-size);
   text-align:             left;
   text-align-last:        left;
   overflow-x:             visible;
