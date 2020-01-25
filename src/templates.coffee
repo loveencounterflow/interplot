@@ -165,7 +165,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     # _.META 'http-equiv': "Content-Security-Policy", content: "script-src 'unsafe-inline'"
     _.TITLE settings.title
     ### ------------------------------------------------------------------------------------------------ ###
-    _.JS  resolve './jquery-3.3.1.js'
+    _.JS  resolve './jquery-3.4.1.js'
     _.JS  resolve './ops-globals.js'
     _.JS  resolve './ops.js'
     _.CSS resolve './reset.css'
