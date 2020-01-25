@@ -112,7 +112,8 @@ provide_ops = ->
     trim_jq       = slug_jq.find 'trim'
     #.........................................................................................................
     trim_jq[ 0 ].insertAdjacentText 'beforeend', partial_slug.text
-    ctx.composer_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
+    # ctx.composer_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
+    ctx.galley_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
     width_mm      = GAUGE.width_mm_of trim_jq
     overshoot_mm  = width_mm - ctx.composer_width_mm
     spc_delta_mm  = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
