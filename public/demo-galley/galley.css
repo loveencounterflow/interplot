@@ -24,10 +24,15 @@ slug {
   line-height:            10mm;
   height:                 10mm;
   word-spacing:           +0.25ex;
+  foo:                    bar;
+  dang:                   24mm;
   text-align:             left;
   text-align-last:        left;
   overflow-x:             visible;
   white-space:            nowrap; }
+
+slug {
+  background: yellow; }
 
 trim {
   display:                inline;
@@ -62,6 +67,8 @@ galley { /* Setzschiff */
 
 
 demo-paragraph {
+  frob:                   'what?';
+  text-indent:            10mm;
   display:                block;
   width:                  150mm;
   max-width:              150mm;
@@ -70,6 +77,21 @@ demo-paragraph {
   font-size:              9mm;
   line-height:            10mm;
   margin:                 10mm; }
+
+demo-paragraph::first-line {
+  margin-left:            10mm;
+  font-weight:            bold;
+  color:                  blue; }
+
+demo-paragraph::nth-line(2) {
+  margin-left:            10mm;
+  font-weight:            bold;
+  color:                  green; }
+
+demo-paragraph::last-line {
+  margin-left:            10mm;
+  color:                  red; }
+
 @media screen { .debug demo-paragraph { outline: 1px dotted red; } }
 
 .has-fallback-glyphs {
