@@ -383,13 +383,13 @@ demo_2 = ->
   urge "waitForSelector"
   await page.waitForSelector target_selector
   #.........................................................................................................
-  await demo_insert_slabs                   page
+  await demo_insert_slabs page
   #.........................................................................................................
-  debug '^12221^', jr await computed_styles_from_selector page, 'slug'
+  # debug '^12221^', jr await computed_styles_from_selector page, 'slug'
   styles          = await styles_from_selector page, 'slug'
   base_style      = await get_base_style page
   computed_style  = { base_style..., styles.verdicts..., }
-  info '^8887^', jr styles.verdicts
+  # info '^8887^', jr styles.verdicts
   urge '^8887^', "border-left-color:    ", computed_style[ 'border-left-color'    ]
   urge '^8887^', "outline-width:        ", computed_style[ 'outline-width'        ]
   urge '^8887^', "background-color:     ", computed_style[ 'background-color'     ]
@@ -397,7 +397,7 @@ demo_2 = ->
   urge '^8887^', "foo:                  ", computed_style[ 'foo'                  ]
   urge '^8887^', "dang:                 ", computed_style[ 'dang'                 ]
   #.........................................................................................................
-  await show_global_font_stats              page
+  await show_global_font_stats page
   #.........................................................................................................
   if settings.puppeteer.headless
     urge "write PDF"
@@ -425,11 +425,11 @@ demo_insert_slabs = ( page ) ->
   text                = """Rectangle自馮瀛王始印五經apostolary已後典籍皆為版本其法用膠泥刻字"""
   text                = """Yaffir rectangle刻文字apostolary. Letterpress printing."""
   text                = """其法用膠泥刻字，薄如錢唇，每字為一印，火燒令堅。先設一鐵版，其上以松脂臘和紙灰之類冒之。"""
-  text                = """Letterpress printing is a technique of relief printing using a printing press, a
+  text                = """䷾Letterpress printing is a technique of relief printing using a printing press, a
   process by which many copies are produced by repeated direct impression of an inked, raised surface
   against sheets or a continuous roll of paper. A worker composes and locks movable type into the "bed" or
   "chase" of a press, inks it, and presses paper against it to transfer the ink from the type which creates
-  an impression on the paper. In typesetting by hand compositing, a sort or type is a piece of type
+  an impression on the paper. ䷾In typesetting by hand compositing, a sort or type is a piece of type
   representing a particular letter or symbol, cast from a matrix mold and assembled with other sorts bearing
   additional letters into lines of type to make up a form from which a page is printed."""
   slabs_dtm           = LINEMAKER.slabs_from_text text
@@ -439,8 +439,8 @@ demo_insert_slabs = ( page ) ->
   t0 = Date.now()
   slugs_with_metrics  = await OPS_slugs_with_metrics_from_slabs page, slabs_dtm, XXX_settings
   dt = Date.now() - t0
-  for d in slugs_with_metrics
-    info '^53566^', "slugs_with_metrics", jr d
+  # for d in slugs_with_metrics
+  #   info '^53566^', "slugs_with_metrics", jr d
   debug '^22332^', "dt: #{format_float dt / 1000} s"
   return null
   ### ((畢昇發明活字印刷術))
