@@ -115,7 +115,7 @@ provide_ops = ->
     # ctx.composer_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
     ctx.galley_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
     width_mm      = GAUGE.width_mm_of trim_jq
-    overshoot_mm  = width_mm - ctx.composer_width_mm
+    overshoot_mm  = width_mm - ctx.column_width_mm
     spc_delta_mm  = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
     ### NOTE here we use a boolean quality assessment; a more refined algorithm should use points for
     to differentiate between less and more desirable fittings based on delta space added to or subtracted
@@ -158,10 +158,9 @@ provide_ops = ->
     #.........................................................................................................
     ctx                 =
       slug_template:        await TEMPLATES_slug()
-      composer_dom:         ( $ 'composer:first'  ).get 0
       galley_dom:           ( $ 'galley:first'    ).get 0
       galley_slugcount:     ( $ 'galley:first'    ).data 'slugcount'
-      composer_width_mm:    GAUGE.width_mm_of $ 'composer:first'
+      column_width_mm:      GAUGE.width_mm_of $ 'galley:first'
       epsilon_mm:           0.2
       live_demo:            false
       live_demo:            true
