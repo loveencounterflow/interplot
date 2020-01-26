@@ -212,11 +212,17 @@ get_base_style = ( page ) ->
     return R
 
 #-----------------------------------------------------------------------------------------------------------
-nodes_from_display_value = ( page, display_value ) ->
+selectors_from_display_value = ( page, display_value ) ->
   return await page.evaluate ->
     all_nodes   = Array.from document.querySelectorAll 'body *'
     block_nodes = all_nodes.filter ( d ) -> ( window.getComputedStyle d ).display is 'block'
     return ( selector_of d for d in block_nodes )
+
+#-----------------------------------------------------------------------------------------------------------
+get_all_selectors = ( page ) ->
+  return await page.evaluate ->
+    all_nodes   = Array.from document.querySelectorAll 'body *'
+    return ( selector_of d for d in all_nodes )
 
 #-----------------------------------------------------------------------------------------------------------
 computed_styles_from_selector = ( page, selector ) ->
@@ -271,33 +277,46 @@ styles_from_nodeid = ( page, nodeid ) ->
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-mark_blocks_with_fallback_glyphs = ( page ) ->
+mark_elements_with_fallback_glyphs = ( page ) ->
   ### TAINT could conceivably be faster because we first retrieve block nodes from the DOM, then try to find
   a selector string for each node, then pass each selector back in to retrieve the respective node again ###
-  R               = []
-  block_selectors = await nodes_from_display_value page, 'block'
-  doc             = await get_ppt_doc_object page
-  for selector in block_selectors
+  R         = []
+  selectors = await get_all_selectors page
+  doc       = await get_ppt_doc_object page
+  #.........................................................................................................
+  echo CND.grey "—".repeat 108
+  echo CND.steel "Missing Glyphs per Element:"
+  #.........................................................................................................
+  for selector in selectors
+    selector_txt    = CND.gold selector.padEnd 50
     raw_font_stats  = await _raw_font_stats_from_selector page, doc, selector
     for font in raw_font_stats
       continue unless font.familyName in settings.fallback_font_names
+      font_name_txt = CND.lime font.familyName.padEnd 50
+      count_txt     = CND.white ( format_integer font.glyphCount ).padStart 5
+      echo font_name_txt, count_txt, selector_txt
       R.push selector
       await page.evaluate ( ( selector ) -> ( $ selector ).addClass 'has-fallback-glyphs' ), selector
   #.........................................................................................................
+  echo CND.grey "—".repeat 108
   return R
 
 #-----------------------------------------------------------------------------------------------------------
 show_global_font_stats = ( page ) ->
   doc             = await get_ppt_doc_object page
   ### thx to https://stackoverflow.com/a/47914111/7568091 ###
-  raw_font_stats  = await _raw_font_stats_from_selector page, doc, 'body'
+  ### TAINT unfortunately these stats are not quite reliable and appear to hinge on quite particular
+  circumstances, such that font statistics for a given element may or may not include the stats for
+  contained elements. Until a better method has been found, the only reliable way to catch all missing
+  glyphs is to query *all* DOM nodes. FTTB we look into the `<artboard/>` element. ###
+  raw_font_stats  = await _raw_font_stats_from_selector page, doc, 'artboard'
   R               = []
   glyph_total     = raw_font_stats.reduce ( ( acc, d ) -> acc + d.glyphCount ), 0
   raw_font_stats.sort ( a, b ) -> - ( a.glyphCount - b.glyphCount )
   fallbacks       = []
   echo CND.grey "—".repeat 108
   echo CND.grey "^interplot/show_global_font_stats@55432^"
-  echo CND.steel "Font Statistics:"
+  echo CND.steel "Global Font Statistics:"
   for font in raw_font_stats
     { familyName: font_name, glyphCount: glyph_count, } = font
     font_name_txt   = CND.lime  ( jr font_name                                    ).padEnd   40
@@ -308,8 +327,8 @@ show_global_font_stats = ( page ) ->
     fallbacks.push font_name if font_name in settings.fallback_font_names
     R.push d
   #.........................................................................................................
-  unless isa.empty fallbacks
-    selectors = await mark_blocks_with_fallback_glyphs  page
+  # unless isa.empty fallbacks
+  unless isa.empty selectors = await mark_elements_with_fallback_glyphs page
     echo CND.red CND.reverse CND.bold " Fallback fonts detected: #{fallbacks.join ', '} "
     echo CND.red "in DOM nodes: #{ ( jr d for d in selectors ).join ', '} "
   #.........................................................................................................
