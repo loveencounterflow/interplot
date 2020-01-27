@@ -2,7 +2,7 @@
   --interplot-font-size:                  6mm;
   --interplot-grid:                       8mm;
   --interplot-glyph-bgcolor:              rgba( 255, 255, 255, 0.75 );
-  --interplot-warn-missing-glyphs-bgcolor:  #ff000050;
+  --interplot-warn-missing-glyphs-bgcolor:  #ff000020;
   --interplot-warn-missing-glyphs-olcolor:  orange;
   font-size:                              var(--interplot-font-size);
 }
@@ -14,33 +14,85 @@ body {
   text-rendering:         geometricPrecision;
   font-family:            'flow', 'fallback';
   font-feature-settings:  'liga', 'clig', 'dlig', 'hlig', 'calt', 'swsh', 'cv11', 'tnum';
+  margin:                 0mm;
   padding:                0mm; }
 
-.gui { /* class for GUI elements that must be on topmost level */
-  z-index:                100; }
+
+zoomer {
+  display:                block;
+  zoom:                   0.5; }
 
 artboard {
-  zoom: 0.75;
+  /*zoom: 0.75;*/
   display:                block;
   position:               absolute;
-  max-width:              1000mm;
-  min-width:              1000mm;
-  max-height:             1000mm;
-  min-height:             1000mm;
+  /*max-width:              1000mm;*/
+  /*min-width:              1000mm;*/
+  /*max-height:             1000mm;*/
+  /*min-height:             1000mm;*/
+  min-width:              100%;
+  min-height:             100%;
   padding:                10mm;
+  z-index:                -100;
   background-image:       url( ../backgrounds/background_linen_lime.png ); }
 
-page {
-  display:                block;
+page,
+paper {
   max-width:              210mm;
   min-width:              210mm;
   max-height:             calc( 297mm - 0.15mm ); /* NOTE (maybe outdated by now) Experimentally detected that paper height */
   min-height:             calc( 297mm - 0.15mm ); /* 297mm - 0.13mm is too little, - 0.15mm is enough to avoid intervening blank pages in the PDF. */
 }
 
-@media screen { page { background-color: white; } }
-@media print  { page { background: none; } }
+page {
+  margin:                 10mm;
+  display:                flex;
+  float:                  left;
+  position:               relative;
+  /*z-index:                100; */
+}
 
+page.left   { left:   9mm; }
+page.right  { right:  9mm; }
+
+chase {
+  width:                  calc( 210mm          - 10mm );
+  height:                 calc( 297mm - 0.15mm - 10mm );
+  left:                   5mm;
+  top:                    5mm;
+  position:               relative;
+  display:                flex;
+  flex-direction:         column;
+}
+
+paper {
+  position:               absolute;
+  box-shadow:             10px 10px 35px 0px rgba(0,0,0,0.5);
+  background-color:       #fdfde2; }
+.debug paper { background-color:  #ffffd3; }
+@media print  { paper {
+  display:                none; } }
+
+earmark {
+  display:                  block;
+  position:                 absolute;
+  top:                      5mm;
+  font-size:                9mm;
+  background-color:         #ff0;
+  border:                   0.5mm solid black;
+  border-radius:            1mm;
+  line-height:              9mm;
+  height:                   10mm;
+  width:                    15mm;
+  font-family:              'Helvetica';
+  /*z-index:                  99;*/
+  text-align:               center; }
+
+page.left   earmark { padding-left:   3mm; text-align: left;  top: 17mm; left:   -14mm; }
+page.right  earmark { padding-right:  3mm; text-align: right; top:  5mm; right:  -14mm; }
+
+@media print  { earmark {
+  display:                  none; } }
 
 /*
 spread
@@ -74,17 +126,39 @@ composer { /* Winkelhaken */
 galley { /* Setzschiff */
   display:                block; }
 
-@media screen { .debug composer { outline: 1px solid     #5500cc8d;  } }
-@media screen { .debug galley   { outline: 1px solid     #0000cc8d;  } }
-@media screen { .debug slug     { outline: 1px dotted    red;        } }
-@media screen { .debug trim     { outline: 1px dashed    blue;       } }
-@media screen { .debug gauge    { outline: 1px dashed    green;      } }
+@media screen {
+  .debug slug,
+  .debug column,
+  /*.debug hbox,*/
+  .debug hgap,
+  /*.debug vbox,*/
+  .debug vgap,
+  .debug xhgap,
+  .debug topmargin,
+  .debug bottommargin,
+  .debug leftmargin,
+  .debug rightmargin {
+    box-shadow:
+      inset +3px +3px +3px 0px #0003,
+      inset -3px -3px  3px 0px #ffff; } }
 
-#debugonoff {
-  position:               absolute;
-  top:                    1mm;
-  left:                   1mm; }
-@media print { #debugonoff { display: none; } }
+@media screen { .debug chase        { outline: 1px solid #0002; } }
+@media screen { .debug galley       { outline: 1px solid #0002; } }
+@media screen { .debug paper        { outline: 1px solid #0002; } }
+@media screen { .debug slug         { outline: 1px solid #0002; } }
+@media screen { .debug trim         { outline: 1px solid #0002; } }
+@media screen { .debug gauge        { outline: 1px solid #0002; } }
+@media screen { .debug box          { outline: 1px solid #0002; } }
+@media screen { .debug column       { outline: 1px solid #0002; } }
+@media screen { .debug hbox         { outline: 1px solid #0002; } }
+@media screen { .debug hgap         { outline: 1px solid #0002; } }
+@media screen { .debug vbox         { outline: 1px solid #0002; } }
+@media screen { .debug vgap         { outline: 1px solid #0002; } }
+@media screen { .debug xhgap        { outline: 1px solid #0002; } }
+@media screen { .debug topmargin    { outline: 1px solid #0002; } }
+@media screen { .debug bottommargin { outline: 1px solid #0002; } }
+@media screen { .debug leftmargin   { outline: 1px solid #0002; } }
+@media screen { .debug rightmargin  { outline: 1px solid #0002; } }
 
 
 demo-paragraph {
@@ -121,4 +195,102 @@ demo-paragraph::last-line {
   /*outline:                3mm solid var(--interplot-warn-missing-glyphs-olcolor); */
   }
 
+page.has-fallback-glyphs {
+  background-color:       #ffa9bdff; }
+
+
+.gui { /* class for GUI elements that must be on topmost level */
+  font-family:            'Helvetica';
+  font-weight:            bold;
+  z-index:                200; }
+
+toolbox {
+  display:                block;
+  position:               fixed;
+  background-color:       #fff5;
+  padding:                3mm;
+  top:                    0mm;
+  left:                   0mm; }
+
+@media print { toolbox { display: none; } }
+
+/* ====================================================================================================== */
+/* */
+/* ------------------------------------------------------------------------------------------------------ */
+box,
+hbox {
+  flex-shrink: 1;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+}
+
+vbox {
+  flex-shrink: 1;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+column {
+  /* Nominal width so all columns in a flex box have the same width regardless of content: */
+  width: 1mm;
+  flex-shrink: 1;
+  flex-grow: 1;
+  /* `position: relative` needed for corks */
+  position: relative;
+}
+
+hgap {
+  width: 100%;
+  flex-shrink: 1;
+  flex-grow: 1;
+}
+
+xhgap {
+  width: 100%;
+  flex-shrink: 1000000;
+  flex-grow: 1000000;
+}
+
+vgap {
+  width: 5mm;
+  min-width: 5mm;
+  max-width: 5mm;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+leftmargin,
+rightmargin {
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+leftmargin {
+  min-width: 15mm;
+  max-width: 15mm;
+}
+
+rightmargin {
+  min-width: 15mm;
+  max-width: 15mm;
+}
+
+topmargin,
+bottommargin {
+  width: 100%;
+  flex-shrink: 0;
+  flex-grow: 0;
+}
+
+topmargin {
+  min-height: 7mm;
+  max-height: 7mm;
+}
+
+bottommargin {
+  min-height: 13mm;
+  max-height: 13mm;
+}
 
