@@ -20,7 +20,7 @@ body {
 
 zoomer {
   display:                block;
-  zoom:                   0.5; }
+  zoom:                   1; }
 
 artboard {
   /*zoom: 0.75;*/
@@ -58,6 +58,10 @@ page.right  { right:  9mm; }
 chase {
   width:                  calc( 210mm          - 10mm );
   height:                 calc( 297mm - 0.15mm - 10mm );
+  min-width:              calc( 210mm          - 10mm );
+  min-height:             calc( 297mm - 0.15mm - 10mm );
+  max-width:              calc( 210mm          - 10mm );
+  max-height:             calc( 297mm - 0.15mm - 10mm );
   left:                   5mm;
   top:                    5mm;
   position:               relative;
@@ -102,9 +106,9 @@ spread
 slug {
   display:                block;
   margin:                 0mm;
-  font-size:              9mm;
-  line-height:            10mm;
-  height:                 10mm;
+  font-size:              4mm;
+  line-height:            5mm;
+  height:                 5mm;
   word-spacing:           +0.25ex;
   foo:                    bar;
   dang:                   var(--interplot-font-size);
@@ -112,9 +116,6 @@ slug {
   text-align-last:        left;
   overflow-x:             visible;
   white-space:            nowrap; }
-
-slug {
-  background: yellow; }
 
 trim {
   display:                inline;
@@ -138,15 +139,16 @@ galley { /* Setzschiff */
   .debug bottommargin,
   .debug leftmargin,
   .debug rightmargin {
-    box-shadow:
-      inset +3px +3px +3px 0px #0003,
-      inset -3px -3px  3px 0px #ffff; } }
+    /*box-shadow: inset 3px 3px  3px 0px #0003, inset -3px -3px 3px 0px #ffff; */
+    box-shadow: inset 5px 3px 11px 2px white, inset -3px -3px 9px 2px #0002;
+    } }
+
+
+}
 
 @media screen { .debug chase        { outline: 1px solid #0002; } }
 @media screen { .debug galley       { outline: 1px solid #0002; } }
 @media screen { .debug paper        { outline: 1px solid #0002; } }
-@media screen { .debug slug         { outline: 1px solid #0002; } }
-@media screen { .debug trim         { outline: 1px solid #0002; } }
 @media screen { .debug gauge        { outline: 1px solid #0002; } }
 @media screen { .debug box          { outline: 1px solid #0002; } }
 @media screen { .debug column       { outline: 1px solid #0002; } }
@@ -159,6 +161,8 @@ galley { /* Setzschiff */
 @media screen { .debug bottommargin { outline: 1px solid #0002; } }
 @media screen { .debug leftmargin   { outline: 1px solid #0002; } }
 @media screen { .debug rightmargin  { outline: 1px solid #0002; } }
+/*@media screen { .debug slug         { outline: 1px solid #0002; } }*/
+@media screen { .debug trim         { outline-right: 1px dotted #0002; } }
 
 
 demo-paragraph {
@@ -219,10 +223,13 @@ toolbox {
 /* ------------------------------------------------------------------------------------------------------ */
 box,
 hbox {
-  flex-shrink: 1;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: row;
+  flex-shrink:            1;
+  flex-grow:              1;
+  display:                flex;
+  flex-direction:         row;
+  max-height:             100%;
+  overflow-x:             visible;
+  overflow-y:             hidden;
 }
 
 vbox {
@@ -237,8 +244,10 @@ column {
   width: 1mm;
   flex-shrink: 1;
   flex-grow: 1;
-  /* `position: relative` needed for corks */
-  position: relative;
+  position:               relative;
+  max-height:             100%;
+  overflow-x:             visible;
+  /*overflow-y:             hidden;*/
 }
 
 hgap {
