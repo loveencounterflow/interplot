@@ -301,16 +301,16 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
           _.TOPMARGIN()
           _.HBOX ->
             _.LEFTMARGIN()
-            _.COLUMN -> _.RAW """flex1 <strong style='color:red;'>galley</strong> <em>(n.)</em> 13c., "sea&shy;going ves&shy;sel ha&shy;ving both sails and oars," from Old French ga&shy;lie, ga&shy;lee "boat, war&shy;ship, gal&shy;ley," from Medi&shy;eval Latin ga&shy;lea or Ca&shy;ta&shy;lan ga&shy;lea, from Late Greek ga&shy;lea, of un&shy;known ori&shy;gin. The word has made its way into most Wes&shy;tern Eu&shy;ro&shy;pe&shy;an lan&shy;gua&shy;ges. Ori&shy;gi&shy;nal&shy;ly "low, flat-built sea&shy;going ves&shy;sel of one deck," once a com&shy;mon type in the Me&shy;di&shy;ter&shy;ra&shy;ne&shy;an. Mean&shy;ing "cook&shy;ing range or cook&shy;ing room on a ship" dates from 1750. The prin&shy;t&shy;ing sense of gal&shy;ley, "ob&shy;long tray that holds the type once set," is from 1650s, from French ga&shy;lée in the same sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of galley-proof it is at&shy;tes&shy;ted from 1890."""
+            _.COLUMN()
             _.VGAP()
-            _.COLUMN -> _.RAW """flex2 <strong style='color:red;'>galley</strong> <em>(n.)</em> 13c., "sea&shy;going ves&shy;sel ha&shy;ving both sails and oars," from Old French ga&shy;lie, ga&shy;lee "boat, war&shy;ship, gal&shy;ley," from Medi&shy;eval Latin ga&shy;lea or Ca&shy;ta&shy;lan ga&shy;lea, from Late Greek ga&shy;lea, of un&shy;known ori&shy;gin. The word has made its way into most Wes&shy;tern Eu&shy;ro&shy;pe&shy;an lan&shy;gua&shy;ges. Ori&shy;gi&shy;nal&shy;ly "low, flat-built sea&shy;going ves&shy;sel of one deck," once a com&shy;mon type in the Me&shy;di&shy;ter&shy;ra&shy;ne&shy;an. Mean&shy;ing "cook&shy;ing range or cook&shy;ing room on a ship" dates from 1750. The prin&shy;t&shy;ing sense of gal&shy;ley, "ob&shy;long tray that holds the type once set," is from 1650s, from French ga&shy;lée in the same sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of galley-proof it is at&shy;tes&shy;ted from 1890."""
+            _.COLUMN()
             _.VGAP()
-            _.COLUMN -> _.RAW """flex3 <strong style='color:red;'>galley</strong> <em>(n.)</em> 13c., "sea&shy;going ves&shy;sel ha&shy;ving both sails and oars," from Old French ga&shy;lie, ga&shy;lee "boat, war&shy;ship, gal&shy;ley," from Medi&shy;eval Latin ga&shy;lea or Ca&shy;ta&shy;lan ga&shy;lea, from Late Greek ga&shy;lea, of un&shy;known ori&shy;gin. The word has made its way into most Wes&shy;tern Eu&shy;ro&shy;pe&shy;an lan&shy;gua&shy;ges. Ori&shy;gi&shy;nal&shy;ly "low, flat-built sea&shy;going ves&shy;sel of one deck," once a com&shy;mon type in the Me&shy;di&shy;ter&shy;ra&shy;ne&shy;an. Mean&shy;ing "cook&shy;ing range or cook&shy;ing room on a ship" dates from 1750. The prin&shy;t&shy;ing sense of gal&shy;ley, "ob&shy;long tray that holds the type once set," is from 1650s, from French ga&shy;lée in the same sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of galley-proof it is at&shy;tes&shy;ted from 1890."""
+            _.COLUMN()
             _.RIGHTMARGIN()
           _.BOTTOMMARGIN()
-        #.......................................................................................................
-        _.PAGE { pagenr: 3, }, ->
-          _.GALLEY    { width: '150mm', slugcount: 25,  empty: true, }
+        # #.......................................................................................................
+        # _.PAGE { pagenr: 3, }, ->
+        #   _.GALLEY    { width: '150mm', slugcount: 25,  empty: true, }
         #.......................................................................................................
         _.PAGE { pagenr: 4, }, ->
           _.TAG 'demo-paragraph', { id: 'd1', contenteditable: 'true', }, """
