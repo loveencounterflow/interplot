@@ -1,4 +1,4 @@
-<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><body class="debug">
+<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.css" /><script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><body class="debug">
 
 <script type="text/javascript" src="../fczbkk-css-selector-generator.js"></script><script type="text/javascript">(function() {
   var __slice = [].slice,
@@ -100,7 +100,20 @@
         return null;
       });
     })();
-})();</script><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><zoomer id="zoomer"><page id="page1" class="right"><earmark>1</earmark><paper></paper><chase><topmargin></topmargin><hbox><leftmargin></leftmargin><column></column><vgap></vgap><column></column><vgap></vgap><column></column><rightmargin></rightmargin></hbox><bottommargin></bottommargin></chase></page><page id="page4" class="left"><earmark>4</earmark><paper></paper><chase><demo-paragraph id="d1" contenteditable="true">自馮瀛王</demo-paragraph></chase></page><page id="page5" class="right"><earmark>5</earmark><paper></paper><chase><demo-paragraph id="d2" contenteditable="true">䷼䷽䷾䷿䷼䷽䷾䷿䷼䷽おきみつおきかずこううんじおきひでこうえいおきながカキクケオイロハニオヘトキュウカッパダッテ
+})();</script><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><zoomer id="zoomer"><div class="draggable dropshadow" style="position:absolute;z-index:100;width:300mm;height:20mm;left:31mm;top:17mm"><img src="../rulers/hruler.png" /></div><div class="draggable dropshadow" style="position:absolute;z-index:100;width:20mm;height:300mm;left:8mm;top:40mm"><img src="../rulers/vruler.png" /></div><script type="text/javascript">(function() {
+  var __slice = [].slice,
+      __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+      __hasProp = {}.hasOwnProperty,
+      __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+  (function() {
+            return ($(document)).ready(function() {
+              ($('.draggable')).draggable();
+              return ($('.draggable')).on('focus', function() {
+                return ($(this)).blur();
+              });
+            });
+          })();
+})();</script><page id="page1" class="right"><earmark>1</earmark><paper></paper><chase><topmargin></topmargin><hbox><leftmargin></leftmargin><column><reglet></reglet></column><vgap></vgap><column><reglet></reglet></column><vgap></vgap><column><reglet></reglet></column><rightmargin></rightmargin></hbox><bottommargin></bottommargin></chase></page><page id="page4" class="left"><earmark>4</earmark><paper></paper><chase><demo-paragraph id="d1" contenteditable="true">自馮瀛王</demo-paragraph></chase></page><page id="page5" class="right"><earmark>5</earmark><paper></paper><chase><demo-paragraph id="d2" contenteditable="true">䷼䷽䷾䷿䷼䷽䷾䷿䷼䷽おきみつおきかずこううんじおきひでこうえいおきながカキクケオイロハニオヘトキュウカッパダッテ
 亥核帝六今令户戶京立音言主文一丁丂國七丄種从虫䜌聲한국어조선말ABC123縉鄑戬戩虚虛嘘噓墟任廷呈程草花
 敬寬茍苟慈没殁沒歿芟投般咎昝晷倃卧臥虎微秃丸常當尚尙區陋沿匚匡亡匸匿龍祗萬禽宫宮侣營麻術述刹新案
 條寨甚商罕深差茶採某也的害編真直值縣祖概鄉者良鬼龜過骨為爲益温溫穴空舟近雞食搵絕丟丢曾𠔃兮清前有
