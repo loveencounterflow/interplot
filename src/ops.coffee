@@ -127,9 +127,8 @@ provide_ops = ->
     to differentiate between less and more desirable fittings based on delta space added to or subtracted
     from all space characters, presence or absence of hyphen and so on ###
     fitting_ok        = overshoot_mm <= ctx.epsilon_mm
-    if ctx.live_demo
-      await sleep 0
-    # slug_jq.remove()
+    await sleep 0 if ctx.live_demo
+    slug_jq.remove()
     return { slug_jq, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
 
   #-----------------------------------------------------------------------------------------------------------
