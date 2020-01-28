@@ -21,7 +21,7 @@
     "linebreak": "^1.0.2",
     "number-format.js": "^2.0.9",
     "pipedreams": "^12.1.0",
-    "puppeteer": "^2.0.0",
+    "puppeteer": "^2.1.0",
     "steampipes": "^3.5.0"
   }
 }
