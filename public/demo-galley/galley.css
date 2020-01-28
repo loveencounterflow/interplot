@@ -126,6 +126,13 @@ trim {
   display:                inline;
   margin:                 0mm; }
 
+reglet {
+  display:                block;
+  height:                 0mm;
+  width:                  100%; }
+.debug reglet { outline: 2px dashed red; }
+@media print { reglet { display: none; } }
+
 composer { /* Winkelhaken */
   display:                block; }
 

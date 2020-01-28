@@ -165,15 +165,15 @@ provide_ops = ->
     push_metrics = ( slug_metrics ) ->
       R.push slug_metrics
       slug_metrics.html = as_html slug_metrics.slug_jq
-      if ctx.live_demo
-        ctx.columns_jq[ ctx.columns_idx ].insertAdjacentElement 'beforeend', slug_metrics.slug_jq[ 0 ]
-        await sleep 0.1
+      reglet_jq         = ( $ ctx.columns_jq[ ctx.columns_idx ] ).find 'reglet'
+      reglet_jq.before slug_metrics.slug_jq
+      await sleep 0 if ctx.live_demo
       delete slug_metrics.slug_jq
       return null
     #.........................................................................................................
     ctx           = await @get_context()
-    ctx.live_demo = false
     ctx.live_demo = true
+    ctx.live_demo = false
     #.........................................................................................................
     loop
       max_slab_idx++
