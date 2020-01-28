@@ -110,14 +110,13 @@ provide_ops = ->
   @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
     slug_jq           = $ ctx.slug_template
     trim_jq           = slug_jq.find 'trim'
-    column_dom        = ctx.columns_jq[ ctx.columns_idx ]
-    column_width_mm   = GAUGE.width_mm_of column_dom
+    column_dom        = ctx.columns_jq[ ctx.columns_idx ] ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
     # column_height_mm  = GAUGE.height_mm_of column_dom
     #.........................................................................................................
     trim_jq[ 0 ].insertAdjacentText 'beforeend', partial_slug.text
     column_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
     width_mm          = GAUGE.width_mm_of trim_jq
-    overshoot_mm      = width_mm - column_width_mm
+    overshoot_mm      = width_mm - ctx.column_width_mm
     spc_delta_mm      = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
     # slug_height_mm    = GAUGE.height_mm_of slug_jq
     # slug_top_mm       = GAUGE.mm_from_px slug_jq.offset().top
@@ -138,13 +137,26 @@ provide_ops = ->
       template = @_slug_template = await TEMPLATES_slug nr
 
   #-----------------------------------------------------------------------------------------------------------
+  @get_reglet_metrics = ( ctx ) ->
+    top_mm      = GAUGE.mm_from_px ctx.reglet_jq.offset().top
+    advance_mm  = top_mm - ctx.column_top
+    remain_mm   = ctx.column_height_mm - advance_mm
+    return { advance_mm, remain_mm, }
+
+  #-----------------------------------------------------------------------------------------------------------
   @get_context = ->
-    slug_template     = await TEMPLATES_slug()
-    columns_jq        = ( $ 'page:first' ).find 'column'
-    columns_idx       = 0
-    epsilon_mm        = 0.2
-    live_demo         = false
-    return { slug_template, columns_jq, columns_idx, epsilon_mm, live_demo, }
+    R                   = {}
+    R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+    R.columns_jq        = ( $ 'page:first' ).find 'column'
+    R.columns_idx       = 0
+    R.column_jq         = $ R.columns_jq[ R.columns_idx ]
+    R.column_top        = GAUGE.mm_from_px    R.column_jq.offset().top
+    R.column_width_mm   = GAUGE.width_mm_of   R.column_jq
+    R.column_height_mm  = GAUGE.height_mm_of  R.column_jq
+    R.reglet_jq         = R.column_jq.find 'reglet'
+    R.epsilon_mm        = 0.2
+    R.live_demo         = false
+    return R
 
   #-----------------------------------------------------------------------------------------------------------
   @slugs_with_metrics_from_slabs = ( slabs_dtm, settings ) ->
@@ -159,13 +171,16 @@ provide_ops = ->
     max_slab_idx        = min_slab_idx - 1
     prv_slug_metrics    = null
     slug_metrics        = null
+    line_nr             = 0
     R                   = []
     #.........................................................................................................
-    push_metrics = ( slug_metrics ) ->
+    push_metrics = ( slug_metrics ) =>
+      line_nr++
       R.push slug_metrics
       slug_metrics.html = as_html slug_metrics.slug_jq
-      reglet_jq         = ( $ ctx.columns_jq[ ctx.columns_idx ] ).find 'reglet'
-      reglet_jq.before slug_metrics.slug_jq
+      ctx.reglet_jq.before slug_metrics.slug_jq
+      reglet_metrics    = @get_reglet_metrics ctx
+      log '^33442^', line_nr, "#{reglet_metrics.advance_mm.toFixed 1} mm / #{reglet_metrics.remain_mm.toFixed 1} mm" # , slug_metrics.slug_jq[ 0 ]
       await sleep 0 if ctx.live_demo
       delete slug_metrics.slug_jq
       return null
