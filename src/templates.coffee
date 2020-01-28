@@ -217,6 +217,8 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.TITLE settings.title
     ### ------------------------------------------------------------------------------------------------ ###
     _.JS  resolve './jquery-3.4.1.js'
+    _.CSS resolve './jquery-ui-1.12.1/jquery-ui.min.css'
+    _.JS  resolve './jquery-ui-1.12.1/jquery-ui.min.js'
     _.JS  resolve './ops-globals.js'
     _.JS  resolve './ops.js'
     _.CSS resolve './reset.css'
@@ -295,6 +297,15 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     #.......................................................................................................
     _.ARTBOARD '#artboard1.pages', ->
       _.ZOOMER '#zoomer', ->
+        # _style = "background-color:#ff0b;z-index:100;position:absolute;"
+        _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;width:300mm;height:20mm;left:31mm;top:17mm", }, ->
+          _.IMG { src: '../rulers/hruler.png', }
+        _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;width:20mm;height:300mm;left:8mm;top:40mm", }, ->
+          _.IMG { src: '../rulers/vruler.png', }
+        _.COFFEESCRIPT ->
+          ( $ document ).ready ->
+            ( $ '.draggable' ).draggable()
+            ( $ '.draggable' ).on 'focus', -> ( $ @ ).blur()
         # _.TAG 'page', { pagenr: 0, }
         #.......................................................................................................
         _.PAGE { pagenr: 1, }, ->
