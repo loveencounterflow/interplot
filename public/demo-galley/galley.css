@@ -71,11 +71,16 @@ chase {
 
 paper {
   position:               absolute;
-  box-shadow:             10px 10px 35px 0px rgba(0,0,0,0.5);
+  background-size:        5mm 5mm;
   background-color:       #fdfde2; }
-.debug paper { background-color:  #ffffd3; }
+.debug paper { background-color:  #ffffd3; background-image: url(../backgrounds/grid.svg); }
 @media print  { paper {
   display:                none; } }
+
+@media screen {
+  paper,
+  .dropshadow {
+    box-shadow:             10px 10px 35px 0px rgba(0,0,0,0.5); } }
 
 earmark {
   display:                  block;
