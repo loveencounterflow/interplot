@@ -81,6 +81,7 @@ settings =
       '--high-dpi-support=1'
       # '--force-device-scale-factor=0.9' ### ca. 0.5 .. 1.0, smaller number scales down entire UI ###
       '--auto-open-devtools-for-tabs'
+      # '--enable-blink-features=CSSSnapSize' ### see https://developer.mozilla.org/en-US/docs/Web/CSS/line-height-step ###
       ]
   # viewport:
   #   ### see https://github.com/puppeteer/puppeteer/blob/master/docs/api.md#pagesetviewportviewport ###
@@ -378,7 +379,8 @@ demo_2 = ->
   #.........................................................................................................
   # await page.exposeFunction 'sha1', ( text ) =>
   #   ( require 'crypto' ).createHash( 'sha1' ).update( text ).digest( 'hex' )[ .. 17 ]
-  await page.exposeFunction 'TEMPLATES_slug', ( P... ) => ( require '../templates' ).slug P...
+  await page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
+  await page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
   #.........................................................................................................
   urge "waitForSelector"
   await page.waitForSelector target_selector
@@ -432,7 +434,7 @@ demo_insert_slabs = ( page ) ->
   an impression on the paper. ䷾In typesetting by hand compositing, a sort or type is a piece of type
   representing a particular letter or symbol, cast from a matrix mold and assembled with other sorts bearing
   additional letters into lines of type to make up a form from which a page is printed."""
-  text                = ( text + ' ' ).repeat 3
+  text                = ( text + ' ' ).repeat 1
   slabs_dtm           = LINEMAKER.slabs_from_text text
   validate.interplot_slabs_datom slabs_dtm
   # html    = await page.evaluate ( ( slabs_dtm ) -> OPS.demo_insert_slabs slabs_dtm ), slabs_dtm

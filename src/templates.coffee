@@ -63,11 +63,7 @@ _.TOPMARGIN             = _.new_tag ( P... ) -> _.TAG 'topmargin',      P...
 _.BOTTOMMARGIN          = _.new_tag ( P... ) -> _.TAG 'bottommargin',   P...
 _.LEFTMARGIN            = _.new_tag ( P... ) -> _.TAG 'leftmargin',     P...
 _.RIGHTMARGIN           = _.new_tag ( P... ) -> _.TAG 'rightmargin',    P...
-
-#-----------------------------------------------------------------------------------------------------------
-_.COLUMN = ( P... ) ->
-  _.TAG 'column', P..., ->
-    _.TAG 'reglet'
+_.COLUMN                = _.new_tag ( P... ) -> _.TAG 'column',         P...
 
 #-----------------------------------------------------------------------------------------------------------
 _.TOOLBOX = ->
@@ -99,8 +95,8 @@ _.TOOLBOX = ->
     _.BUTTON '#zoomin.gui',     "z+"
 
 #-----------------------------------------------------------------------------------------------------------
-_.SLUG = @slug = _.new_tag ->
-  _.TAG 'slug', -> _.TRIM()
+_.SLUG    = @slug     = _.new_tag -> _.TAG 'slug', -> _.TRIM()
+_.POINTER = @pointer  = _.new_tag -> _.TAG 'pointer', '#pointer'
 
 #-----------------------------------------------------------------------------------------------------------
 _.UNSTYLEDELEMENT = _.new_tag -> _.TAG 'unstyledelement'
@@ -383,15 +379,16 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
         _.PAGE { pagenr: 7, }, ->
           #.......................................................................................................
           _.TAG 'demo-paragraph', { id: 'd3', contenteditable: 'true', }, -> for [ 0 .. 3 ] then _.RAW """
-            <strong style='color:red;'>galley</strong> <em>(n.)</em> 13c., "sea&shy;going ves&shy;sel ha&shy;ving
-            both sails and oars," from Old French ga&shy;lie, ga&shy;lee "boat, war&shy;ship, gal&shy;ley," from
-            Medi&shy;eval Latin ga&shy;lea or Ca&shy;ta&shy;lan ga&shy;lea, from Late Greek ga&shy;lea, of
-            un&shy;known ori&shy;gin. The word has made its way into most Wes&shy;tern Eu&shy;ro&shy;pe&shy;an
-            lan&shy;gua&shy;ges. Ori&shy;gi&shy;nal&shy;ly "low, flat-built sea&shy;going ves&shy;sel of one
-            deck," once a com&shy;mon type in the Me&shy;di&shy;ter&shy;ra&shy;ne&shy;an. Mean&shy;ing
-            "cook&shy;ing range or cook&shy;ing room on a ship" dates from 1750. The prin&shy;t&shy;ing sense of
-            gal&shy;ley, "ob&shy;long tray that holds the type once set," is from 1650s, from French ga&shy;lée in
-            the same sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of
+            <strong style='color:red;'>galley</strong> <em>(n.)</em> 13c., "sea&shy;going ves&shy;sel
+            ha&shy;ving both sails and oars," from Old French ga&shy;lie, ga&shy;lee "boat, war&shy;ship,
+            gal&shy;ley," from Medi&shy;eval Latin ga&shy;lea or Ca&shy;ta&shy;lan ga&shy;lea, from Late
+            Greek ga&shy;lea, of un&shy;known ori&shy;gin. The <span style='font-size:300%'>word</span> has
+            made its way into most Wes&shy;tern Eu&shy;ro&shy;pe&shy;an lan&shy;gua&shy;ges.
+            Ori&shy;gi&shy;nal&shy;ly "low, flat-built sea&shy;going ves&shy;sel of one deck," once a
+            com&shy;mon type in the Me&shy;di&shy;ter&shy;ra&shy;ne&shy;an. Mean&shy;ing "cook&shy;ing range
+            or cook&shy;ing room on a ship" dates from 1750. The prin&shy;t&shy;ing sense of gal&shy;ley,
+            "ob&shy;long tray that holds the type once set," is from 1650s, from French ga&shy;lée in the
+            same sense, in re&shy;f&shy;er&shy;en&shy;ce to the shape of the tray. As a short form of
             galley-proof it is at&shy;tes&shy;ted from 1890. """
         #.......................................................................................................
         _.PAGE { pagenr: 8, }

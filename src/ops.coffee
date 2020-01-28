@@ -131,20 +131,19 @@ provide_ops = ->
     return { slug_jq, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
 
   #-----------------------------------------------------------------------------------------------------------
-  @_slug_template = null
-  @new_slug = ( nr ) ->
-    unless ( template = @_slug_template )?
-      template = @_slug_template = await TEMPLATES_slug nr
-
-  #-----------------------------------------------------------------------------------------------------------
-  @get_reglet_metrics = ( ctx ) ->
-    top_mm      = GAUGE.mm_from_px ctx.reglet_jq.offset().top
+  @get_pointer_metrics = ( ctx ) ->
+    top_mm      = GAUGE.mm_from_px ctx.pointer_jq.offset().top
     advance_mm  = top_mm - ctx.column_top
     remain_mm   = ctx.column_height_mm - advance_mm
     return { advance_mm, remain_mm, }
 
   #-----------------------------------------------------------------------------------------------------------
   @get_context = ->
+    ### NOTE intermediate solution; later on, the pointer should be set by some higher level method to
+    indicate where upcoming material should be directed to; setting up columns will then consisting of
+    locating the `pointer#pointer` element, then retrieving its parent element (the first column to
+    consider) and the columns that either follow it according to a special 'text flow' attribute or (the
+    default) in document order. ###
     R                   = {}
     R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
     R.columns_jq        = ( $ 'page:first' ).find 'column'
@@ -153,8 +152,12 @@ provide_ops = ->
     R.column_top        = GAUGE.mm_from_px    R.column_jq.offset().top
     R.column_width_mm   = GAUGE.width_mm_of   R.column_jq
     R.column_height_mm  = GAUGE.height_mm_of  R.column_jq
-    R.reglet_jq         = R.column_jq.find 'reglet'
+    # R.pointer_jq        = R.column_jq.find '#pointer'
+    R.pointer_jq        = $ await TEMPLATES_pointer()
+    R.column_jq.append R.pointer_jq
     R.epsilon_mm        = 0.2
+    #.........................................................................................................
+    R.XXX_insert_big_words = true
     R.live_demo         = false
     return R
 
@@ -178,8 +181,14 @@ provide_ops = ->
       line_nr++
       R.push slug_metrics
       slug_metrics.html = as_html slug_metrics.slug_jq
-      ctx.reglet_jq.before slug_metrics.slug_jq
-      reglet_metrics    = @get_reglet_metrics ctx
+      ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+      if ctx.XXX_insert_big_words and ( parts = slug_metrics.slug_jq.text().split /(raised)/ ).length is 3 ### !!!! ###
+        # slug_metrics.slug_jq.html "#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}"
+        ### NOTE `<trim/>` needed for proper baseline-alignment ###
+        slug_metrics.slug_jq.html "<trim>#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}</trim>"
+      ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+      ctx.pointer_jq.before slug_metrics.slug_jq
+      reglet_metrics    = @get_pointer_metrics ctx
       log '^33442^', line_nr, "#{reglet_metrics.advance_mm.toFixed 1} mm / #{reglet_metrics.remain_mm.toFixed 1} mm" # , slug_metrics.slug_jq[ 0 ]
       await sleep 0 if ctx.live_demo
       delete slug_metrics.slug_jq

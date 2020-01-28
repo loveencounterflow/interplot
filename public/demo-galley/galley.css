@@ -1,18 +1,20 @@
 :root {
-  --interplot-font-size:                  6mm;
-  --interplot-grid:                       8mm;
-  --interplot-glyph-bgcolor:              rgba( 255, 255, 255, 0.75 );
+  --interplot-font-family:                'flow', 'fallback';
+  --interplot-font-size:                  4mm;
+  --interplot-line-height:                5mm;
   --interplot-warn-missing-glyphs-bgcolor:  #ff000020;
   --interplot-warn-missing-glyphs-olcolor:  orange;
+  font-family:                            var(--interplot-font-family);
   font-size:                              var(--interplot-font-size);
+  line-height:                            var(--interplot-line-height);
 }
 
 
 body {
-  text-rendering:         optimizeLegibility;
-  text-rendering:         optimizeSpeed;
+  /*text-rendering:         optimizeLegibility;*/
+  /*text-rendering:         optimizeSpeed;*/
   text-rendering:         geometricPrecision;
-  font-family:            'flow', 'fallback';
+  /*font-family:            'flow', 'fallback';*/
   font-feature-settings:  'liga', 'clig', 'dlig', 'hlig', 'calt', 'swsh', 'cv11', 'tnum';
   margin:                 0mm;
   padding:                0mm; }
@@ -109,12 +111,13 @@ spread
 */
 
 slug {
-  display:                block;
+  display:                flex;
+  align-items:            center;
+  align-items:            baseline;
+  align-items:            flex-end;
+  /* ### TAINT this property must be re-set in accordance with metrics valid at insertion point */
+  height:                 var(--interplot-line-height);
   margin:                 0mm;
-  font-size:              4mm;
-  line-height:            5mm;
-  height:                 5mm;
-  word-spacing:           +0.25ex;
   foo:                    bar;
   dang:                   var(--interplot-font-size);
   text-align:             left;
@@ -126,12 +129,12 @@ trim {
   display:                inline;
   margin:                 0mm; }
 
-reglet {
+pointer#pointer {
   display:                block;
   height:                 0mm;
   width:                  100%; }
-.debug reglet { outline: 2px dashed red; }
-@media print { reglet { display: none; } }
+.debug pointer#pointer { outline: 1px solid red; }
+@media print { pointer#pointer { display: none; } }
 
 composer { /* Winkelhaken */
   display:                block; }
@@ -186,7 +189,7 @@ demo-paragraph {
   text-align:             justify;
   text-align-last:        justify;
   font-size:              9mm;
-  line-height:            10mm;
+  line-height:            1;
   /*margin:                 10mm; */
 }
 
@@ -253,6 +256,8 @@ vbox {
 
 column {
   /* Nominal width so all columns in a flex box have the same width regardless of content: */
+  display:                flex;
+  flex-direction:         column;
   width: 1mm;
   flex-shrink: 1;
   flex-grow: 1;
