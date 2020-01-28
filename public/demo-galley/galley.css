@@ -32,7 +32,7 @@ artboard {
   /*min-height:             1000mm;*/
   min-width:              100%;
   min-height:             100%;
-  padding:                10mm;
+  padding:                30mm;
   z-index:                -100;
   background-image:       url( ../backgrounds/background_linen_lime.png ); }
 
