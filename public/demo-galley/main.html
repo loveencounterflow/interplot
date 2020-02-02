@@ -15,7 +15,7 @@
         return null;
       });
     })();
-})();</script><link rel="stylesheet" href="./galley.css" /><unstyledelement></unstyledelement><style>gauge {
+})();</script><link rel="stylesheet" href="./galley.css" /><unstyledelement></unstyledelement><style>gauge#gauge {
   display:                block;
   position:               absolute;
   top:                    10mm;
@@ -26,8 +26,10 @@
   height:                 10mm;
   min-height:             10mm;
   max-height:             10mm;
-  background:             repeating-linear-gradient(-45deg,#606dbc80,#606dbc80 10px,#46529880 10px,#46529880 20px); }
-@media print{ gauge { display: none; } }
+  mix-blend-mode:         multiply;
+  backdrop-filter:        blur(0.2mm);
+  background-color:       #ab2865; }
+@media print{ gauge#gauge { display: none; } }
 </style><script type="text/javascript">(function() {
   var __slice = [].slice,
       __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
@@ -39,7 +41,7 @@
         //.....................................................................................................
         f = function() {
           var cmgauge_jq;
-          cmgauge_jq = $('gauge');
+          cmgauge_jq = $('gauge#gauge');
           this.px_per_mm = cmgauge_jq.width() / 10;
           this.mm_per_px = 1 / this.px_per_mm;
           this.px_from_mm = function(mm) {
@@ -60,7 +62,7 @@
         return null;
       });
     })();
-})();</script><gauge class="gui"></gauge><script type="text/javascript">(function() {
+})();</script><gauge id="gauge" class="gui draggable"></gauge><script type="text/javascript">(function() {
   var __slice = [].slice,
       __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
       __hasProp = {}.hasOwnProperty,
@@ -100,7 +102,7 @@
         return null;
       });
     })();
-})();</script><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><zoomer id="zoomer"><div class="draggable dropshadow" style="position:absolute;z-index:100;width:300mm;height:20mm;left:31mm;top:17mm"><img src="../rulers/hruler.png" /></div><div class="draggable dropshadow" style="position:absolute;z-index:100;width:20mm;height:300mm;left:8mm;top:40mm"><img src="../rulers/vruler.png" /></div><script type="text/javascript">(function() {
+})();</script><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><zoomer id="zoomer"><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:300mm;height:20mm;left:31mm;top:17mm"><img src="../rulers/hruler.png" style="mix-blend-mode:multiply;" /></div><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm"><img src="../rulers/vruler.png" style="mix-blend-mode:multiply;" /></div><script type="text/javascript">(function() {
   var __slice = [].slice,
       __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
       __hasProp = {}.hasOwnProperty,
