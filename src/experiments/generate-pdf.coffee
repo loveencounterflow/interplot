@@ -334,6 +334,12 @@ show_global_font_stats = ( page ) ->
   return R
 
 #-----------------------------------------------------------------------------------------------------------
+profile = ( page, f ) ->
+  await page.tracing.start { path: '.cache/trace.json', }
+  await f()
+  await page.tracing.stop()
+
+#-----------------------------------------------------------------------------------------------------------
 demo_2 = ->
   url             = 'https://de.wikipedia.org/wiki/Berlin'
   target_selector = '#content'
@@ -382,7 +388,7 @@ demo_2 = ->
   urge "waitForSelector"
   await page.waitForSelector target_selector
   #.........................................................................................................
-  await demo_insert_slabs page
+  await profile page, -> await demo_insert_slabs page
   #.........................................................................................................
   # debug '^12221^', jr await computed_styles_from_selector page, 'slug'
   styles          = await styles_from_selector page, 'slug'

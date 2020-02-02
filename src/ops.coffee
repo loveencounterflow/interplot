@@ -158,6 +158,7 @@ provide_ops = ->
     R.epsilon_mm        = 0.2
     #.........................................................................................................
     R.XXX_insert_big_words = true
+    R.XXX_insert_big_words = false
     R.live_demo         = false
     return R
 
@@ -195,8 +196,8 @@ provide_ops = ->
       return null
     #.........................................................................................................
     ctx           = await @get_context()
-    ctx.live_demo = true
     ctx.live_demo = false
+    ctx.live_demo = true
     #.........................................................................................................
     loop
       max_slab_idx++

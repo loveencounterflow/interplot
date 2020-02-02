@@ -148,7 +148,7 @@ _.GALLEY    = _.new_tag ( settings ) -> _._SLUGCONTAINER 'galley',    settings
 #-----------------------------------------------------------------------------------------------------------
 _.GAUGE = _.new_tag ->
   _.STYLE """
-    gauge {
+    gauge#gauge {
       display:                block;
       position:               absolute;
       top:                    10mm;
@@ -159,13 +159,15 @@ _.GAUGE = _.new_tag ->
       height:                 10mm;
       min-height:             10mm;
       max-height:             10mm;
-      background:             repeating-linear-gradient(-45deg,#606dbc80,#606dbc80 10px,#46529880 10px,#46529880 20px); }
-    @media print{ gauge { display: none; } }\n"""
+      mix-blend-mode:         multiply;
+      backdrop-filter:        blur(0.2mm);
+      background-color:       #ab2865; }
+    @media print{ gauge#gauge { display: none; } }\n"""
   _.COFFEESCRIPT ->
     ( $ document ).ready ->
       #.....................................................................................................
       f = ->
-        cmgauge_jq    = $ 'gauge'
+        cmgauge_jq    = $ 'gauge#gauge'
         @px_per_mm    = cmgauge_jq.width() / 10
         @mm_per_px    = 1 / @px_per_mm
         @px_from_mm   = ( mm    ) -> mm * @px_per_mm
@@ -175,7 +177,7 @@ _.GAUGE = _.new_tag ->
       #.....................................................................................................
       f.apply globalThis.GAUGE = {}
       return null
-  _.TAG 'gauge', '.gui'
+  _.TAG 'gauge', '#gauge.gui.draggable'
 
 #-----------------------------------------------------------------------------------------------------------
 _.selector_generator = ->
@@ -298,10 +300,10 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.ARTBOARD '#artboard1.pages', ->
       _.ZOOMER '#zoomer', ->
         # _style = "background-color:#ff0b;z-index:100;position:absolute;"
-        _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;width:300mm;height:20mm;left:31mm;top:17mm", }, ->
-          _.IMG { src: '../rulers/hruler.png', }
-        _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;width:20mm;height:300mm;left:8mm;top:40mm", }, ->
-          _.IMG { src: '../rulers/vruler.png', }
+        _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:300mm;height:20mm;left:31mm;top:17mm", }, ->
+          _.IMG { src: '../rulers/hruler.png', style: "mix-blend-mode:multiply;", }
+        _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm", }, ->
+          _.IMG { src: '../rulers/vruler.png', style: "mix-blend-mode:multiply;", }
         _.COFFEESCRIPT ->
           ( $ document ).ready ->
             ( $ '.draggable' ).draggable()
