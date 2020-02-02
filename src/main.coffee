@@ -22,10 +22,6 @@ TEMPLATES                 = require './templates'
 { jr, }                   = CND
 assign                    = Object.assign
 #...........................................................................................................
-PD                        = require 'pipedreams'
-{ $
-  async }                 = PD
-#...........................................................................................................
 page_html_path            = PATH.resolve PATH.join __dirname, '../public/main.html'
 # S                         = require './settings'
 

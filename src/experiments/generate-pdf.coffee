@@ -31,9 +31,6 @@ types                     = require '../types'
   validate
   cast
   type_of }               = types
-PD                        = require 'pipedreams'
-{ $
-  async }                 = PD
 #...........................................................................................................
 after                     = ( dts, f ) -> setTimeout f, dts * 1000
 sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done

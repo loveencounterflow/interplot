@@ -22,10 +22,11 @@ FS                        = require 'fs'
 assign                    = Object.assign
 join_path                 = ( P... ) -> PATH.resolve PATH.join P...
 #...........................................................................................................
-isa                       = require 'intertype'
-PD                        = require 'pipedreams'
-{ $
-  async }                 = PD
+types                     = require './types'
+{ isa
+  validate
+  cast
+  type_of }               = types
 #...........................................................................................................
 after                     = ( dts, f ) -> setTimeout f, dts * 1000
 sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done
