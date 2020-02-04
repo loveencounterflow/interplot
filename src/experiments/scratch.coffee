@@ -55,22 +55,14 @@ INTERPLOT                 = {}
 _settings                 = DATOM.freeze require '../settings'
 
 
-#===========================================================================================================
-#
-#-----------------------------------------------------------------------------------------------------------
-HTML.$html_as_datoms = ->
-  return $ ( buffer_or_text, send ) =>
-    send d for d in HTML.html_as_datoms buffer_or_text
-    return null
-
 
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------
-INTERTEXT.$as_lines = ( settings ) ->
-  ### TAINT implement settings to configure what to do if data is not text ###
+INTERTEXT.$append = ( text ) ->
+  validate.text text
   return $ ( x, send ) ->
-    send if ( isa.text x ) then x + '\n' else x
+    send if ( isa.text x ) then x + text else x
     return null
 
 
@@ -158,31 +150,40 @@ DEMO.$as_slabs = ->
 provide_interplot_extensions = ->
 
   #-----------------------------------------------------------------------------------------------------------
+  @$issue_launch_cmd = ( S ) ->
+    ### NOTE replace with modifiers to `$launch()` when available for async transforms ###
+    first = Symbol 'first'
+    return $ { first, }, ( d, send ) =>
+      return send d unless d is first
+      send new_datom '^interplot:launch-browser'
+      send new_datom '^foo'
+
+  #-----------------------------------------------------------------------------------------------------------
   @$launch = ( S ) ->
-    has_launched      = false
+    ### TAINT settings to be passed in via `S`? ###
     url               = 'file:///home/flow/jzr/interplot/public/demo-galley/main.html'
     wait_for_selector = '#page-ready'
     gui               = true
     #.........................................................................................................
     return $async ( d, send, done ) =>
-      send stamp d
-      unless has_launched
-        urge "launching browser..."
-        S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
-        #.....................................................................................................
-        ### TAINT how to best expose libraries in browser context? ###
-        await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
-        await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
-        #.....................................................................................................
-        urge "browser launched"
+      unless select d, '^interplot:launch-browser'
+        send d
+        return done()
+      urge "launching browser..."
+      S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
+      urge "browser launched"
+      #.....................................................................................................
+      ### TAINT how to best expose libraries in browser context? ###
+      await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
+      await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
+      #.....................................................................................................
+      send new_datom '^interplot:browser-ready'
       return done()
 
   #-----------------------------------------------------------------------------------------------------------
-  @$f = ( settings ) ->
-    ### TAINT how to avoid repeated validation of settings? ###
+  @$f = ( S ) ->
     return $async ( d, send, done ) =>
-      #.......................................................................................................
-      # help "^3342^ output written to #{settings.path}"
+      debug d
       send stamp d
       return done()
 
@@ -191,19 +192,11 @@ provide_interplot_extensions = ->
     validate.nonempty_text  S.target_path
     #..........................................................................................................
     pipeline  = []
-    pipeline.push @$launch S
-    pipeline.push @$f()
+    pipeline.push @$issue_launch_cmd  S
+    pipeline.push @$launch            S
+    pipeline.push @$f                 S
     #..........................................................................................................
     return SP.pull pipeline...
-
-  #-----------------------------------------------------------------------------------------------------------
-  ### TAINT put into browser interface module ###
-  @get_page = ( browser ) ->
-    if isa.empty ( pages = await browser.pages() )
-      urge "µ29923-2 new page";           R = await browser.newPage()
-    else
-      urge "µ29923-2 use existing page";  R = pages[ 0 ]
-    return R
 
 provide_interplot_extensions.apply INTERPLOT
 
@@ -220,15 +213,16 @@ provide_interplot_extensions.apply INTERPLOT
   S.source_path = PATH.join S.sample_home, 'sample-text.html'
   S.target_path = PATH.join S.sample_home, 'sample-text.pdf'
   pipeline      = []
-  source        = SP.read_from_file S.source_path
+  # source        = SP.read_from_file S.source_path
+  source        = await SP._KLUDGE_file_as_buffers S.source_path
   not_a_text    = ( d ) -> not isa.text d
   #.........................................................................................................
   pipeline.push source                                           ### ↓↓↓ arbitrarily chunked buffers ↓↓↓ ###
-  ### TAINT implement `$split()` w/ newline/whitespace-preserving ###
   #.........................................................................................................
+  ### TAINT implement `$split()` w/ newline/whitespace-preserving ###
   pipeline.push SP.$split()                                                    ### ↓↓↓ lines of text ↓↓↓ ###
-  pipeline.push INTERTEXT.$as_lines()
   pipeline.push DATAMILL.$stop_on_stop_tag()
+  pipeline.push INTERTEXT.$append '\n'
   #.........................................................................................................
   pipeline.push $ { leapfrog: not_a_text, }, HTML.$html_as_datoms()
   pipeline.push DEMO.$grab_first_paragraphs()
@@ -236,9 +230,9 @@ provide_interplot_extensions.apply INTERPLOT
   # pipeline.push DEMO.$consolidate_text()
   pipeline.push DEMO.$blockify()                                         ### ↓↓↓ text/HTML of blocks ↓↓↓ ###
   pipeline.push DEMO.$hyphenate()
-  pipeline.push DEMO.$as_slabs()                                         ### ↓↓↓ slabs ↓↓↓ ###
+  pipeline.push DEMO.$as_slabs()                                                       ### ↓↓↓ slabs ↓↓↓ ###
   #.........................................................................................................
-  # pipeline.push INTERPLOT.$text_as_pdf S
+  pipeline.push INTERPLOT.$text_as_pdf S
   pipeline.push $show()
   #.........................................................................................................
   pipeline.push $drain =>

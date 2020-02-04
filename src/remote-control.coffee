@@ -97,13 +97,13 @@ merge                     = require 'lodash.merge'
   settings.puppeteer.headless = not settings.gui ? true
   R.browser                   = await PUPPETEER.launch settings.puppeteer
   R.page                      = await @get_old_or_new_page R
-  await R.page.goto settings.url                          if settings.url?
-  await R.page.waitForSelector settings.wait_for_selector if settings.wait_for_selector
+  page_loaded                 = new Promise ( resolve ) => R.page.once 'load', => resolve()
+  await R.page.goto settings.url if settings.url?
+  await page_loaded
+  await R.page.waitForSelector settings.wait_for_selector if settings.wait_for_selector?
   #.........................................................................................................
   R.page.on 'error', ( error ) => throw error
   R.page.on 'console', @_echo_browser_console
-  # await R.page.exposeFunction 'sha1', ( text ) =>
-  #   ( require 'crypto' ).createHash( 'sha1' ).update( text ).digest( 'hex' )[ .. 17 ]
   #.........................................................................................................
   return R
 
