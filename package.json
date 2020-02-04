@@ -17,12 +17,12 @@
     "coffeenode-teacup": "^0.2.0",
     "commander": "^4.1.1",
     "hyphenopoly": "^4.0.0",
-    "intertext": "^0.4.0",
+    "intertext": "^0.5.0",
     "intertype": "^3.1.0",
     "linebreak": "^1.0.2",
     "lodash.merge": "^4.6.2",
     "number-format.js": "^2.0.9",
     "puppeteer": "^2.1.0",
-    "steampipes": "^3.5.1"
+    "steampipes": "^3.6.0"
   }
 }
