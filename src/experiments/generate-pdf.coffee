@@ -73,6 +73,7 @@ echo_browser_console = ( c ) =>
 
 #-----------------------------------------------------------------------------------------------------------
 get_page = ( browser ) ->
+  ### OK ###
   if isa.empty ( pages = await browser.pages() )
     urge "µ29923-2 new page";           R = await browser.newPage()
   else
