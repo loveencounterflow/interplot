@@ -29,6 +29,7 @@ types                     = require '../types'
 # DATOM                     = new ( require 'datom' ).Datom { dirty: false, }
 DATOM                     = require 'datom'
 { new_datom
+  stamp
   lets
   select }                = DATOM.export()
 #...........................................................................................................
@@ -47,14 +48,25 @@ LINEMAKER                 = require '../linemaker'
 # PUPPETEER                 = require 'puppeteer'
 INTERTEXT                 = require 'intertext'
 { HTML, }                 = INTERTEXT
+#...........................................................................................................
+RC                        = require '../remote-control'
+DATAMILL                  = {}
+DEMO                      = {}
+INTERPLOT                 = {}
+_settings                 = DATOM.freeze require '../settings'
 
 
+#===========================================================================================================
+#
 #-----------------------------------------------------------------------------------------------------------
 HTML.$html_as_datoms = ->
   return $ ( buffer_or_text, send ) =>
     send d for d in HTML.html_as_datoms buffer_or_text
     return null
 
+
+#===========================================================================================================
+#
 #-----------------------------------------------------------------------------------------------------------
 INTERTEXT.$as_lines = ( settings ) ->
   ### TAINT implement settings to configure what to do if data is not text ###
@@ -62,8 +74,10 @@ INTERTEXT.$as_lines = ( settings ) ->
     send if ( isa.text x ) then x + '\n' else x
     return null
 
+
+#===========================================================================================================
+#
 #-----------------------------------------------------------------------------------------------------------
-DATAMILL = {}
 DATAMILL.$stop_on_stop_tag = ->
   has_stopped = false
   line_nr     = 0
@@ -76,15 +90,15 @@ DATAMILL.$stop_on_stop_tag = ->
       return send.end()
     send line
 
-#-----------------------------------------------------------------------------------------------------------
-DEMO = {}
 
+#===========================================================================================================
+#
 #-----------------------------------------------------------------------------------------------------------
-DEMO.$grab_first_paragraph = ->
+DEMO.$grab_first_paragraphs = ->
   p_count   = 0
   within_p  = false
   return $ ( d, send ) =>
-    return send.end() if p_count >= 1
+    return send.end() if p_count >= 2
     switch d.$key
       when '<p'
         within_p = true
@@ -103,31 +117,131 @@ DEMO.$filter_text = ->
     return unless select d, '^text'
     send d.text
 
+# #-----------------------------------------------------------------------------------------------------------
+# DEMO.$consolidate_text = ->
+#   ### TAINT use SP.$collect() ?? ###
+#   last      = Symbol 'last'
+#   collector = []
+#   return $ { last, }, ( d, send ) =>
+#     return send collector.join '' if d is last
+#     validate.text d
+#     collector.push d
+
 #-----------------------------------------------------------------------------------------------------------
-DEMO.$consolidate_text = ->
-  ### TAINT use SP.$collect() ?? ###
+DEMO.$blockify = ->
   last      = Symbol 'last'
   collector = []
   return $ { last, }, ( d, send ) =>
-    return send collector.join '' if d is last
+    if d is last
+      text = collector.join ''
+      return send new_datom '^mkts:block', { text, }
     validate.text d
     collector.push d
 
 #-----------------------------------------------------------------------------------------------------------
+DEMO.$hyphenate = ->
+  return $ ( d, send ) =>
+    return send d unless select d, '^mkts:block'
+    send lets d, ( d ) => d.text = INTERTEXT.HYPH.hyphenate d.text
+
+#-----------------------------------------------------------------------------------------------------------
+DEMO.$as_slabs = ->
+  return $ ( d, send ) =>
+    return send d unless select d, '^mkts:block'
+    send stamp d
+    send new_datom '^slabs', INTERTEXT.SLABS.slabs_from_text d.text
+    # send lets d, ( d ) => d.text = INTERTEXT.hyphenate d.text
+
+
+#===========================================================================================================
+#
+#-----------------------------------------------------------------------------------------------------------
+provide_interplot_extensions = ->
+
+  #-----------------------------------------------------------------------------------------------------------
+  @$launch = ( S ) ->
+    has_launched      = false
+    url               = 'file:///home/flow/jzr/interplot/public/demo-galley/main.html'
+    wait_for_selector = '#page-ready'
+    gui               = true
+    #.........................................................................................................
+    return $async ( d, send, done ) =>
+      send stamp d
+      unless has_launched
+        urge "launching browser..."
+        S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
+        #.....................................................................................................
+        ### TAINT how to best expose libraries in browser context? ###
+        await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
+        await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
+        #.....................................................................................................
+        urge "browser launched"
+      return done()
+
+  #-----------------------------------------------------------------------------------------------------------
+  @$f = ( settings ) ->
+    ### TAINT how to avoid repeated validation of settings? ###
+    return $async ( d, send, done ) =>
+      #.......................................................................................................
+      # help "^3342^ output written to #{settings.path}"
+      send stamp d
+      return done()
+
+  #-----------------------------------------------------------------------------------------------------------
+  @$text_as_pdf = ( S ) ->
+    validate.nonempty_text  S.target_path
+    #..........................................................................................................
+    pipeline  = []
+    pipeline.push @$launch S
+    pipeline.push @$f()
+    #..........................................................................................................
+    return SP.pull pipeline...
+
+  #-----------------------------------------------------------------------------------------------------------
+  ### TAINT put into browser interface module ###
+  @get_page = ( browser ) ->
+    if isa.empty ( pages = await browser.pages() )
+      urge "µ29923-2 new page";           R = await browser.newPage()
+    else
+      urge "µ29923-2 use existing page";  R = pages[ 0 ]
+    return R
+
+provide_interplot_extensions.apply INTERPLOT
+
+#===========================================================================================================
+#
+#-----------------------------------------------------------------------------------------------------------
 @f = -> new Promise ( resolve ) =>
-  source_path = PATH.resolve PATH.join __dirname, '../../sample-data/sample-text.html'
-  pipeline    = []
-  source      = SP.read_from_file source_path
-  not_a_text  = ( d ) -> not isa.text d
-  pipeline.push source
-  pipeline.push SP.$split() ### TAINT implement `$split()` w/ newline/whitespace-preserving ###
+  S =
+    settings:     lets _settings, ( d ) -> assign d, headless: false
+    browser:      null
+    page:         null
+  #.........................................................................................................
+  S.sample_home = PATH.resolve PATH.join __dirname, '../../sample-data'
+  S.source_path = PATH.join S.sample_home, 'sample-text.html'
+  S.target_path = PATH.join S.sample_home, 'sample-text.pdf'
+  pipeline      = []
+  source        = SP.read_from_file S.source_path
+  not_a_text    = ( d ) -> not isa.text d
+  #.........................................................................................................
+  pipeline.push source                                           ### ↓↓↓ arbitrarily chunked buffers ↓↓↓ ###
+  ### TAINT implement `$split()` w/ newline/whitespace-preserving ###
+  #.........................................................................................................
+  pipeline.push SP.$split()                                                    ### ↓↓↓ lines of text ↓↓↓ ###
   pipeline.push INTERTEXT.$as_lines()
   pipeline.push DATAMILL.$stop_on_stop_tag()
+  #.........................................................................................................
   pipeline.push $ { leapfrog: not_a_text, }, HTML.$html_as_datoms()
-  pipeline.push DEMO.$grab_first_paragraph()
+  pipeline.push DEMO.$grab_first_paragraphs()
   pipeline.push DEMO.$filter_text()
-  pipeline.push DEMO.$consolidate_text()
+  # pipeline.push DEMO.$consolidate_text()
+  pipeline.push DEMO.$blockify()                                         ### ↓↓↓ text/HTML of blocks ↓↓↓ ###
+  pipeline.push DEMO.$hyphenate()
+  pipeline.push DEMO.$as_slabs()                                         ### ↓↓↓ slabs ↓↓↓ ###
+  #.........................................................................................................
+  # pipeline.push INTERPLOT.$text_as_pdf S
   pipeline.push $show()
+  #.........................................................................................................
   pipeline.push $drain =>
     resolve()
   SP.pull pipeline...
