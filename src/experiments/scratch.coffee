@@ -39,6 +39,8 @@ SP                        = require 'steampipes'
   $async
   $drain
   $watch
+  $before_first
+  $async_before_first
   $show  }                = SP.export()
 #...........................................................................................................
 after                     = ( dts, f ) -> setTimeout f, dts * 1000
