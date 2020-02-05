@@ -149,6 +149,20 @@ DEMO.$as_slabs = ->
 #-----------------------------------------------------------------------------------------------------------
 provide_interplot_extensions = ->
 
+  #-----------------------------------------------------------------------------------------------------------
+  leapfrog = ( d, send, done ) ->
+    ### NOTE Helper function to slightly simplify quick exit from (async) transforms; used to make up for
+    the still missing `{ leapfrog, }` modifier for `$async` transforms. Does very little but helps to mark
+    those points where the modifier would have been used. Usage:
+
+    ```coffee
+    $t = -> $async ( d, send, done ) =>
+      return ( leapfrog d, send, done ) unless select d, '^key-i'm-waiting-for
+      ...
+    ```
+    ###
+    send d
+    done()
 
   #-----------------------------------------------------------------------------------------------------------
   @$launch = ( S ) ->
@@ -186,9 +200,12 @@ provide_interplot_extensions = ->
     return SP.pull pipeline...
 
   #-----------------------------------------------------------------------------------------------------------
-  @$f = ( S ) ->
+  @$find_first_target_element = ( S ) ->
     return $async ( d, send, done ) =>
-      send stamp d
+      return ( leapfrog d, send, done ) unless select d, '^interplot:browser-ready'
+      send d
+      selector = 'column:first' # 'column:nth(0)'
+      send new_datom '^interplot:first-target-element', { selector, }
       return done()
 
   #-----------------------------------------------------------------------------------------------------------
