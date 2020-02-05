@@ -68,11 +68,6 @@ merge                     = require 'lodash.merge'
   path        = short_path unless short_path.startsWith '../'
   location    = "#{path}:#{linenr}"
   text        = c._text ? '???'
-  # whisper '^33489^', ( types.all_keys_of c ).sort().join ' ' # [ .. 100 ]
-  # whisper '^33489^', ( types.all_keys_of c.valueOf() ).sort().join ' ' # [ .. 100 ]
-  # whisper '^33489^', typeof c
-  # whisper '^33489^', typeof c.valueOf()
-  # debug c.valueOf().jsonValue
   #.........................................................................................................
   if c._type is 'error'
     settings.has_error = true
