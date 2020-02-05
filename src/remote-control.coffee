@@ -81,7 +81,7 @@ merge                     = require 'lodash.merge'
   return null
 
 #-----------------------------------------------------------------------------------------------------------
-@get_old_or_new_page = ( me ) ->
+@fetch_old_or_new_page = ( me ) ->
   return await me.browser.newPage() if isa.empty ( pages = await me.browser.pages() )
   return pages[ 0 ]
 
@@ -91,7 +91,7 @@ merge                     = require 'lodash.merge'
   settings                    = merge {}, ( require './settings' ), settings
   settings.puppeteer.headless = not settings.gui ? true
   R.browser                   = await PUPPETEER.launch settings.puppeteer
-  R.page                      = await @get_old_or_new_page R
+  R.page                      = await @fetch_old_or_new_page R
   page_loaded                 = new Promise ( resolve ) => R.page.once 'load', => resolve()
   await R.page.goto settings.url if settings.url?
   await page_loaded
