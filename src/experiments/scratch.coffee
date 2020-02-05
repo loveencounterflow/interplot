@@ -149,14 +149,6 @@ DEMO.$as_slabs = ->
 #-----------------------------------------------------------------------------------------------------------
 provide_interplot_extensions = ->
 
-  #-----------------------------------------------------------------------------------------------------------
-  @$issue_launch_cmd = ( S ) ->
-    ### NOTE replace with modifiers to `$launch()` when available for async transforms ###
-    first = Symbol 'first'
-    return $ { first, }, ( d, send ) =>
-      return send d unless d is first
-      send new_datom '^interplot:launch-browser'
-      send new_datom '^foo'
 
   #-----------------------------------------------------------------------------------------------------------
   @$launch = ( S ) ->
@@ -165,34 +157,61 @@ provide_interplot_extensions = ->
     wait_for_selector = '#page-ready'
     gui               = true
     #.........................................................................................................
-    return $async ( d, send, done ) =>
-      unless select d, '^interplot:launch-browser'
-        send d
+    @$XXX_issue_launch_cmd = ( S ) ->
+      ### NOTE replace with modifiers to `$launch()` when available for async transforms ###
+      first = Symbol 'first'
+      return $ { first, }, ( d, send ) =>
+        return send d unless d is first
+        send new_datom '^interplot:launch-browser'
+    #.........................................................................................................
+    @$XXX_launch_proper = ( S ) ->
+      return $async ( d, send, done ) =>
+        unless select d, '^interplot:launch-browser'
+          send d
+          return done()
+        urge "launching browser..."
+        S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
+        urge "browser launched"
+        #.....................................................................................................
+        ### TAINT how to best expose libraries in browser context? ###
+        await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
+        await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
+        #.....................................................................................................
+        send new_datom '^interplot:browser-ready'
         return done()
-      urge "launching browser..."
-      S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
-      urge "browser launched"
-      #.....................................................................................................
-      ### TAINT how to best expose libraries in browser context? ###
-      await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
-      await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
-      #.....................................................................................................
-      send new_datom '^interplot:browser-ready'
-      return done()
+    #.........................................................................................................
+    pipeline  = []
+    pipeline.push @$XXX_issue_launch_cmd  S
+    pipeline.push @$XXX_launch_proper     S
+    return SP.pull pipeline...
 
   #-----------------------------------------------------------------------------------------------------------
   @$f = ( S ) ->
     return $async ( d, send, done ) =>
-      debug d
       send stamp d
       return done()
 
   #-----------------------------------------------------------------------------------------------------------
   @$text_as_pdf = ( S ) ->
+    ###
+    * [x] launch browser
+    * [ ] establish flow order of target elements (columns) in document
+    * [ ] insert `pointer#pointer` DOM element into page
+    * [ ] ignore events other than `^slabs` FTTB
+    * [ ] determine leftmost, rightmost indexes into slugs that is close to one line worth of text
+    * [ ] call OPS method with assembled text to determine metrics of text at insertion point
+    * [ ] depending on metrics, accept line, try new one, or accept previous attempt
+    * [ ] call OPS method to accept good line and remove other
+    * [ ] check metrics whether vertical column limit has been reached; if so, reposition pointer
+
+    NOTE procedure as detailed here may suffer from performance issue due to repeated IPC; might be better
+    to preproduce and send more line data to reduce IPC calls. Check for ways that
+    `INTERTEXT.SLABS.assemble()` can be made available to OPS.
+
+    ###
     validate.nonempty_text  S.target_path
     #..........................................................................................................
     pipeline  = []
-    pipeline.push @$issue_launch_cmd  S
     pipeline.push @$launch            S
     pipeline.push @$f                 S
     #..........................................................................................................
