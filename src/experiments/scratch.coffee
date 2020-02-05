@@ -173,33 +173,18 @@ provide_interplot_extensions = ->
     wait_for_selector = '#page-ready'
     gui               = true
     #.........................................................................................................
-    @$XXX_issue_launch_cmd = ( S ) ->
-      ### NOTE replace with modifiers to `$launch()` when available for async transforms ###
-      first = Symbol 'first'
-      return $ { first, }, ( d, send ) =>
-        return send d unless d is first
-        send new_datom '^interplot:launch-browser'
-    #.........................................................................................................
-    @$XXX_launch_proper = ( S ) ->
-      return $async ( d, send, done ) =>
-        unless select d, '^interplot:launch-browser'
-          send d
-          return done()
-        urge "launching browser..."
-        S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
-        urge "browser launched"
-        #.....................................................................................................
-        ### TAINT how to best expose libraries in browser context? ###
-        await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
-        await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
-        #.....................................................................................................
-        send new_datom '^interplot:browser-ready'
-        return done()
-    #.........................................................................................................
-    pipeline  = []
-    pipeline.push @$XXX_issue_launch_cmd  S
-    pipeline.push @$XXX_launch_proper     S
-    return SP.pull pipeline...
+    return $async_before_first ( send, done ) =>
+      send new_datom '^interplot:launch-browser'
+      urge "launching browser..."
+      S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
+      urge "browser launched"
+      #.....................................................................................................
+      ### TAINT how to best expose libraries in browser context? ###
+      await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
+      await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
+      #.....................................................................................................
+      send new_datom '^interplot:browser-ready'
+      return done()
 
   #-----------------------------------------------------------------------------------------------------------
   @$find_first_target_element = ( S ) ->
