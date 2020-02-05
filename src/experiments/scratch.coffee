@@ -229,8 +229,8 @@ provide_interplot_extensions = ->
     validate.nonempty_text  S.target_path
     #..........................................................................................................
     pipeline  = []
-    pipeline.push @$launch            S
-    pipeline.push @$f                 S
+    pipeline.push @$launch                      S
+    pipeline.push @$find_first_target_element   S
     #..........................................................................................................
     return SP.pull pipeline...
 
