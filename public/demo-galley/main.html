@@ -1,4 +1,4 @@
-<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css" /><script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><body class="debug">
+<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css" /><script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops.js"></script><script type="text/javascript" src="../intertext.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><body class="debug">
 
 <script type="text/javascript" src="../fczbkk-css-selector-generator.js"></script><script type="text/javascript">(function() {
   var __slice = [].slice,
@@ -8,7 +8,7 @@
   (function() {
       return ($(document)).ready(function() {
         var sg;
-        sg = new CssSelectorGenerator;
+        sg = new CssSelectorGenerator();
         globalThis.selector_of = function(node) {
           return sg.getSelector(as_dom_node(node));
         };
