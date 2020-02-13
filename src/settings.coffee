@@ -13,8 +13,17 @@ module.exports =
   url:                null # 'file:///home/flow/jzr/interplot/public/demo-galley/main.html'
   wait_for_selector:  null # '#page-ready'
   gui:                false
+  emulate_media:      'print'
+  # use_profile:        'firefox'
+  #.........................................................................................................
+  firefox:
+    product:          'firefox'
+    headless:         false
+    executablePath:   '/home/flow/bin/firefox-nightly'
   #.........................................................................................................
   puppeteer:
+    product:            'chrome'
+    # product:            'firefox'
     headless:           false
     # headless:           true
     pipe:               true ### use pipe instead of web sockets for communication ###
@@ -30,7 +39,12 @@ module.exports =
       ### https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md ###
       # '--disable-infobars' # hide 'Chrome is being controlled by ...'
       '--no-first-run'
-      # '--enable-automation'
+      '--enable-automation'
+      '--disable-notifications'
+      '--disable-desktop-notifications'
+      '--disable-datasaver-prompt'
+      '--disable-hang-monitor'
+      '--disable-timeouts-for-profiling'
       '--no-default-browser-check'
       # '--incognito'
       # process.env.NODE_ENV === "production" ? "--kiosk" : null
@@ -39,6 +53,16 @@ module.exports =
       # '--disable-setuid-sandbox'
       # '--start-fullscreen'
       # '--start-maximized'
+      '--user-data-dir=/tmp/interplot-puppeteer-chromium-user-data'
+      # '--app-auto-launched'
+      # '--incognito'
+      ### doesnt work anymore see https://superuser.com/questions/461035/disable-google-chrome-session-restore-functionality#618972 ###
+      ### https://github.com/puppeteer/puppeteer/issues/839 ###
+      # '--disable-session-crashed-bubble'
+      ### ---------------------------------------------- ###
+      # '--restore-last-session' ### never, always opens new tab ###
+      # '--enable-consumer-kiosk'
+      # '--kiosk'
       '--window-size=1200,500'
       '--high-dpi-support=1'
       # '--force-device-scale-factor=0.9' ### ca. 0.5 .. 1.0, smaller number scales down entire UI ###
