@@ -289,35 +289,37 @@ demo_2 = ->
   target_selector = '#page-ready'
   #.........................................................................................................
   # Set up browser and page.
-  urge "launching browser";  browser = await PUPPETEER.launch settings.puppeteer
+  urge "launching browser";
+  # browser = await PUPPETEER.launch settings.puppeteer
+  browser_settings            = settings[ settings.use_profile ? 'puppeteer' ]
+  browser                     = await PUPPETEER.launch browser_settings
   page = await get_page browser
   #.........................................................................................................
   page.on 'error', ( error ) => throw error
   page.on 'console', echo_browser_console
   #.........................................................................................................
-  media = 'print'
-  urge "emulate media: #{rpr media}"
-  debug '^4432^', await page.evaluate -> ( matchMedia 'print' ).matches
-  await page.emulateMediaType media
-  debug '^4432^', await page.evaluate -> ( matchMedia 'print' ).matches
-  await page._client.send 'Emulation.clearDeviceMetricsOverride'
-  # await page.emulateMedia null
-  # page.setViewport settings.viewport
-  # await page.emulate PUPPETEER.devices[ 'iPhone 6' ]
-  # await page.emulate PUPPETEER.devices[ 'Galaxy Note 3 landscape' ]
+  # media = 'print'                                       ### OK ###
+  # urge "emulate media: #{rpr media}"
+  # debug '^4432^', await page.evaluate -> ( matchMedia 'print' ).matches
+  # await page.emulateMediaType media
+  # debug '^4432^', await page.evaluate -> ( matchMedia 'print' ).matches
+  # await page._client.send 'Emulation.clearDeviceMetricsOverride'
+  # # await page.emulateMedia null
+  # # page.setViewport settings.viewport
+  # # await page.emulate PUPPETEER.devices[ 'iPhone 6' ]
+  # # await page.emulate PUPPETEER.devices[ 'Galaxy Note 3 landscape' ]
   #.........................................................................................................
   urge "goto #{url}"
   await page.goto url
   #.........................................................................................................
-  # await page.exposeFunction 'sha1', ( text ) =>
-  #   ( require 'crypto' ).createHash( 'sha1' ).update( text ).digest( 'hex' )[ .. 17 ]
-  await page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
-  await page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
-  #.........................................................................................................
   urge "waitForSelector"
   await page.waitForSelector target_selector
   #.........................................................................................................
-  await profile page, -> await demo_insert_slabs page
+  await page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
+  await page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
+  #.........................................................................................................
+  # await profile page, -> await demo_insert_slabs page
+  await demo_insert_slabs page
   #.........................................................................................................
   # debug '^12221^', jr await computed_styles_from_selector page, 'slug'
   styles          = await styles_from_selector page, 'slug'
