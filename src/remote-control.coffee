@@ -81,6 +81,18 @@ merge                     = require 'lodash.merge'
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+@clear_metrics = ( me ) ->
+  await me.page._client.send 'Emulation.clearDeviceMetricsOverride'
+
+#-----------------------------------------------------------------------------------------------------------
+@emulate_media = ( me ) ->
+  await me.page.emulateMediaType me.emulate_media ? 'print'
+  # await me.page.emulateMedia null
+  # debug '^4432^', await me.page.evaluate -> ( matchMedia 'print' ).matches
+  # await me.page.emulate PUPPETEER.devices[ 'Galaxy Note 3 landscape' ]
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
 @fetch_old_or_new_page = ( me ) ->
   return await me.browser.newPage() if isa.empty ( pages = await me.browser.pages() )
   return pages[ 0 ]
@@ -90,11 +102,20 @@ merge                     = require 'lodash.merge'
   R                           = {}
   settings                    = merge {}, ( require './settings' ), settings
   settings.puppeteer.headless = not settings.gui ? true
-  R.browser                   = await PUPPETEER.launch settings.puppeteer
+  browser_settings            = settings[ settings.use_profile ? 'puppeteer' ]
+  R.browser                   = await PUPPETEER.launch browser_settings
+  # context                     = await R.browser.newContext()
+  # R.page                      = await context.newPage()
   R.page                      = await @fetch_old_or_new_page R
+  #.........................................................................................................
+  ### try to avoid 'slow network' notifications; also, no need for non-local content ATM: ###
+  await R.page.setOfflineMode true
+  #.........................................................................................................
   page_loaded                 = new Promise ( resolve ) => R.page.once 'load', => resolve()
   await R.page.goto settings.url if settings.url?
   await page_loaded
+  # await @emulate_media R ### TAINT causes columns to be hidden behind artboard (?) ###
+  await @clear_metrics R
   await R.page.waitForSelector settings.wait_for_selector if settings.wait_for_selector?
   #.........................................................................................................
   R.page.on 'error', ( error ) => throw error

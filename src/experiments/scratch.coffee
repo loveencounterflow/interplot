@@ -171,6 +171,7 @@ provide_interplot_extensions = ->
     ### TAINT settings to be passed in via `S`? ###
     url               = 'file:///home/flow/jzr/interplot/public/demo-galley/main.html'
     wait_for_selector = '#page-ready'
+    gui               = false
     gui               = true
     #.........................................................................................................
     return $async_before_first ( send, done ) =>
@@ -191,7 +192,14 @@ provide_interplot_extensions = ->
     return $async ( d, send, done ) =>
       return ( leapfrog d, send, done ) unless select d, '^interplot:browser-ready'
       send d
-      selector = 'column:first' # 'column:nth(0)'
+      selector = 'column' # 'column:nth(0)'
+      # debug '^22298^', await S.rc.page.$ selector
+      # debug '^22298^', await S.rc.page.$ 'column'
+      opsf = ( selector ) ->
+        ( $ document ).ready ->
+          globalThis.xxx_target_elements = $ selector
+        return globalThis.xxx_target_elements?.length
+      debug '^22298^', await S.rc.page.evaluate opsf, selector
       send new_datom '^interplot:first-target-element', { selector, }
       return done()
 
@@ -266,7 +274,15 @@ provide_interplot_extensions.apply INTERPLOT
 
 ############################################################################################################
 if module is require.main then do =>
+  #.........................................................................................................
   await @f()
+  # settings =
+  #   product:          'firefox'
+  #   headless:         false
+  #   executablePath:   '/usr/bin/firefox'
+  # await ( require 'puppeteer' ).launch settings
   help 'ok'
+
+
 
 
