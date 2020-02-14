@@ -235,10 +235,17 @@ provide_interplot_extensions.apply INTERPLOT
 #
 #-----------------------------------------------------------------------------------------------------------
 @f = -> new Promise ( resolve ) =>
+  #.........................................................................................................
+  process.on 'SIGINT', ->
+    ### Make sure browser is closed gracefully so as to continue in previous state and avoid "do you want to
+    restore" dialog. This solution works sometimes but not always. ###
+    warn "Caught interrupt signal"
+    await S.rc.page.close { runBeforeUnload: true, }
+    await S.rc.browser.close()
+    process.exit()
+  #.........................................................................................................
   S =
     settings:     lets _settings, ( d ) -> assign d, headless: false
-    browser:      null
-    page:         null
   #.........................................................................................................
   S.sample_home = PATH.resolve PATH.join __dirname, '../../sample-data'
   S.source_path = PATH.join S.sample_home, 'sample-text.html'
