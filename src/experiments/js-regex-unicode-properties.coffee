@@ -16,10 +16,11 @@ help                      = CND.get_logger 'help',      badge
 urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
 #...........................................................................................................
-_format                   = require 'number-format.js'
-format_float              = ( x ) -> _format '#,##0.000', x
-format_integer            = ( x ) -> _format '#,##0.',    x
-format_as_percentage      = ( x ) -> _format '#,##0.00',  x * 100
+# _format                   = require 'number-format.js'
+# format_float              = ( x ) -> _format '#,##0.000', x
+# format_integer            = ( x ) -> _format '#,##0.',    x
+# format_as_percentage      = ( x ) -> _format '#,##0.00',  x * 100
+format_integer = ( x ) -> "#{x}"
 #...........................................................................................................
 types                     = require '../types'
 { isa
@@ -43,7 +44,7 @@ show_ranges = ( ranges ) ->
     [ first_cid, last_cid, ]  = range
     last_cid                 ?= first_cid
     glyphs                    = []
-    for cid in [ first_cid .. ( Math.min first_cid + 10, last_cid ) ]
+    for cid in [ first_cid .. ( Math.min first_cid + 32, last_cid ) ]
       glyphs.push String.fromCodePoint cid
     glyphs = glyphs.join ''
     first_cid_hex = "0x#{first_cid.toString 16}"
@@ -90,36 +91,41 @@ ranges_from_pattern = ( pattern ) ->
 # pattern_B   = /^\p{Script_Extensions=Latin}$/u
 ### see https://github.com/mathiasbynens/regexpu-core/blob/master/property-escapes.md ###
 patterns    = []
-# patterns.push /^\p{Script_Extensions=Latin}$/u
-# patterns.push /^\p{Script=Latin}$/u
 # # patterns.push /^\p{Script_Extensions=Cyrillic}$/u
 # # patterns.push /^\p{Script_Extensions=Greek}$/u
 # patterns.push /^\p{Unified_Ideograph}$/u
-# patterns.push /^\p{Script=Han}$/u
-patterns.push /^\p{Script_Extensions=Han}$/u
-patterns.push /^\p{IDS_Binary_Operator}$/u
-patterns.push /^\p{IDS_Trinary_Operator}$/u
+patterns.push /^\p{Script=Han}$/u
+patterns.push /^\p{Cc}$/u # Control
+patterns.push /^\p{Cf}$/u # Format
+patterns.push /^\p{Cs}$/u # Surrogate
+# patterns.push /^\p{Co}$/u # Private Use
+patterns.push /^\p{Cn}$/u # Unassigned
+# patterns.push /^\p{Script_Extensions=Han}$/u
+# patterns.push /^\p{IDS_Binary_Operator}$/u
+# patterns.push /^\p{IDS_Trinary_Operator}$/u
 # patterns.push /^\p{Radical}$/u
 # patterns.push /^\p{White_Space}$/u
 # patterns.push /^\p{Script_Extensions=Hiragana}$/u
-patterns.push /^\p{Script=Hiragana}$/u
+# patterns.push /^\p{Script=Hiragana}$/u
 # patterns.push /^\p{Script_Extensions=Katakana}$/u
-patterns.push /^\p{Script=Katakana}$/u
-patterns.push /^\p{Script_Extensions=Hangul}$/u
-patterns.push /^\p{Ideographic}$/u
+# patterns.push /^\p{Script=Katakana}$/u
+# patterns.push /^\p{Script_Extensions=Hangul}$/u
+# patterns.push /^\p{Ideographic}$/u
+# patterns.push /^\p{Script_Extensions=Latin}$/u
+# patterns.push /^\p{Script=Latin}$/u
 for pattern in patterns
   show_ranges ranges_from_pattern pattern
 
-info isa.interplot_text_with_hiragana 'あいうえおか'
-info isa.interplot_text_with_hiragana 'あいうえおかx'
-info isa.interplot_text_with_hiragana 'abc'
-info isa.interplot_text_hiragana      'あいうえおか'
-info isa.interplot_text_with_ideographic      'あいうえおか'
-info isa.interplot_text_cjk           'あいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
-info isa.interplot_text_with_cjk      'あいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
-info isa.interplot_text_cjk           'abcあいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
-info isa.interplot_text_with_cjk      'abcあいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
-info ///^#{types._regex_any_of_cjk_property_terms()}+$///
+# info isa.interplot_text_with_hiragana 'あいうえおか'
+# info isa.interplot_text_with_hiragana 'あいうえおかx'
+# info isa.interplot_text_with_hiragana 'abc'
+# info isa.interplot_text_hiragana      'あいうえおか'
+# info isa.interplot_text_with_ideographic      'あいうえおか'
+# info isa.interplot_text_cjk           'あいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
+# info isa.interplot_text_with_cjk      'あいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
+# info isa.interplot_text_cjk           'abcあいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
+# info isa.interplot_text_with_cjk      'abcあいうえおか〇〡〢〣〤〥〦〧〨〩〸〹〺㐀㐁㐂一丁丂豈更車並况全𗀀𗀁𗀂𘠄𘠅𘠆𘠇𘠈𘠉𘠊𛅰𛅱𛅲𛅳𠀀𠀁가각갂、。〃《》【】〓〜ｦｧｨｩｱｲｳｴ⿰⿱𝍦𝍧𝍨'
+# info ///^#{types._regex_any_of_cjk_property_terms()}+$///
 
 
 
