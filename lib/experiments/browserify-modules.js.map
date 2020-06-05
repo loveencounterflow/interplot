@@ -1,1 +1,13 @@
-undefined
+{
+  "version": 3,
+  "file": "browserify-modules.js",
+  "sourceRoot": "../..",
+  "sources": [
+    "src/experiments/browserify-modules.coffee"
+  ],
+  "names": [],
+  "mappings": ";AAEA,IAAA,IAAA,EAAA;;AAAA,SAAA,GAAoB,OAAA,CAAQ,WAAR;;AACpB,CAAA,CAAE,IAAF,CAAA,GAAoB,SAApB;;AACA,OAAO,CAAC,GAAR,CAAY,IAAI,CAAC,cAAL,CAAoB,IAAI,CAAC,SAAL,CAAe,gDAAf,CAApB,CAAZ",
+  "sourcesContent": [
+    "\n\nINTERTEXT \t\t\t\t\t\t\t\t= require 'intertext'\n{ HYPH, }\t\t\t\t\t\t\t\t\t= INTERTEXT\nconsole.log HYPH.reveal_hyphens HYPH.hyphenate \"welcome to the world of InterText hyphenation!\"\n\n"
+  ]
+}
