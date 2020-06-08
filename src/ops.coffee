@@ -144,8 +144,12 @@ provide_ops = ->
     locating the `pointer#pointer` element, then retrieving its parent element (the first column to
     consider) and the columns that either follow it according to a special 'text flow' attribute or (the
     default) in document order. ###
+    log '^ops/get_context@66855-1^'
     R                   = {}
-    R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+    ### TANT fix in template-elments ###
+    # R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+    log '^ops/get_context@66855-1^', 'R.slug_template', await TEMPLATES_slug()
+    R.slug_template     = $ "<slug><trim></trim></slug>"
     R.columns_jq        = ( $ 'page:first' ).find 'column'
     R.columns_idx       = 0
     R.column_jq         = $ R.columns_jq[ R.columns_idx ]
@@ -153,13 +157,17 @@ provide_ops = ->
     R.column_width_mm   = GAUGE.width_mm_of   R.column_jq
     R.column_height_mm  = GAUGE.height_mm_of  R.column_jq
     # R.pointer_jq        = R.column_jq.find '#pointer'
-    R.pointer_jq        = $ await TEMPLATES_pointer()
+    ### TANT fix in template-elments ###
+    # R.pointer_jq        = $ ( await TEMPLATES_pointer() )[ 0 ]
+    R.pointer_jq        = $ "<pointer id=pointer></pointer>"
+    log '^ops/get_context@66855-1^', 'R.column_jq', R.column_jq
+    log '^ops/get_context@66855-1^', 'R.pointer_jq', R.pointer_jq
     R.column_jq.append R.pointer_jq
     R.epsilon_mm        = 0.2
     #.........................................................................................................
     R.XXX_insert_big_words = true
     R.XXX_insert_big_words = false
-    R.live_demo         = false
+    R.live_demo         = true
     return R
 
   #-----------------------------------------------------------------------------------------------------------
@@ -167,6 +175,7 @@ provide_ops = ->
     ### TAINT how to use intertype in browser context? ###
     # validate.interplot_slabs_datom slabs_dtm
     ### TAINT use intertype for defaults ###
+    log '^ops/slugs_with_metrics_from_slabs@4455-1^'
     defaults            = { min_slab_idx: 0, }
     settings            = { defaults..., settings..., }
     slabs               = slabs_dtm.$value
