@@ -73,6 +73,7 @@ H                         = dhtml
         ( $ document ).ready ->
           sg = new CssSelectorGenerator;
           globalThis.selector_of = ( node ) -> sg.getSelector as_dom_node node
+          console.log '^template-elements@4476-1^', "CssSelectorGenerator ready"
           return null
     #.......................................................................................................
     ]
@@ -100,6 +101,7 @@ H                         = dhtml
       current_zoom = parseFloat zoomer_jq.css 'zoom'
       zoomer_jq.animate { zoom: current_zoom / 1.25, }, 150, 'linear'
     #.......................................................................................................
+    console.log '^template-elements@4476-2^', "zoomer ready"
     return null
   R.push H 'toolbox.gui', [
     H 'button#debugonoff.gui', "dbg"
@@ -148,6 +150,7 @@ H                         = dhtml
       @mm_from_px   = ( px    ) -> px * @mm_per_px
       @width_mm_of  = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().width
       @height_mm_of = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().height
+      console.log '^template-elements@4476-3^', "element gauge#gauge ready; px_per_mm: #{@px_per_mm}"
     f.apply globalThis.GAUGE = {}
     return null
   #.........................................................................................................

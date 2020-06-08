@@ -5,6 +5,8 @@
           globalThis.selector_of = function(node) {
             return sg.getSelector(as_dom_node(node));
           };
+          console.log('^template-elements@4476-1^',
+      "CssSelectorGenerator ready");
           return null;
         });
       })();</script><link href=./galley.css rel=stylesheet></head><body><unstyledelement id=unstyledelement></unstyledelement><style>gauge#gauge {
@@ -38,9 +40,10 @@
           this.width_mm_of = function(node) {
             return this.mm_from_px((as_dom_node(node)).getBoundingClientRect().width);
           };
-          return this.height_mm_of = function(node) {
+          this.height_mm_of = function(node) {
             return this.mm_from_px((as_dom_node(node)).getBoundingClientRect().height);
           };
+          return console.log('^template-elements@4476-3^', `element gauge#gauge ready; px_per_mm: ${this.px_per_mm}`);
         };
         f.apply(globalThis.GAUGE = {});
         return null;
@@ -77,6 +80,7 @@
           }, 150, 'linear');
         });
         //.......................................................................................................
+        console.log('^template-elements@4476-2^', "zoomer ready");
         return null;
       });
     })();</script><toolbox class=gui><button class=gui id=debugonoff>dbg</button><button class=gui id=zoomout>z–</button><button class=gui id=zoomin>z+</button></toolbox><artboard class=pages id=artboard1><zoomer id=zoomer><page class=right id=page1><earmark>1</earmark><paper></paper><chase><topmargin></topmargin><hbox><leftmargin></leftmargin><column></column><vgap></vgap><column></column><vgap></vgap><column></column><rightmargin></rightmargin></hbox><bottommargin></bottommargin></chase></page></zoomer></artboard><span id=page-ready></span></body>
