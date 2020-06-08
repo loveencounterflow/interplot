@@ -174,15 +174,22 @@ provide_interplot_extensions = ->
     gui               = false
     gui               = true
     #.........................................................................................................
-    return $async_before_first ( send, done ) =>
+    return $once_async_before_first ( send, done ) =>
+      progress '^P2^', "INTERPLOT_extensions.$launch"
       send new_datom '^interplot:launch-browser'
       urge "launching browser..."
       S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
       urge "browser launched"
       #.....................................................................................................
       ### TAINT how to best expose libraries in browser context? ###
-      await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../templates' ).slug     P...
-      await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../templates' ).pointer  P...
+      await S.rc.page.exposeFunction 'TEMPLATES_slug',     ( P... ) => ( require '../template-elements' ).slug     P...
+      await S.rc.page.exposeFunction 'TEMPLATES_pointer',  ( P... ) => ( require '../template-elements' ).pointer  P...
+      await S.rc.page.evaluate ->
+        ( $ document ).ready ->
+          console.log '^scratch/launch@6745^', 'TEMPLATES_slug()', await TEMPLATES_slug()
+          console.log '^scratch/launch@6745^', 'TEMPLATES_pointer()', await TEMPLATES_pointer()
+      debug '^scratch/$launch@883^', "slug():",     ( require '../template-elements' ).slug
+      debug '^scratch/$launch@883^', "pointer():",  ( require '../template-elements' ).pointer
       #.....................................................................................................
       send new_datom '^interplot:browser-ready'
       return done()
@@ -191,15 +198,19 @@ provide_interplot_extensions = ->
   @$find_first_target_element = ( S ) ->
     return $async ( d, send, done ) =>
       return ( leapfrog d, send, done ) unless select d, '^interplot:browser-ready'
+      progress '^P3^', "INTERPLOT_extensions.$find_first_target_element"
       send d
       selector = 'column' # 'column:nth(0)'
       # debug '^22298^', await S.rc.page.$ selector
       # debug '^22298^', await S.rc.page.$ 'column'
-      opsf = ( selector ) ->
-        ( $ document ).ready ->
-          globalThis.xxx_target_elements = $ selector
+      opsf = ( selector ) -> ### NOTE: OPSF = On-Page Script Function ###
+        ### TAINT race condition or can we rely on page ready? ###
+        # ( $ document ).ready ->
+        globalThis.xxx_target_elements = $ selector
+        console.log '^scratch/find_first_target_element@3987^', "xxx_target_elements:", xxx_target_elements[ 0 ]
         return globalThis.xxx_target_elements?.length
-      debug '^22298^', await S.rc.page.evaluate opsf, selector
+      column_count = await S.rc.page.evaluate opsf, selector
+      debug '^scratch/find_first_target_element@22298^', "found #{column_count} elements for #{rpr { selector, }}"
       send new_datom '^interplot:first-target-element', { selector, }
       return done()
 
@@ -226,7 +237,9 @@ provide_interplot_extensions = ->
     pipeline  = []
     pipeline.push @$launch                      S
     pipeline.push @$find_first_target_element   S
+    pipeline.push $watch ( d ) -> whisper '^scratch/$text_as_pdf@334', d
     #..........................................................................................................
+    progress '^P4^', "INTERPLOT_extensions.$text_as_pdf"
     return SP.pull pipeline...
 
 provide_interplot_extensions.apply INTERPLOT
@@ -262,7 +275,8 @@ provide_interplot_extensions.apply INTERPLOT
   pipeline.push DATAMILL.$stop_on_stop_tag()
   pipeline.push INTERTEXT.$append '\n'
   #.........................................................................................................
-  pipeline.push $ { leapfrog: not_a_text, }, HTML.$html_as_datoms()
+  pipeline.push $ { leapfrog: not_a_text, }, $XXX_datoms_from_html()
+  pipeline.push $watch ( d ) -> progress '^P5^', "(pipeline) #{rpr d}"
   pipeline.push DEMO.$grab_first_paragraphs()
   pipeline.push DEMO.$filter_text()
   # pipeline.push DEMO.$consolidate_text()
@@ -271,10 +285,11 @@ provide_interplot_extensions.apply INTERPLOT
   pipeline.push DEMO.$as_slabs()                                                       ### ↓↓↓ slabs ↓↓↓ ###
   #.........................................................................................................
   pipeline.push INTERPLOT.$text_as_pdf S
-  pipeline.push $show()
+  pipeline.push $show { title: '--334-->', }
   #.........................................................................................................
   pipeline.push $drain =>
     resolve()
+  progress '^P6^', "f"
   SP.pull pipeline...
   return null
 
