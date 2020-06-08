@@ -56,7 +56,18 @@ DEMO                      = {}
 INTERPLOT                 = {}
 _settings                 = DATOM.freeze require '../settings'
 
+progress = ( P... ) -> echo ( CND.cyan p for p in P )...
 
+#===========================================================================================================
+#
+#-----------------------------------------------------------------------------------------------------------
+$XXX_datoms_from_html = ->
+  return $ ( x, send ) ->
+    progress '^P1^', rpr x
+    if x is '<p>A concise introduction to the things discussed below.</p>\n'
+      send freeze { $key: '<p', }
+      send freeze { $key: '^text', text: "(simulated) A concise introduction to the things discussed below." }
+      send freeze { $key: '>p', }
 
 #===========================================================================================================
 #
