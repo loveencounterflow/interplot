@@ -31,6 +31,7 @@ DATOM                     = require 'datom'
 { new_datom
   stamp
   lets
+  freeze
   select }                = DATOM.export()
 #...........................................................................................................
 SP                        = require 'steampipes'
