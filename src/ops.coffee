@@ -196,10 +196,14 @@ provide_ops = ->
       return null
     #.........................................................................................................
     ctx           = await @get_context()
+    log '^3334^', "ctx:", ctx
     ctx.live_demo = false
     ctx.live_demo = true
+    XXX_count     = 0
     #.........................................................................................................
     loop
+      XXX_count++
+      break if XXX_count > 20
       max_slab_idx++
       ### TAINT add prv_slug_metrics to R where missing ###
       if max_slab_idx > last_slab_idx
