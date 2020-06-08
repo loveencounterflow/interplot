@@ -21,7 +21,8 @@ assign                    = Object.assign
 join_path                 = ( P... ) -> PATH.resolve PATH.join P...
 #...........................................................................................................
 ### TAINT implement in InterText ###
-_format                   = require 'number-format.js'
+# _format                   = require 'number-format.js'
+_format                   = CND.format_number
 format_float              = ( x ) -> _format '#,##0.000', x
 format_integer            = ( x ) -> _format '#,##0.',    x
 format_as_percentage      = ( x ) -> _format '#,##0.00',  x * 100
