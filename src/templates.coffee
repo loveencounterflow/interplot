@@ -102,7 +102,7 @@ H                         = dhtml
           E.topmargin()
           E.hbox [
             E.leftmargin()
-            E.column()
+            E.column() # E.pointer()
             E.vgap()
             E.column()
             E.vgap()
