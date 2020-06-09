@@ -270,8 +270,8 @@ profile = ( page, f ) ->
 
 #-----------------------------------------------------------------------------------------------------------
 demo_2 = ->
-  url             = 'https://de.wikipedia.org/wiki/Berlin'
-  target_selector = '#content'
+  # url             = 'https://de.wikipedia.org/wiki/Berlin'
+  # target_selector = '#content'
   # url             = 'http://localhost:8080/slugs'
   # url             = 'http://localhost:8080/slugs', { waitUntil: "networkidle2" }
   # url             = 'http://example.com'
@@ -285,7 +285,10 @@ demo_2 = ->
   # url             = 'file:///home/flow/jzr/interplot/public/demo-columns/main.html'
   # target_selector = '#page-ready'
   #.........................................................................................................
-  url             = 'file:///home/flow/jzr/interplot/public/demo-galley/main.html'
+  ### TAINT get path from configuration? ###
+  URL             = require 'url'
+  path            = PATH.resolve PATH.join __dirname, '../../public/demo-galley/main.html'
+  url             = ( URL.pathToFileURL path ).href
   target_selector = '#page-ready'
   #.........................................................................................................
   # Set up browser and page.
