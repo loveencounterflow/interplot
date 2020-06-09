@@ -13,13 +13,15 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cnd": "^5.3.0",
-    "commander": "^4.1.1",
+    "cnd": "^9.0.0",
+    "coffeenode-teacup": "^0.2.0",
+    "commander": "^5.1.0",
     "intertext": "^1.2.0",
-    "intertype": "^3.1.1",
+    "intertype": "^7.0.1",
     "lodash": "^4.17.15",
     "lodash.merge": "^4.6.2",
-    "puppeteer": "^2.1.1",
-    "steampipes": "^5.1.0"
+    "number-format.js": "^2.0.9",
+    "puppeteer": "^3.3.0",
+    "steampipes": "^6.3.0"
   }
 }
