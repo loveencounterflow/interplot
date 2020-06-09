@@ -81,6 +81,18 @@ merge                     = require 'lodash.merge'
   return null
 
 #-----------------------------------------------------------------------------------------------------------
+@clear_metrics = ( me ) ->
+  await me.page._client.send 'Emulation.clearDeviceMetricsOverride'
+
+#-----------------------------------------------------------------------------------------------------------
+@emulate_media = ( me ) ->
+  await me.page.emulateMediaType me.emulate_media ? 'print'
+  # await me.page.emulateMedia null
+  # debug '^4432^', await me.page.evaluate -> ( matchMedia 'print' ).matches
+  # await me.page.emulate PUPPETEER.devices[ 'Galaxy Note 3 landscape' ]
+  return null
+
+#-----------------------------------------------------------------------------------------------------------
 @fetch_old_or_new_page = ( me ) ->
   return await me.browser.newPage() if isa.empty ( pages = await me.browser.pages() )
   return pages[ 0 ]
