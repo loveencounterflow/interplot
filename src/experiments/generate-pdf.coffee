@@ -324,7 +324,7 @@ demo_2 = ->
   # await profile page, -> await demo_insert_slabs page
   await demo_insert_slabs page
   #.........................................................................................................
-  # debug '^12221^', jr await computed_styles_from_selector page, 'slug'
+  debug '^12221^', jr await computed_styles_from_selector page, 'slug'
   styles          = await styles_from_selector page, 'slug'
   base_style      = await get_base_style page
   computed_style  = { base_style..., styles.verdicts..., }
