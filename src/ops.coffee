@@ -144,6 +144,7 @@ provide_ops = ->
     locating the `pointer#pointer` element, then retrieving its parent element (the first column to
     consider) and the columns that either follow it according to a special 'text flow' attribute or (the
     default) in document order. ###
+    log '^ops/get_context@66855-1^'
     R                   = {}
     R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
     R.columns_jq        = ( $ 'page:first' ).find 'column'
@@ -167,6 +168,7 @@ provide_ops = ->
     ### TAINT how to use intertype in browser context? ###
     # validate.interplot_slabs_datom slabs_dtm
     ### TAINT use intertype for defaults ###
+    log '^ops/slugs_with_metrics_from_slabs@4455-1^'
     defaults            = { min_slab_idx: 0, }
     settings            = { defaults..., settings..., }
     slabs               = slabs_dtm.$value
