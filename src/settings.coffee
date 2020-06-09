@@ -63,7 +63,7 @@ module.exports =
       # '--restore-last-session' ### never, always opens new tab ###
       # '--enable-consumer-kiosk'
       # '--kiosk'
-      '--window-size=1200,500'
+      '--window-size=1500,500'
       '--high-dpi-support=1'
       # '--force-device-scale-factor=0.9' ### ca. 0.5 .. 1.0, smaller number scales down entire UI ###
       '--auto-open-devtools-for-tabs'
