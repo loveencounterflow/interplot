@@ -200,8 +200,14 @@ provide_ops = ->
     ctx           = await @get_context()
     ctx.live_demo = false
     ctx.live_demo = true
+    XXX_count     = 0
+    XXX_count_max = 20
     #.........................................................................................................
     loop
+      XXX_count++
+      if XXX_count > XXX_count_max
+        warn "^4476^ used emergency break in `ops/slugs_with_metrics_from_slabs()`"
+        break
       max_slab_idx++
       ### TAINT add prv_slug_metrics to R where missing ###
       if max_slab_idx > last_slab_idx
