@@ -86,6 +86,31 @@ ranges_from_pattern = ( pattern ) ->
   return R
 
 #-----------------------------------------------------------------------------------------------------------
+patterns =
+  control:                /^\p{Cc}$/u # Control
+  format:                 /^\p{Cf}$/u # Format
+  unassigned:             /^\p{Cn}$/u # Unassigned
+  pua:                    /^\p{Co}$/u # Private Use
+  surrogate:              /^\p{Cs}$/u # Surrogate
+  ideographic:            /^\p{Ideographic}$/u
+  ids_binary_operator:    /^\p{IDS_Binary_Operator}$/u
+  ids_trinary_operator:   /^\p{IDS_Trinary_Operator}$/u
+  radical:                /^\p{Radical}$/u
+  han:                    /^\p{Script=Han}$/u
+  hiragana:               /^\p{Script=Hiragana}$/u
+  katakana:               /^\p{Script=Katakana}$/u
+  latin:                  /^\p{Script=Latin}$/u
+  cyrillic_plus:          /^\p{Script_Extensions=Cyrillic}$/u
+  greek_plus:             /^\p{Script_Extensions=Greek}$/u
+  hangul_plus:            /^\p{Script_Extensions=Hangul}$/u
+  han_plus:               /^\p{Script_Extensions=Han}$/u
+  hiragana_plus:          /^\p{Script_Extensions=Hiragana}$/u
+  katakana_plus:          /^\p{Script_Extensions=Katakana}$/u
+  latin_plus:             /^\p{Script_Extensions=Latin}$/u
+  unified_ideograph:      /^\p{Unified_Ideograph}$/u
+  whitespace:             /^\p{White_Space}$/u
+
+#-----------------------------------------------------------------------------------------------------------
 # pattern_A   = /^\p{Script=Latin}$/u
 # pattern_B   = /^\p{Script_Extensions=Latin}$/u
 ### see https://github.com/mathiasbynens/regexpu-core/blob/master/property-escapes.md ###
