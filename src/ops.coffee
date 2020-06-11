@@ -171,7 +171,7 @@ provide_ops = ->
     R.column_jq.append R.pointer_jq
     R.epsilon_mm        = 0.2
     R.prv_dom_id        = 0
-    R.caret_dom         = document.getElementById 'caret'
+    R.caret_dom         = µ.DOM.select '#caret'
     R.caret_style       = getComputedStyle R.caret_dom
     #.........................................................................................................
     R.XXX_insert_big_words = true
