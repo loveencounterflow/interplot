@@ -30,9 +30,9 @@ URL                       = require 'url'
 ### NOTE starting migration to `Cupofhtml` b/c of `&quote` bug in teacup ###
 INTERTEXT                 = require 'intertext'
 { HTML }                  = INTERTEXT
-cupofhtml                 = new HTML.Cupofhtml { flatten: true, }
 SCRIPT = ( f ) ->
   # validate.function f
+  cupofhtml = new HTML.Cupofhtml { flatten: true, }
   cupofhtml.script f
   return HTML.html_from_datoms cupofhtml.expand()
 
@@ -78,7 +78,7 @@ _.COLUMN                = _.new_tag ( P... ) -> _.TAG 'column',         P...
 
 #-----------------------------------------------------------------------------------------------------------
 _.TOOLBOX = ->
-  SCRIPT ->
+  _.RAW SCRIPT ->
     ( $ document ).ready ->
       globalThis.toolbox    = {}
       toolbox.debugonoff_jq = debugonoff_jq = $ '#debugonoff'
@@ -176,7 +176,7 @@ _.GAUGE = _.new_tag ->
       backdrop-filter:        blur(0.2mm);
       background-color:       #ab2865; }
     @media print{ gauge#gauge { display: none; } }\n"""
-  SCRIPT ->
+  _.RAW SCRIPT ->
     ( $ document ).ready ->
       #.....................................................................................................
       f = ->
@@ -195,7 +195,7 @@ _.GAUGE = _.new_tag ->
 #-----------------------------------------------------------------------------------------------------------
 _.selector_generator = ->
   _.JS  '../fczbkk-css-selector-generator.js' ### https://github.com/fczbkk/css-selector-generator ###
-  SCRIPT ->
+  _.RAW SCRIPT ->
     ( $ document ).ready ->
       sg = new CssSelectorGenerator;
       globalThis.selector_of = ( node ) -> sg.getSelector as_dom_node node
@@ -241,7 +241,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.JS  resolve './ops.js'
     _.CSS resolve './reset.css'
     _.CSS resolve './styles.css'
-    SCRIPT ->
+    _.RAW SCRIPT ->
       µ.DOM.ready -> console.log '^4445^', "demo for `µ.DOM.ready()`"
     ### ------------------------------------------------------------------------------------------------ ###
     ### LIBRARIES                                                                                       ###
@@ -323,7 +323,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
           _.IMG { src: '../rulers/hruler.png', style: "mix-blend-mode:multiply;", }
         _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm", }, ->
           _.IMG { src: '../rulers/vruler.png', style: "mix-blend-mode:multiply;", }
-        SCRIPT ->
+        _.RAW SCRIPT ->
           ( $ document ).ready ->
             ( $ '.draggable' ).draggable()
             ( $ '.draggable' ).on 'focus', -> ( $ @ ).blur()
