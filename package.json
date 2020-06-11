@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "brfs": "^2.0.2",
     "cnd": "^9.0.0",
     "coffeenode-teacup": "^1.0.0",
     "commander": "^5.1.0",
