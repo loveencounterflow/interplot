@@ -9,10 +9,13 @@ render like UIs do in movies.
 */
 // plink-plonk.js
 const audioCtx = new window.AudioContext();
+gainNode = audioCtx.createGain();
 const observer = new MutationObserver(function(mutationsList) {
   // if ( audioCtx.state != 'running' ) { return; }
   const oscillator = audioCtx.createOscillator()
-  oscillator.connect(audioCtx.destination)
+  gainNode.gain.value = 0.01;
+  oscillator.connect(gainNode);
+  gainNode.connect(audioCtx.destination);
   oscillator.type = "sine"
   oscillator.frequency.setValueAtTime( Math.log(mutationsList.length + 5) * 180, audioCtx.currentTime )
   oscillator.start();
