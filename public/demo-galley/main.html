@@ -75,7 +75,7 @@
         toolbox.zoomin_jq = zoomin_jq = $('#zoomin');
         toolbox.zoomout_jq = zoomout_jq = $('#zoomout');
         toolbox.zoomer_jq = zoomer_jq = $('#zoomer');
-        // zoomer_jq.css 'transform-origin', "top left"
+        // zoomer_jq.css 'transform-origin', &quot;top left&quot;
         //.....................................................................................................
         debugonoff_jq.on('click', function() {
           return ($('body')).toggleClass('debug');
@@ -92,7 +92,7 @@
         //.....................................................................................................
         zoomout_jq.on('click', function() {
           var current_zoom;
-          // zoomer_jq.css 'transform-origin', "top left"
+          // zoomer_jq.css 'transform-origin', &quot;top left&quot;
           current_zoom = parseFloat(zoomer_jq.css('zoom'));
           return zoomer_jq.animate({
             zoom: current_zoom / 1.25
