@@ -1,13 +1,13 @@
 {
   "version": 3,
-  "file": "browserify-modules.js",
-  "sourceRoot": "../..",
+  "file": "",
+  "sourceRoot": "",
   "sources": [
-    "src/experiments/browserify-modules.coffee"
+    "../../src/experiments/browserify-modules.coffee"
   ],
   "names": [],
-  "mappings": ";AAEA;AAAA,MAAA,IAAA,EAAA;;EAAA,OAAO,CAAC,GAAR,CAAY,UAAZ;;EACA,SAAA,GAAoB,OAAA,CAAQ,WAAR;;EACpB,CAAA,CAAE,IAAF,CAAA,GAAoB,SAApB;;EACA,OAAO,CAAC,GAAR,CAAY,UAAZ,EAAwB,SAAxB;;EACA,OAAO,CAAC,GAAR,CAAY,UAAZ,EAAwB,IAAxB;;EACA,OAAO,CAAC,GAAR,CAAY,UAAZ,EAAwB,IAAI,CAAC,cAAL,CAAoB,IAAI,CAAC,SAAL,CAAe,gDAAf,CAApB,CAAxB;AALA",
+  "mappings": "AACA;EAAA;;IAEA,UAAU,CAAC,IAAK,CAAA;;;EAChB,CAAC,CAAC,KAAF,GAAU,IAAI,CAAE,OAAA,CAAQ,WAAR,CAAF,CAAuB,CAAC,SAA5B,CAAA;;EAHV;;;;;;;;;AAAA",
   "sourcesContent": [
-    "\n\nconsole.log '^4453-1^'\nINTERTEXT \t\t\t\t\t\t\t\t= require 'intertext'\n{ HYPH, }\t\t\t\t\t\t\t\t\t= INTERTEXT\nconsole.log '^4453-2^', INTERTEXT\nconsole.log '^4453-3^', HYPH\nconsole.log '^4453-4^', HYPH.reveal_hyphens HYPH.hyphenate \"welcome to the world of InterText hyphenation!\"\n\n"
+    "\n'use strict'\n\nglobalThis.µ ?= {}\nµ.types = new ( require 'intertype' ).Intertype()\n# console.log '^4453-1^', µ.types\n\n# INTERTEXT \t\t\t\t\t\t\t\t= require 'intertext'\n# { HYPH, }\t\t\t\t\t\t\t\t\t= INTERTEXT\n# console.log '^4453-2^', INTERTEXT\n# console.log '^4453-3^', HYPH\n# console.log '^4453-4^', HYPH.reveal_hyphens HYPH.hyphenate \"welcome to the world of InterText hyphenation!\"\n\n# browserify lib/experiments/browserify-modules.js --ignore-missing -o public/browserified.js\n\n\n"
   ]
 }

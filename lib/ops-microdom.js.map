@@ -1,0 +1,13 @@
+{
+  "version": 3,
+  "file": "",
+  "sourceRoot": "",
+  "sources": [
+    "../src/ops-microdom.coffee"
+  ],
+  "names": [],
+  "mappings": "AACA;EAAA;AAAA,MAAA;;EAIM;;;;IAAN,MAAA,UAAA,CAAA;;;MAGC,KAAO,CAAE,CAAF,CAAA,EAAA;;;QAGN,KAAK,CAAC,QAAQ,CAAC,QAAf,CAAwB,CAAxB;QACA,IAA4C,IAAI,CAAC,IAAL,CAAU,QAAQ,CAAC,UAAnB,CAA5C;AAAA,iBAAS,UAAA,CAAW,CAAE,CAAA,CAAA,GAAA;mBAAG,IAAC,CAAA,KAAD,CAAO,CAAP;UAAH,CAAF,CAAX,EAA4B,CAA5B,EAAT;;AACA,eAAO,CAAA,CAAA;MALD;;IAHR;;IAUC,OAAO,CAAC,GAAR;;AAAc;MAAA,KAAA,cAAA;qBAAA;MAAA,CAAA;;iBAAd;;;;gBAdD;;;EAkBA,wBAAE,UAAU,CAAC,IAAX,UAAU,CAAC,IAAK,CAAA,CAAlB,CAAsB,CAAC,GAAvB,GAA6B,IAAI,SAAJ,CAAA;AAlB7B",
+  "sourcesContent": [
+    "\n'use strict'\n\n\n#===========================================================================================================\nclass Micro_dom # extends Multimix\n\n\t#-----------------------------------------------------------------------------------------------------------\n\tready: ( f ) ->\n\t\t# thx to https://stackoverflow.com/a/7053197/7568091\n\t\t# function r(f){/in/.test(document.readyState)?setTimeout(r,9,f):f()}\n\t\ttypes.validate.function f\n\t\treturn ( setTimeout ( => @ready f ), 9 ) if /in/.test document.readyState\n\t\treturn f()\n\n\tconsole.log ( k for k of @ )\n\n# provide_µ.apply globalThis.µ = {}\n\n( globalThis.µ ?= {} ).DOM = new Micro_dom()\n\n"
+  ]
+}
