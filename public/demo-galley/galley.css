@@ -136,6 +136,13 @@ pointer#pointer {
 .debug pointer#pointer { outline: 1px solid red; }
 @media print { pointer#pointer { display: none; } }
 
+caret#caret {
+  display:                block;
+  height:                 3mm;
+  width:                  0mm; }
+.debug caret#caret { outline: 1px solid #090; }
+@media print { caret#caret { display: none; } }
+
 composer { /* Winkelhaken */
   display:                block; }
 

@@ -107,20 +107,27 @@ provide_ops = ->
     #   trim_dom.style.marginRight = margin
 
   #-----------------------------------------------------------------------------------------------------------
+  @XXX_show_caret_style = ( ctx ) ->
+    css = ctx.caret_style
+    # log '^3334-1^', [ ( css.getPropertyValue 'font-family' ), ( css.getPropertyValue 'font-size' ), ( css.getPropertyValue 'font-style' ), ]
+    # log '^3334-2^', [ ( css[ 'font-family' ] ), ( css[ 'font-size' ] ), ( css[ 'font-style' ] ), ]
+    # log '^3334-3^', [ css.fontFamily, css.fontSize, css.fontStyle, ]
+    return null
+
+  #-----------------------------------------------------------------------------------------------------------
   @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
     slug_jq           = $ ctx.slug_template
     trim_jq           = slug_jq.find 'trim'
-    caret_jq          = trim_jq.find 'caret'
     ctx.prv_dom_id++
     slug_jq.attr  'id', "slug#{ctx.prv_dom_id}"
     trim_jq.attr  'id', "trim#{ctx.prv_dom_id}"
-    caret_jq.attr 'id', "caret#{ctx.prv_dom_id}"
-    # trim_jq.attr 'id',
     column_dom        = ctx.columns_jq[ ctx.columns_idx ] ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
     # column_height_mm  = GAUGE.height_mm_of column_dom
     #.........................................................................................................
     trim_jq[ 0 ].insertAdjacentText 'afterbegin', partial_slug.text
+    trim_jq[ 0 ].insertAdjacentElement 'beforeend', ctx.caret_dom
     column_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
+    @XXX_show_caret_style ctx
     width_mm          = GAUGE.width_mm_of trim_jq
     overshoot_mm      = width_mm - ctx.column_width_mm
     spc_delta_mm      = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
@@ -164,11 +171,21 @@ provide_ops = ->
     R.column_jq.append R.pointer_jq
     R.epsilon_mm        = 0.2
     R.prv_dom_id        = 0
+    R.caret_dom         = document.getElementById 'caret'
+    R.caret_style       = getComputedStyle R.caret_dom
     #.........................................................................................................
     R.XXX_insert_big_words = true
     R.XXX_insert_big_words = false
     R.live_demo         = false
     return R
+    ###
+    document.createElement('p')
+    d = document.createElement('p')
+    d.setAttribute('style',"width:10px;height:10px;border:2px solid red;")
+    ref = document.getElementById('r1-1')
+    ref.insertAdjacentElement('beforebegin',d)
+    document.getElementById('r1-2').insertAdjacentElement('beforebegin',d)
+    ###
 
   #-----------------------------------------------------------------------------------------------------------
   @slugs_with_metrics_from_slabs = ( slabs_dtm, settings ) ->

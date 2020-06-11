@@ -106,8 +106,8 @@ _.TOOLBOX = ->
     _.BUTTON '#zoomin.gui',     "z+"
 
 #-----------------------------------------------------------------------------------------------------------
-_.CARET   = @caret    = _.new_tag -> _.TAG 'caret'
-_.TRIM    = @trim     = _.new_tag -> _.TAG 'trim', -> _.CARET()
+_.CARET   = @caret    = _.new_tag -> _.TAG 'caret', '#caret'
+_.TRIM    = @trim     = _.new_tag -> _.TAG 'trim'
 _.SLUG    = @slug     = _.new_tag -> _.TAG 'slug', -> _.TRIM()
 _.POINTER = @pointer  = _.new_tag -> _.TAG 'pointer', '#pointer'
 
@@ -312,13 +312,14 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.UNSTYLEDELEMENT(); _.GAUGE(); _.TOOLBOX()
     #.......................................................................................................
     _.ARTBOARD '#artboard1.pages', ->
+      _.CARET() ### TAINT ensure element doesn't take up space ###
       _.ZOOMER '#zoomer', ->
         # _style = "background-color:#ff0b;z-index:100;position:absolute;"
         _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:300mm;height:20mm;left:31mm;top:17mm", }, ->
           _.IMG { src: '../rulers/hruler.png', style: "mix-blend-mode:multiply;", }
         _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm", }, ->
           _.IMG { src: '../rulers/vruler.png', style: "mix-blend-mode:multiply;", }
-        _.COFFEESCRIPT ->
+        SCRIPT ->
           ( $ document ).ready ->
             ( $ '.draggable' ).draggable()
             ( $ '.draggable' ).on 'focus', -> ( $ @ ).blur()
