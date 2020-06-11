@@ -110,10 +110,16 @@ provide_ops = ->
   @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
     slug_jq           = $ ctx.slug_template
     trim_jq           = slug_jq.find 'trim'
+    caret_jq          = trim_jq.find 'caret'
+    ctx.prv_dom_id++
+    slug_jq.attr  'id', "slug#{ctx.prv_dom_id}"
+    trim_jq.attr  'id', "trim#{ctx.prv_dom_id}"
+    caret_jq.attr 'id', "caret#{ctx.prv_dom_id}"
+    # trim_jq.attr 'id',
     column_dom        = ctx.columns_jq[ ctx.columns_idx ] ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
     # column_height_mm  = GAUGE.height_mm_of column_dom
     #.........................................................................................................
-    trim_jq[ 0 ].insertAdjacentText 'beforeend', partial_slug.text
+    trim_jq[ 0 ].insertAdjacentText 'afterbegin', partial_slug.text
     column_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
     width_mm          = GAUGE.width_mm_of trim_jq
     overshoot_mm      = width_mm - ctx.column_width_mm
@@ -157,6 +163,7 @@ provide_ops = ->
     R.pointer_jq        = $ await TEMPLATES_pointer()
     R.column_jq.append R.pointer_jq
     R.epsilon_mm        = 0.2
+    R.prv_dom_id        = 0
     #.........................................................................................................
     R.XXX_insert_big_words = true
     R.XXX_insert_big_words = false
