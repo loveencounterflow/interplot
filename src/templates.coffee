@@ -79,7 +79,7 @@ _.COLUMN                = _.new_tag ( P... ) -> _.TAG 'column',         P...
 #-----------------------------------------------------------------------------------------------------------
 _.TOOLBOX = ->
   _.RAW SCRIPT ->
-    ( $ document ).ready ->
+    µ.DOM.ready ->
       globalThis.toolbox    = {}
       toolbox.debugonoff_jq = debugonoff_jq = $ '#debugonoff'
       toolbox.zoomin_jq     = zoomin_jq     = $ '#zoomin'
@@ -177,7 +177,7 @@ _.GAUGE = _.new_tag ->
       background-color:       #ab2865; }
     @media print{ gauge#gauge { display: none; } }\n"""
   _.RAW SCRIPT ->
-    ( $ document ).ready ->
+    µ.DOM.ready ->
       #.....................................................................................................
       f = ->
         cmgauge_jq    = $ 'gauge#gauge'
@@ -196,7 +196,7 @@ _.GAUGE = _.new_tag ->
 _.selector_generator = ->
   _.JS  '../fczbkk-css-selector-generator.js' ### https://github.com/fczbkk/css-selector-generator ###
   _.RAW SCRIPT ->
-    ( $ document ).ready ->
+    µ.DOM.ready ->
       sg = new CssSelectorGenerator;
       globalThis.selector_of = ( node ) -> sg.getSelector as_dom_node node
       return null
@@ -324,7 +324,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
         _.DIV '.draggable.dropshadow', { style: "position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm", }, ->
           _.IMG { src: '../rulers/vruler.png', style: "mix-blend-mode:multiply;", }
         _.RAW SCRIPT ->
-          ( $ document ).ready ->
+          µ.DOM.ready ->
             ( $ '.draggable' ).draggable()
             ( $ '.draggable' ).on 'focus', -> ( $ @ ).blur()
         # _.TAG 'page', { pagenr: 0, }
