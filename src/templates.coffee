@@ -19,6 +19,7 @@ urge                      = CND.get_logger 'urge',      badge
 PATH                      = require 'path'
 FS                        = require 'fs'
 TEACUP                    = require 'coffeenode-teacup'
+URL                       = require 'url'
 # CHR                       = require 'coffeenode-chr'
 #...........................................................................................................
 # _STYLUS                   = require 'stylus'
@@ -26,6 +27,15 @@ TEACUP                    = require 'coffeenode-teacup'
 # style_route               = PATH.join __dirname, '../src/mingkwai-typesetter.styl'
 # css                       = as_css FS.readFileSync style_route, encoding: 'utf-8'
 #...........................................................................................................
+### NOTE starting migration to `Cupofhtml` b/c of `&quote` bug in teacup ###
+INTERTEXT                 = require 'intertext'
+{ HTML }                  = INTERTEXT
+cupofhtml                 = new HTML.Cupofhtml { flatten: true, }
+SCRIPT = ( f ) ->
+  # validate.function f
+  cupofhtml.script f
+  return HTML.html_from_datoms cupofhtml.expand()
+
 
 #===========================================================================================================
 # TEACUP NAMESPACE ACQUISITION
@@ -64,9 +74,10 @@ _.LEFTMARGIN            = _.new_tag ( P... ) -> _.TAG 'leftmargin',     P...
 _.RIGHTMARGIN           = _.new_tag ( P... ) -> _.TAG 'rightmargin',    P...
 _.COLUMN                = _.new_tag ( P... ) -> _.TAG 'column',         P...
 
+
 #-----------------------------------------------------------------------------------------------------------
 _.TOOLBOX = ->
-  _.COFFEESCRIPT ->
+  SCRIPT ->
     ( $ document ).ready ->
       globalThis.toolbox    = {}
       toolbox.debugonoff_jq = debugonoff_jq = $ '#debugonoff'
@@ -164,7 +175,7 @@ _.GAUGE = _.new_tag ->
       backdrop-filter:        blur(0.2mm);
       background-color:       #ab2865; }
     @media print{ gauge#gauge { display: none; } }\n"""
-  _.COFFEESCRIPT ->
+  SCRIPT ->
     ( $ document ).ready ->
       #.....................................................................................................
       f = ->
@@ -183,7 +194,7 @@ _.GAUGE = _.new_tag ->
 #-----------------------------------------------------------------------------------------------------------
 _.selector_generator = ->
   _.JS  '../fczbkk-css-selector-generator.js' ### https://github.com/fczbkk/css-selector-generator ###
-  _.COFFEESCRIPT ->
+  SCRIPT ->
     ( $ document ).ready ->
       sg = new CssSelectorGenerator;
       globalThis.selector_of = ( node ) -> sg.getSelector as_dom_node node
@@ -288,7 +299,7 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
   content         = _.render =>
     _.selector_generator()
     _.CSS './galley.css'
-    # _.COFFEESCRIPT ->
+    # SCRIPT ->
     #   ( $ window ).on 'resize', ( event ) ->
     #     log '^29000^', "resize", event
     #     log window.devicePixelRatio
