@@ -23,6 +23,7 @@
     "lodash.merge": "^4.6.2",
     "number-format.js": "^2.0.9",
     "puppeteer": "^3.3.0",
-    "steampipes": "^6.3.0"
+    "steampipes": "^6.3.0",
+    "util-inspect": "^0.1.8"
   }
 }
