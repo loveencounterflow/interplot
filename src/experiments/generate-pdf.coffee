@@ -155,6 +155,7 @@ get_all_selectors = ( page ) ->
 #-----------------------------------------------------------------------------------------------------------
 computed_styles_from_selector = ( page, selector ) ->
   styles          = await styles_from_selector page, 'slug'
+  debug '^33334^', styles
   base_style      = await get_base_style page
   return { base_style..., styles.verdicts..., }
 
