@@ -1,9 +1,43 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 (function() {
   'use strict';
-  globalThis.types = new (require('intertype')).Intertype();
+  var k, v;
 
-  console.log('^4453-1^', types);
+  if (globalThis.µ == null) {
+    globalThis.µ = {};
+  }
+
+  µ.TYPES = new (require('intertype')).Intertype();
+
+  µ.TYPES.declare('frob', function(x) {
+    return (this.isa.text(x)) || x === 42;
+  });
+
+  µ.TYPES.declare('domelement', function(x) {
+    var ref;
+    return (ref = this.type_of(x)) === 'htmlhtmlelement' || ref === 'htmldocument' || ref === 'htmlunknownelement';
+  });
+
+  µ.rpr = require('util-inspect');
+
+  if (µ.TMP == null) {
+    µ.TMP = {};
+  }
+
+  µ.TMP._css_properties = require('./css-properties.js');
+
+  µ.TMP._css_font_properties = ((function() {
+    var ref, results;
+    ref = µ.TMP._css_properties;
+    results = [];
+    for (k in ref) {
+      v = ref[k];
+      if (v.fonts) {
+        results.push(k);
+      }
+    }
+    return results;
+  })()).sort();
 
   // INTERTEXT 								= require 'intertext'
 // { HYPH, }									= INTERTEXT
@@ -16,7 +50,1152 @@
 }).call(this);
 
 
-},{"intertype":14}],2:[function(require,module,exports){
+},{"./css-properties.js":2,"intertype":19,"util-inspect":27}],2:[function(require,module,exports){
+(function() {
+  /*
+
+  Experimental categorization of CSS properties need to implement caching of slugs (pre-assembled bits of
+  type). In order to avoid typesetting elements—words and partial words—over and over again just to obtain the
+  same appearance and the same metrics all over again, it might be advantageous to cache known elements and be
+  able to perform the costliest part of line-fitting—putting type on a browser page with a suitable
+  environment to see how it fits— entirely offline, i.e. without needing the browser to do anything at all.
+
+  This will only be possible for those case where one has already tried a given combination of a sequence of
+  codepoints in the typographically same environment, that is, with the same font, the same size, the same
+  font style (bold/italic) and so on. The task then is to identify such factors that may be used to
+  'fingerprint' typographic settings such that a when a combination of a codepoint sequence (a word or a part
+  thereof; any sequence that is surrounded by line break opportunities) and a 'typographic ID' occurs, we can
+  be sure of the metrics of the typeset material, and re-use cached metrics instead of typesetting the
+  material in the browser.
+
+  Out of the hundreds of CSS property that may apply to a given point in a document, only a fraction will be
+  relevant for the 'metric behavior' of type. As a preliminary measure, they have been identified in the below
+  table under the property here named `fonts`. A value of `false` indicates the property is definitely
+  unrelated to font appearance; a value of `null` (also falsey) indicates that the property might be of
+  interest now or later on; a value of `true` indicates the property is definitely releavant for font metrics
+  caching.
+
+  */
+  module.exports = {
+    '-webkit-app-region': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-appearance': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-border-horizontal-spacing': {
+      fonts: false,
+      sample: '0px'
+    },
+    '-webkit-border-image': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-border-vertical-spacing': {
+      fonts: false,
+      sample: '0px'
+    },
+    '-webkit-box-align': {
+      fonts: false,
+      sample: 'stretch'
+    },
+    '-webkit-box-decoration-break': {
+      fonts: false,
+      sample: 'slice'
+    },
+    '-webkit-box-direction': {
+      fonts: false,
+      sample: 'normal'
+    },
+    '-webkit-box-flex': {
+      fonts: false,
+      sample: '0'
+    },
+    '-webkit-box-ordinal-group': {
+      fonts: false,
+      sample: '1'
+    },
+    '-webkit-box-orient': {
+      fonts: false,
+      sample: 'horizontal'
+    },
+    '-webkit-box-pack': {
+      fonts: false,
+      sample: 'start'
+    },
+    '-webkit-box-reflect': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-highlight': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-mask-box-image': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-mask-box-image-outset': {
+      fonts: false,
+      sample: '0'
+    },
+    '-webkit-mask-box-image-repeat': {
+      fonts: false,
+      sample: 'stretch'
+    },
+    '-webkit-mask-box-image-slice': {
+      fonts: false,
+      sample: '0 fill'
+    },
+    '-webkit-mask-box-image-source': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-mask-box-image-width': {
+      fonts: false,
+      sample: 'auto'
+    },
+    '-webkit-mask-clip': {
+      fonts: false,
+      sample: 'border-box'
+    },
+    '-webkit-mask-composite': {
+      fonts: false,
+      sample: 'source-over'
+    },
+    '-webkit-mask-image': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-mask-origin': {
+      fonts: false,
+      sample: 'border-box'
+    },
+    '-webkit-mask-position': {
+      fonts: false,
+      sample: '0% 0%'
+    },
+    '-webkit-mask-repeat': {
+      fonts: false,
+      sample: 'repeat'
+    },
+    '-webkit-mask-size': {
+      fonts: false,
+      sample: 'auto'
+    },
+    '-webkit-print-color-adjust': {
+      fonts: false,
+      sample: 'economy'
+    },
+    '-webkit-tap-highlight-color': {
+      fonts: false,
+      sample: 'rgba(0, 0, 0, 0.18)'
+    },
+    '-webkit-text-emphasis-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    '-webkit-text-emphasis-position': {
+      fonts: false,
+      sample: 'over right'
+    },
+    '-webkit-text-emphasis-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    '-webkit-text-fill-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    '-webkit-text-stroke-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    '-webkit-user-drag': {
+      fonts: false,
+      sample: 'auto'
+    },
+    '-webkit-user-modify': {
+      fonts: false,
+      sample: 'read-only'
+    },
+    'align-items': {
+      fonts: false,
+      sample: 'flex-end'
+    },
+    'align-self': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'animation-delay': {
+      fonts: false,
+      sample: '0s'
+    },
+    'animation-direction': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'animation-duration': {
+      fonts: false,
+      sample: '0s'
+    },
+    'animation-fill-mode': {
+      fonts: false,
+      sample: 'none'
+    },
+    'animation-iteration-count': {
+      fonts: false,
+      sample: '1'
+    },
+    'animation-name': {
+      fonts: false,
+      sample: 'none'
+    },
+    'animation-play-state': {
+      fonts: false,
+      sample: 'running'
+    },
+    'animation-timing-function': {
+      fonts: false,
+      sample: 'ease'
+    },
+    'backdrop-filter': {
+      fonts: false,
+      sample: 'none'
+    },
+    'backface-visibility': {
+      fonts: false,
+      sample: 'visible'
+    },
+    'background-attachment': {
+      fonts: false,
+      sample: 'scroll'
+    },
+    'background-blend-mode': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'background-clip': {
+      fonts: false,
+      sample: 'border-box'
+    },
+    'background-color': {
+      fonts: false,
+      sample: 'rgba(0, 0, 0, 0)'
+    },
+    'background-image': {
+      fonts: false,
+      sample: 'none'
+    },
+    'background-origin': {
+      fonts: false,
+      sample: 'padding-box'
+    },
+    'background-position': {
+      fonts: false,
+      sample: '0% 0%'
+    },
+    'background-repeat': {
+      fonts: false,
+      sample: 'repeat'
+    },
+    'background-size': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'border-bottom-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'border-bottom-left-radius': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-bottom-right-radius': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-bottom-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    'border-bottom-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-collapse': {
+      fonts: false,
+      sample: 'separate'
+    },
+    'border-image-outset': {
+      fonts: false,
+      sample: '0'
+    },
+    'border-image-repeat': {
+      fonts: false,
+      sample: 'stretch'
+    },
+    'border-image-slice': {
+      fonts: false,
+      sample: '100%'
+    },
+    'border-image-source': {
+      fonts: false,
+      sample: 'none'
+    },
+    'border-image-width': {
+      fonts: false,
+      sample: '1'
+    },
+    'border-left-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'border-left-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    'border-left-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-right-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'border-right-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    'border-right-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-top-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'border-top-left-radius': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-top-right-radius': {
+      fonts: false,
+      sample: '0px'
+    },
+    'border-top-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    'border-top-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'bottom': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'box-shadow': {
+      fonts: false,
+      sample: 'inset 5px 3px 11px 2px white, inset -3px -3px 9px 2px #0002'
+    },
+    'box-sizing': {
+      fonts: false,
+      sample: 'inherit'
+    },
+    'buffered-rendering': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'clear': {
+      fonts: false,
+      sample: 'none'
+    },
+    'clip': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'clip-path': {
+      fonts: false,
+      sample: 'none'
+    },
+    'clip-rule': {
+      fonts: false,
+      sample: 'nonzero'
+    },
+    'color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'color-interpolation': {
+      fonts: false,
+      sample: 'srgb'
+    },
+    'color-interpolation-filters': {
+      fonts: false,
+      sample: 'linearrgb'
+    },
+    'color-rendering': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'column-count': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'column-gap': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'column-rule-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'column-rule-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    'column-rule-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'column-span': {
+      fonts: false,
+      sample: 'none'
+    },
+    'column-width': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'content': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'cursor': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'display': {
+      fonts: false,
+      sample: 'flex'
+    },
+    'empty-cells': {
+      fonts: false,
+      sample: 'show'
+    },
+    'fill': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'fill-opacity': {
+      fonts: false,
+      sample: '1'
+    },
+    'fill-rule': {
+      fonts: false,
+      sample: 'nonzero'
+    },
+    'filter': {
+      fonts: false,
+      sample: 'none'
+    },
+    'flex-basis': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'flex-direction': {
+      fonts: false,
+      sample: 'row'
+    },
+    'flex-grow': {
+      fonts: false,
+      sample: '0'
+    },
+    'flex-shrink': {
+      fonts: false,
+      sample: '1'
+    },
+    'flex-wrap': {
+      fonts: false,
+      sample: 'nowrap'
+    },
+    'float': {
+      fonts: false,
+      sample: 'none'
+    },
+    'flood-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'flood-opacity': {
+      fonts: false,
+      sample: '1'
+    },
+    'grid-auto-columns': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'grid-auto-flow': {
+      fonts: false,
+      sample: 'row'
+    },
+    'grid-auto-rows': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'grid-column-end': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'grid-column-start': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'grid-row-end': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'grid-row-start': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'grid-template-areas': {
+      fonts: false,
+      sample: 'none'
+    },
+    'grid-template-columns': {
+      fonts: false,
+      sample: 'none'
+    },
+    'grid-template-rows': {
+      fonts: false,
+      sample: 'none'
+    },
+    'height': {
+      fonts: false,
+      sample: 'var(--interplot-line-height)'
+    },
+    'image-orientation': {
+      fonts: false,
+      sample: 'from-image'
+    },
+    'image-rendering': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'isolation': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'justify-content': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'justify-items': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'justify-self': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'left': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'letter-spacing': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'lighting-color': {
+      fonts: false,
+      sample: 'rgb(255, 255, 255)'
+    },
+    'list-style-image': {
+      fonts: false,
+      sample: 'none'
+    },
+    'list-style-position': {
+      fonts: false,
+      sample: 'outside'
+    },
+    'list-style-type': {
+      fonts: false,
+      sample: 'disc'
+    },
+    'margin-bottom': {
+      fonts: false,
+      sample: '0mm'
+    },
+    'margin-left': {
+      fonts: false,
+      sample: '0mm'
+    },
+    'margin-right': {
+      fonts: false,
+      sample: '0mm'
+    },
+    'margin-top': {
+      fonts: false,
+      sample: '0mm'
+    },
+    'marker-end': {
+      fonts: false,
+      sample: 'none'
+    },
+    'marker-mid': {
+      fonts: false,
+      sample: 'none'
+    },
+    'marker-start': {
+      fonts: false,
+      sample: 'none'
+    },
+    'mask': {
+      fonts: false,
+      sample: 'none'
+    },
+    'mask-type': {
+      fonts: false,
+      sample: 'luminance'
+    },
+    'max-height': {
+      fonts: false,
+      sample: 'none'
+    },
+    'max-width': {
+      fonts: false,
+      sample: 'none'
+    },
+    'min-height': {
+      fonts: false,
+      sample: '0px'
+    },
+    'min-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'mix-blend-mode': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'object-fit': {
+      fonts: false,
+      sample: 'fill'
+    },
+    'object-position': {
+      fonts: false,
+      sample: '50% 50%'
+    },
+    'offset-distance': {
+      fonts: false,
+      sample: '0px'
+    },
+    'offset-path': {
+      fonts: false,
+      sample: 'none'
+    },
+    'offset-rotate': {
+      fonts: false,
+      sample: 'auto 0deg'
+    },
+    'opacity': {
+      fonts: false,
+      sample: '1'
+    },
+    'order': {
+      fonts: false,
+      sample: '0'
+    },
+    'outline-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'outline-offset': {
+      fonts: false,
+      sample: '0px'
+    },
+    'outline-style': {
+      fonts: false,
+      sample: 'none'
+    },
+    'outline-width': {
+      fonts: false,
+      sample: '0px'
+    },
+    'overflow-anchor': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'overflow-wrap': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'overflow-x': {
+      fonts: false,
+      sample: 'visible'
+    },
+    'overflow-y': {
+      fonts: false,
+      sample: 'visible'
+    },
+    'padding-bottom': {
+      fonts: false,
+      sample: '0px'
+    },
+    'padding-left': {
+      fonts: false,
+      sample: '0px'
+    },
+    'padding-right': {
+      fonts: false,
+      sample: '0px'
+    },
+    'padding-top': {
+      fonts: false,
+      sample: '0px'
+    },
+    'paint-order': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'perspective': {
+      fonts: false,
+      sample: 'none'
+    },
+    'perspective-origin': {
+      fonts: false,
+      sample: '0px 0px'
+    },
+    'pointer-events': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'position': {
+      fonts: false,
+      sample: 'static'
+    },
+    'resize': {
+      fonts: false,
+      sample: 'none'
+    },
+    'right': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'row-gap': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'scroll-behavior': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'shape-image-threshold': {
+      fonts: false,
+      sample: '0'
+    },
+    'shape-margin': {
+      fonts: false,
+      sample: '0px'
+    },
+    'shape-outside': {
+      fonts: false,
+      sample: 'none'
+    },
+    'shape-rendering': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'speak': {
+      fonts: false,
+      sample: 'normal'
+    },
+    'stop-color': {
+      fonts: false,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'stop-opacity': {
+      fonts: false,
+      sample: '1'
+    },
+    'stroke': {
+      fonts: false,
+      sample: 'none'
+    },
+    'stroke-dasharray': {
+      fonts: false,
+      sample: 'none'
+    },
+    'stroke-dashoffset': {
+      fonts: false,
+      sample: '0px'
+    },
+    'stroke-linecap': {
+      fonts: false,
+      sample: 'butt'
+    },
+    'stroke-linejoin': {
+      fonts: false,
+      sample: 'miter'
+    },
+    'stroke-miterlimit': {
+      fonts: false,
+      sample: '4'
+    },
+    'stroke-opacity': {
+      fonts: false,
+      sample: '1'
+    },
+    'stroke-width': {
+      fonts: false,
+      sample: '1px'
+    },
+    'table-layout': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'top': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'touch-action': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'transform': {
+      fonts: false,
+      sample: 'none'
+    },
+    'transform-origin': {
+      fonts: false,
+      sample: '0px 0px'
+    },
+    'transform-style': {
+      fonts: false,
+      sample: 'flat'
+    },
+    'transition-delay': {
+      fonts: false,
+      sample: '0s'
+    },
+    'transition-duration': {
+      fonts: false,
+      sample: '0s'
+    },
+    'transition-property': {
+      fonts: false,
+      sample: 'all'
+    },
+    'transition-timing-function': {
+      fonts: false,
+      sample: 'ease'
+    },
+    'user-select': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'vector-effect': {
+      fonts: false,
+      sample: 'none'
+    },
+    'vertical-align': {
+      fonts: false,
+      sample: 'baseline'
+    },
+    'visibility': {
+      fonts: false,
+      sample: 'visible'
+    },
+    'width': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'will-change': {
+      fonts: false,
+      sample: 'auto'
+    },
+    'z-index': {
+      fonts: false,
+      sample: 'auto'
+    },
+    '-webkit-font-smoothing': {
+      fonts: null,
+      sample: 'auto'
+    },
+    '-webkit-hyphenate-character': {
+      fonts: null,
+      sample: 'auto'
+    },
+    '-webkit-line-break': {
+      fonts: null,
+      sample: 'auto'
+    },
+    '-webkit-line-clamp': {
+      fonts: null,
+      sample: 'none'
+    },
+    '-webkit-locale': {
+      fonts: null,
+      sample: 'auto'
+    },
+    '-webkit-rtl-ordering': {
+      fonts: null,
+      sample: 'logical'
+    },
+    '-webkit-text-combine': {
+      fonts: null,
+      sample: 'none'
+    },
+    '-webkit-text-decorations-in-effect': {
+      fonts: null,
+      sample: 'none'
+    },
+    '-webkit-text-orientation': {
+      fonts: null,
+      sample: 'vertical-right'
+    },
+    '-webkit-text-security': {
+      fonts: null,
+      sample: 'none'
+    },
+    '-webkit-text-stroke-width': {
+      fonts: null,
+      sample: '0px'
+    },
+    '-webkit-writing-mode': {
+      fonts: null,
+      sample: 'horizontal-tb'
+    },
+    'align-content': {
+      fonts: null,
+      sample: 'normal'
+    },
+    'alignment-baseline': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'baseline-shift': {
+      fonts: null,
+      sample: '0px'
+    },
+    'break-after': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'break-before': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'break-inside': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'caption-side': {
+      fonts: null,
+      sample: 'top'
+    },
+    'direction': {
+      fonts: null,
+      sample: 'ltr'
+    },
+    'dominant-baseline': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'hyphens': {
+      fonts: null,
+      sample: 'manual'
+    },
+    'line-height': {
+      fonts: null,
+      sample: '18.8976px'
+    },
+    'orphans': {
+      fonts: null,
+      sample: '2'
+    },
+    'tab-size': {
+      fonts: null,
+      sample: '8'
+    },
+    'text-align': {
+      fonts: null,
+      sample: 'left'
+    },
+    'text-align-last': {
+      fonts: null,
+      sample: 'left'
+    },
+    'text-anchor': {
+      fonts: null,
+      sample: 'start'
+    },
+    'text-decoration': {
+      fonts: null,
+      sample: 'none solid rgb(0, 0, 0)'
+    },
+    'text-decoration-color': {
+      fonts: null,
+      sample: 'rgb(0, 0, 0)'
+    },
+    'text-decoration-line': {
+      fonts: null,
+      sample: 'none'
+    },
+    'text-decoration-skip-ink': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'text-decoration-style': {
+      fonts: null,
+      sample: 'solid'
+    },
+    'text-indent': {
+      fonts: null,
+      sample: '0px'
+    },
+    'text-overflow': {
+      fonts: null,
+      sample: 'clip'
+    },
+    'text-rendering': {
+      fonts: null,
+      sample: 'geometricprecision'
+    },
+    'text-shadow': {
+      fonts: null,
+      sample: 'none'
+    },
+    'text-size-adjust': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'text-transform': {
+      fonts: null,
+      sample: 'none'
+    },
+    'text-underline-position': {
+      fonts: null,
+      sample: 'auto'
+    },
+    'unicode-bidi': {
+      fonts: null,
+      sample: 'normal'
+    },
+    'white-space': {
+      fonts: null,
+      sample: 'nowrap'
+    },
+    'widows': {
+      fonts: null,
+      sample: '2'
+    },
+    'word-break': {
+      fonts: null,
+      sample: 'normal'
+    },
+    'word-spacing': {
+      fonts: null,
+      sample: '0px'
+    },
+    'writing-mode': {
+      fonts: null,
+      sample: 'horizontal-tb'
+    },
+    'zoom': {
+      fonts: null,
+      sample: '1'
+    },
+    'font-family': {
+      fonts: true,
+      sample: 'flow, fallback'
+    },
+    'font-kerning': {
+      fonts: true,
+      sample: 'auto'
+    },
+    'font-optical-sizing': {
+      fonts: true,
+      sample: 'auto'
+    },
+    'font-size': {
+      fonts: true,
+      sample: '15.1181px'
+    },
+    'font-stretch': {
+      fonts: true,
+      sample: '100%'
+    },
+    'font-style': {
+      fonts: true,
+      sample: 'normal'
+    },
+    'font-variant': {
+      fonts: true,
+      sample: 'normal'
+    },
+    'font-variant-caps': {
+      fonts: true,
+      sample: 'normal'
+    },
+    'font-variant-east-asian': {
+      fonts: true,
+      sample: 'normal'
+    },
+    'font-variant-ligatures': {
+      fonts: true,
+      sample: 'normal'
+    },
+    'font-variant-numeric': {
+      fonts: true,
+      sample: 'normal'
+    },
+    'font-weight': {
+      fonts: true,
+      sample: '400'
+    }
+  };
+
+}).call(this);
+
+
+},{}],3:[function(require,module,exports){
+module.exports = function (xs, f) {
+    if (xs.map) return xs.map(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        var x = xs[i];
+        if (hasOwn.call(xs, i)) res.push(f(x, i, xs));
+    }
+    return res;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+},{}],4:[function(require,module,exports){
+var hasOwn = Object.prototype.hasOwnProperty;
+
+module.exports = function (xs, f, acc) {
+    var hasAcc = arguments.length >= 3;
+    if (hasAcc && xs.reduce) return xs.reduce(f, acc);
+    if (xs.reduce) return xs.reduce(f);
+    
+    for (var i = 0; i < xs.length; i++) {
+        if (!hasOwn.call(xs, i)) continue;
+        if (!hasAcc) {
+            acc = xs[i];
+            hasAcc = true;
+            continue;
+        }
+        acc = f(acc, xs[i], i);
+    }
+    return acc;
+};
+
+},{}],5:[function(require,module,exports){
 (function (process){
 (function() {
   //###########################################################################################################
@@ -628,7 +1807,7 @@
 }).call(this);
 
 }).call(this,require('_process'))
-},{"./main":6,"./universal-copy":7,"_process":174,"crypto":91,"fs":18,"os":160,"path":166,"util":215}],3:[function(require,module,exports){
+},{"./main":9,"./universal-copy":10,"_process":185,"crypto":102,"fs":29,"os":171,"path":177,"util":226}],6:[function(require,module,exports){
 // Generated by CoffeeScript 2.5.1
 (function() {
   //-----------------------------------------------------------------------------------------------------------
@@ -721,7 +1900,7 @@
 
 
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 // Generated by CoffeeScript 2.5.1
 (function() {
   var CND, ansi_vt100_cc_matcher, rgb_hex_by_vt100_colorcode;
@@ -1094,7 +2273,7 @@
 
 
 
-},{"./main":6}],5:[function(require,module,exports){
+},{"./main":9}],8:[function(require,module,exports){
 (function (process,global){
 (function() {
   //###########################################################################################################
@@ -1639,7 +2818,7 @@
 }).call(this);
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./TRM-CONSTANTS":3,"./TRM-VT100-ANALYZER":4,"_process":174,"child_process":18,"readline":18,"util":215}],6:[function(require,module,exports){
+},{"./TRM-CONSTANTS":6,"./TRM-VT100-ANALYZER":7,"_process":185,"child_process":29,"readline":29,"util":226}],9:[function(require,module,exports){
 (function (global){
 (function() {
   'use strict';
@@ -1683,7 +2862,7 @@
 }).call(this);
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./BITSNPIECES":2,"./TRM":5,"util":215}],7:[function(require,module,exports){
+},{"./BITSNPIECES":5,"./TRM":8,"util":226}],10:[function(require,module,exports){
 // Generated by CoffeeScript 2.5.1
 (function() {
   /*
@@ -1884,7 +3063,42 @@ FakeMap.prototype.set = function (key, value) {
 
 
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString;
+
+module.exports = function forEach (obj, fn, ctx) {
+    if (toString.call(fn) !== '[object Function]') {
+        throw new TypeError('iterator must be a function');
+    }
+    var l = obj.length;
+    if (l === +l) {
+        for (var i = 0; i < l; i++) {
+            fn.call(ctx, obj[i], i, obj);
+        }
+    } else {
+        for (var k in obj) {
+            if (hasOwn.call(obj, k)) {
+                fn.call(ctx, obj[k], k, obj);
+            }
+        }
+    }
+};
+
+
+},{}],12:[function(require,module,exports){
+
+var indexOf = [].indexOf;
+
+module.exports = function(arr, obj){
+  if (indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+},{}],13:[function(require,module,exports){
 
 var type = require('./jkroso-type')
 
@@ -2009,7 +3223,7 @@ function getEnumerableProperties (object) {
 module.exports = equal
 
 
-},{"./jkroso-type":9}],9:[function(require,module,exports){
+},{"./jkroso-type":14}],14:[function(require,module,exports){
 
 var toString = {}.toString
 var DomNode = typeof window != 'undefined'
@@ -2070,7 +3284,7 @@ var types = exports.types = {
 }
 
 
-},{}],10:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 (function() {
   'use strict';
   var CND, alert, badge, debug, help, info, js_type_of, rpr, sad, urge, warn, whisper;
@@ -2145,7 +3359,7 @@ var types = exports.types = {
 
 }).call(this);
 
-},{"./helpers":13,"cnd":6}],11:[function(require,module,exports){
+},{"./helpers":18,"cnd":9}],16:[function(require,module,exports){
 (function (Buffer){
 (function() {
   //...........................................................................................................
@@ -2690,7 +3904,7 @@ var types = exports.types = {
 }).call(this);
 
 }).call(this,require("buffer").Buffer)
-},{"./checks":10,"./helpers":13,"buffer":82,"fs":18,"path":166}],12:[function(require,module,exports){
+},{"./checks":15,"./helpers":18,"buffer":93,"fs":29,"path":177}],17:[function(require,module,exports){
 (function (Buffer){
 (function() {
   'use strict';
@@ -3004,7 +4218,7 @@ var types = exports.types = {
 }).call(this);
 
 }).call(this,{"isBuffer":require("../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js")})
-},{"../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":153,"./helpers":13,"cnd":6}],13:[function(require,module,exports){
+},{"../../../../../../../usr/local/lib/node_modules/browserify/node_modules/is-buffer/index.js":164,"./helpers":18,"cnd":9}],18:[function(require,module,exports){
 (function() {
   'use strict';
   var CND, _xrpr, inspect, rpr,
@@ -3100,7 +4314,7 @@ var types = exports.types = {
 
 }).call(this);
 
-},{"cnd":6,"util":215}],14:[function(require,module,exports){
+},{"cnd":9,"util":226}],19:[function(require,module,exports){
 (function() {
   'use strict';
   var CND, Multimix, alert, assign, badge, cast, check, debug, declarations, flatten, get_rprs_of_tprs, help, info, isa, isa_list_of, jk_equals, jr, js_type_of, rpr, sad, urge, validate, validate_list_of, warn, whisper, xrpr;
@@ -3270,7 +4484,7 @@ var types = exports.types = {
 
 }).call(this);
 
-},{"../deps/jkroso-equals":8,"./checks":10,"./declarations":11,"./declaring":12,"./helpers":13,"./sizing":15,"cnd":6,"multimix":17}],15:[function(require,module,exports){
+},{"../deps/jkroso-equals":13,"./checks":15,"./declarations":16,"./declaring":17,"./helpers":18,"./sizing":20,"cnd":9,"multimix":22}],20:[function(require,module,exports){
 // Generated by CoffeeScript 2.4.1
 (function() {
   'use strict';
@@ -3373,7 +4587,7 @@ var types = exports.types = {
 
 
 
-},{"./helpers":13,"cnd":6}],16:[function(require,module,exports){
+},{"./helpers":18,"cnd":9}],21:[function(require,module,exports){
 (function() {
   'use strict';
   var CND, alert, assign, badge, debug, help, info, inspect, jr, rpr, urge, warn, whisper;
@@ -3545,7 +4759,7 @@ var types = exports.types = {
 
 }).call(this);
 
-},{"cnd":6,"util":215}],17:[function(require,module,exports){
+},{"cnd":9,"util":226}],22:[function(require,module,exports){
 (function() {
   'use strict';
   var CND, Multimix, alert, badge, debug, help, info, module_keywords, rpr, urge, warn, whisper,
@@ -3689,9 +4903,1461 @@ var types = exports.types = {
 
 }).call(this);
 
-},{"./cataloguing":16,"cnd":6}],18:[function(require,module,exports){
+},{"./cataloguing":21,"cnd":9}],23:[function(require,module,exports){
+(function (global){
+/*! JSON v3.3.0 | http://bestiejs.github.io/json3 | Copyright 2012-2014, Kit Cambridge | http://kit.mit-license.org */
+;(function (root) {
+  // Detect the `define` function exposed by asynchronous module loaders. The
+  // strict `define` check is necessary for compatibility with `r.js`.
+  var isLoader = typeof define === "function" && define.amd;
 
-},{}],19:[function(require,module,exports){
+  // Use the `global` object exposed by Node (including Browserify via
+  // `insert-module-globals`), Narwhal, and Ringo as the default context.
+  // Rhino exports a `global` function instead.
+  var freeGlobal = typeof global == "object" && global;
+  if (freeGlobal && (freeGlobal["global"] === freeGlobal || freeGlobal["window"] === freeGlobal)) {
+    root = freeGlobal;
+  }
+
+  // Public: Initializes JSON 3 using the given `context` object, attaching the
+  // `stringify` and `parse` functions to the specified `exports` object.
+  function runInContext(context, exports) {
+    context || (context = root["Object"]());
+    exports || (exports = root["Object"]());
+
+    // Native constructor aliases.
+    var Number = context["Number"] || root["Number"],
+        String = context["String"] || root["String"],
+        Object = context["Object"] || root["Object"],
+        Date = context["Date"] || root["Date"],
+        SyntaxError = context["SyntaxError"] || root["SyntaxError"],
+        TypeError = context["TypeError"] || root["TypeError"],
+        Math = context["Math"] || root["Math"],
+        nativeJSON = context["JSON"] || root["JSON"];
+
+    // Delegate to the native `stringify` and `parse` implementations.
+    if (typeof nativeJSON == "object" && nativeJSON) {
+      exports.stringify = nativeJSON.stringify;
+      exports.parse = nativeJSON.parse;
+    }
+
+    // Convenience aliases.
+    var objectProto = Object.prototype,
+        getClass = objectProto.toString,
+        isProperty, forEach, undef;
+
+    // Test the `Date#getUTC*` methods. Based on work by @Yaffle.
+    var isExtended = new Date(-3509827334573292);
+    try {
+      // The `getUTCFullYear`, `Month`, and `Date` methods return nonsensical
+      // results for certain dates in Opera >= 10.53.
+      isExtended = isExtended.getUTCFullYear() == -109252 && isExtended.getUTCMonth() === 0 && isExtended.getUTCDate() === 1 &&
+        // Safari < 2.0.2 stores the internal millisecond time value correctly,
+        // but clips the values returned by the date methods to the range of
+        // signed 32-bit integers ([-2 ** 31, 2 ** 31 - 1]).
+        isExtended.getUTCHours() == 10 && isExtended.getUTCMinutes() == 37 && isExtended.getUTCSeconds() == 6 && isExtended.getUTCMilliseconds() == 708;
+    } catch (exception) {}
+
+    // Internal: Determines whether the native `JSON.stringify` and `parse`
+    // implementations are spec-compliant. Based on work by Ken Snyder.
+    function has(name) {
+      if (has[name] !== undef) {
+        // Return cached feature test result.
+        return has[name];
+      }
+      var isSupported;
+      if (name == "bug-string-char-index") {
+        // IE <= 7 doesn't support accessing string characters using square
+        // bracket notation. IE 8 only supports this for primitives.
+        isSupported = "a"[0] != "a";
+      } else if (name == "json") {
+        // Indicates whether both `JSON.stringify` and `JSON.parse` are
+        // supported.
+        isSupported = has("json-stringify") && has("json-parse");
+      } else {
+        var value, serialized = '{"a":[1,true,false,null,"\\u0000\\b\\n\\f\\r\\t"]}';
+        // Test `JSON.stringify`.
+        if (name == "json-stringify") {
+          var stringify = exports.stringify, stringifySupported = typeof stringify == "function" && isExtended;
+          if (stringifySupported) {
+            // A test function object with a custom `toJSON` method.
+            (value = function () {
+              return 1;
+            }).toJSON = value;
+            try {
+              stringifySupported =
+                // Firefox 3.1b1 and b2 serialize string, number, and boolean
+                // primitives as object literals.
+                stringify(0) === "0" &&
+                // FF 3.1b1, b2, and JSON 2 serialize wrapped primitives as object
+                // literals.
+                stringify(new Number()) === "0" &&
+                stringify(new String()) == '""' &&
+                // FF 3.1b1, 2 throw an error if the value is `null`, `undefined`, or
+                // does not define a canonical JSON representation (this applies to
+                // objects with `toJSON` properties as well, *unless* they are nested
+                // within an object or array).
+                stringify(getClass) === undef &&
+                // IE 8 serializes `undefined` as `"undefined"`. Safari <= 5.1.7 and
+                // FF 3.1b3 pass this test.
+                stringify(undef) === undef &&
+                // Safari <= 5.1.7 and FF 3.1b3 throw `Error`s and `TypeError`s,
+                // respectively, if the value is omitted entirely.
+                stringify() === undef &&
+                // FF 3.1b1, 2 throw an error if the given value is not a number,
+                // string, array, object, Boolean, or `null` literal. This applies to
+                // objects with custom `toJSON` methods as well, unless they are nested
+                // inside object or array literals. YUI 3.0.0b1 ignores custom `toJSON`
+                // methods entirely.
+                stringify(value) === "1" &&
+                stringify([value]) == "[1]" &&
+                // Prototype <= 1.6.1 serializes `[undefined]` as `"[]"` instead of
+                // `"[null]"`.
+                stringify([undef]) == "[null]" &&
+                // YUI 3.0.0b1 fails to serialize `null` literals.
+                stringify(null) == "null" &&
+                // FF 3.1b1, 2 halts serialization if an array contains a function:
+                // `[1, true, getClass, 1]` serializes as "[1,true,],". FF 3.1b3
+                // elides non-JSON values from objects and arrays, unless they
+                // define custom `toJSON` methods.
+                stringify([undef, getClass, null]) == "[null,null,null]" &&
+                // Simple serialization test. FF 3.1b1 uses Unicode escape sequences
+                // where character escape codes are expected (e.g., `\b` => `\u0008`).
+                stringify({ "a": [value, true, false, null, "\x00\b\n\f\r\t"] }) == serialized &&
+                // FF 3.1b1 and b2 ignore the `filter` and `width` arguments.
+                stringify(null, value) === "1" &&
+                stringify([1, 2], null, 1) == "[\n 1,\n 2\n]" &&
+                // JSON 2, Prototype <= 1.7, and older WebKit builds incorrectly
+                // serialize extended years.
+                stringify(new Date(-8.64e15)) == '"-271821-04-20T00:00:00.000Z"' &&
+                // The milliseconds are optional in ES 5, but required in 5.1.
+                stringify(new Date(8.64e15)) == '"+275760-09-13T00:00:00.000Z"' &&
+                // Firefox <= 11.0 incorrectly serializes years prior to 0 as negative
+                // four-digit years instead of six-digit years. Credits: @Yaffle.
+                stringify(new Date(-621987552e5)) == '"-000001-01-01T00:00:00.000Z"' &&
+                // Safari <= 5.1.5 and Opera >= 10.53 incorrectly serialize millisecond
+                // values less than 1000. Credits: @Yaffle.
+                stringify(new Date(-1)) == '"1969-12-31T23:59:59.999Z"';
+            } catch (exception) {
+              stringifySupported = false;
+            }
+          }
+          isSupported = stringifySupported;
+        }
+        // Test `JSON.parse`.
+        if (name == "json-parse") {
+          var parse = exports.parse;
+          if (typeof parse == "function") {
+            try {
+              // FF 3.1b1, b2 will throw an exception if a bare literal is provided.
+              // Conforming implementations should also coerce the initial argument to
+              // a string prior to parsing.
+              if (parse("0") === 0 && !parse(false)) {
+                // Simple parsing test.
+                value = parse(serialized);
+                var parseSupported = value["a"].length == 5 && value["a"][0] === 1;
+                if (parseSupported) {
+                  try {
+                    // Safari <= 5.1.2 and FF 3.1b1 allow unescaped tabs in strings.
+                    parseSupported = !parse('"\t"');
+                  } catch (exception) {}
+                  if (parseSupported) {
+                    try {
+                      // FF 4.0 and 4.0.1 allow leading `+` signs and leading
+                      // decimal points. FF 4.0, 4.0.1, and IE 9-10 also allow
+                      // certain octal literals.
+                      parseSupported = parse("01") !== 1;
+                    } catch (exception) {}
+                  }
+                  if (parseSupported) {
+                    try {
+                      // FF 4.0, 4.0.1, and Rhino 1.7R3-R4 allow trailing decimal
+                      // points. These environments, along with FF 3.1b1 and 2,
+                      // also allow trailing commas in JSON objects and arrays.
+                      parseSupported = parse("1.") !== 1;
+                    } catch (exception) {}
+                  }
+                }
+              }
+            } catch (exception) {
+              parseSupported = false;
+            }
+          }
+          isSupported = parseSupported;
+        }
+      }
+      return has[name] = !!isSupported;
+    }
+
+    if (!has("json")) {
+      // Common `[[Class]]` name aliases.
+      var functionClass = "[object Function]",
+          dateClass = "[object Date]",
+          numberClass = "[object Number]",
+          stringClass = "[object String]",
+          arrayClass = "[object Array]",
+          booleanClass = "[object Boolean]";
+
+      // Detect incomplete support for accessing string characters by index.
+      var charIndexBuggy = has("bug-string-char-index");
+
+      // Define additional utility methods if the `Date` methods are buggy.
+      if (!isExtended) {
+        var floor = Math.floor;
+        // A mapping between the months of the year and the number of days between
+        // January 1st and the first of the respective month.
+        var Months = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+        // Internal: Calculates the number of days between the Unix epoch and the
+        // first day of the given month.
+        var getDay = function (year, month) {
+          return Months[month] + 365 * (year - 1970) + floor((year - 1969 + (month = +(month > 1))) / 4) - floor((year - 1901 + month) / 100) + floor((year - 1601 + month) / 400);
+        };
+      }
+
+      // Internal: Determines if a property is a direct property of the given
+      // object. Delegates to the native `Object#hasOwnProperty` method.
+      if (!(isProperty = objectProto.hasOwnProperty)) {
+        isProperty = function (property) {
+          var members = {}, constructor;
+          if ((members.__proto__ = null, members.__proto__ = {
+            // The *proto* property cannot be set multiple times in recent
+            // versions of Firefox and SeaMonkey.
+            "toString": 1
+          }, members).toString != getClass) {
+            // Safari <= 2.0.3 doesn't implement `Object#hasOwnProperty`, but
+            // supports the mutable *proto* property.
+            isProperty = function (property) {
+              // Capture and break the objectgs prototype chain (see section 8.6.2
+              // of the ES 5.1 spec). The parenthesized expression prevents an
+              // unsafe transformation by the Closure Compiler.
+              var original = this.__proto__, result = property in (this.__proto__ = null, this);
+              // Restore the original prototype chain.
+              this.__proto__ = original;
+              return result;
+            };
+          } else {
+            // Capture a reference to the top-level `Object` constructor.
+            constructor = members.constructor;
+            // Use the `constructor` property to simulate `Object#hasOwnProperty` in
+            // other environments.
+            isProperty = function (property) {
+              var parent = (this.constructor || constructor).prototype;
+              return property in this && !(property in parent && this[property] === parent[property]);
+            };
+          }
+          members = null;
+          return isProperty.call(this, property);
+        };
+      }
+
+      // Internal: A set of primitive types used by `isHostType`.
+      var PrimitiveTypes = {
+        "boolean": 1,
+        "number": 1,
+        "string": 1,
+        "undefined": 1
+      };
+
+      // Internal: Determines if the given object `property` value is a
+      // non-primitive.
+      var isHostType = function (object, property) {
+        var type = typeof object[property];
+        return type == "object" ? !!object[property] : !PrimitiveTypes[type];
+      };
+
+      // Internal: Normalizes the `for...in` iteration algorithm across
+      // environments. Each enumerated key is yielded to a `callback` function.
+      forEach = function (object, callback) {
+        var size = 0, Properties, members, property;
+
+        // Tests for bugs in the current environment's `for...in` algorithm. The
+        // `valueOf` property inherits the non-enumerable flag from
+        // `Object.prototype` in older versions of IE, Netscape, and Mozilla.
+        (Properties = function () {
+          this.valueOf = 0;
+        }).prototype.valueOf = 0;
+
+        // Iterate over a new instance of the `Properties` class.
+        members = new Properties();
+        for (property in members) {
+          // Ignore all properties inherited from `Object.prototype`.
+          if (isProperty.call(members, property)) {
+            size++;
+          }
+        }
+        Properties = members = null;
+
+        // Normalize the iteration algorithm.
+        if (!size) {
+          // A list of non-enumerable properties inherited from `Object.prototype`.
+          members = ["valueOf", "toString", "toLocaleString", "propertyIsEnumerable", "isPrototypeOf", "hasOwnProperty", "constructor"];
+          // IE <= 8, Mozilla 1.0, and Netscape 6.2 ignore shadowed non-enumerable
+          // properties.
+          forEach = function (object, callback) {
+            var isFunction = getClass.call(object) == functionClass, property, length;
+            var hasProperty = !isFunction && typeof object.constructor != "function" && isHostType(object, "hasOwnProperty") ? object.hasOwnProperty : isProperty;
+            for (property in object) {
+              // Gecko <= 1.0 enumerates the `prototype` property of functions under
+              // certain conditions; IE does not.
+              if (!(isFunction && property == "prototype") && hasProperty.call(object, property)) {
+                callback(property);
+              }
+            }
+            // Manually invoke the callback for each non-enumerable property.
+            for (length = members.length; property = members[--length]; hasProperty.call(object, property) && callback(property));
+          };
+        } else if (size == 2) {
+          // Safari <= 2.0.4 enumerates shadowed properties twice.
+          forEach = function (object, callback) {
+            // Create a set of iterated properties.
+            var members = {}, isFunction = getClass.call(object) == functionClass, property;
+            for (property in object) {
+              // Store each property name to prevent double enumeration. The
+              // `prototype` property of functions is not enumerated due to cross-
+              // environment inconsistencies.
+              if (!(isFunction && property == "prototype") && !isProperty.call(members, property) && (members[property] = 1) && isProperty.call(object, property)) {
+                callback(property);
+              }
+            }
+          };
+        } else {
+          // No bugs detected; use the standard `for...in` algorithm.
+          forEach = function (object, callback) {
+            var isFunction = getClass.call(object) == functionClass, property, isConstructor;
+            for (property in object) {
+              if (!(isFunction && property == "prototype") && isProperty.call(object, property) && !(isConstructor = property === "constructor")) {
+                callback(property);
+              }
+            }
+            // Manually invoke the callback for the `constructor` property due to
+            // cross-environment inconsistencies.
+            if (isConstructor || isProperty.call(object, (property = "constructor"))) {
+              callback(property);
+            }
+          };
+        }
+        return forEach(object, callback);
+      };
+
+      // Public: Serializes a JavaScript `value` as a JSON string. The optional
+      // `filter` argument may specify either a function that alters how object and
+      // array members are serialized, or an array of strings and numbers that
+      // indicates which properties should be serialized. The optional `width`
+      // argument may be either a string or number that specifies the indentation
+      // level of the output.
+      if (!has("json-stringify")) {
+        // Internal: A map of control characters and their escaped equivalents.
+        var Escapes = {
+          92: "\\\\",
+          34: '\\"',
+          8: "\\b",
+          12: "\\f",
+          10: "\\n",
+          13: "\\r",
+          9: "\\t"
+        };
+
+        // Internal: Converts `value` into a zero-padded string such that its
+        // length is at least equal to `width`. The `width` must be <= 6.
+        var leadingZeroes = "000000";
+        var toPaddedString = function (width, value) {
+          // The `|| 0` expression is necessary to work around a bug in
+          // Opera <= 7.54u2 where `0 == -0`, but `String(-0) !== "0"`.
+          return (leadingZeroes + (value || 0)).slice(-width);
+        };
+
+        // Internal: Double-quotes a string `value`, replacing all ASCII control
+        // characters (characters with code unit values between 0 and 31) with
+        // their escaped equivalents. This is an implementation of the
+        // `Quote(value)` operation defined in ES 5.1 section 15.12.3.
+        var unicodePrefix = "\\u00";
+        var quote = function (value) {
+          var result = '"', index = 0, length = value.length, useCharIndex = !charIndexBuggy || length > 10;
+          var symbols = useCharIndex && (charIndexBuggy ? value.split("") : value);
+          for (; index < length; index++) {
+            var charCode = value.charCodeAt(index);
+            // If the character is a control character, append its Unicode or
+            // shorthand escape sequence; otherwise, append the character as-is.
+            switch (charCode) {
+              case 8: case 9: case 10: case 12: case 13: case 34: case 92:
+                result += Escapes[charCode];
+                break;
+              default:
+                if (charCode < 32) {
+                  result += unicodePrefix + toPaddedString(2, charCode.toString(16));
+                  break;
+                }
+                result += useCharIndex ? symbols[index] : value.charAt(index);
+            }
+          }
+          return result + '"';
+        };
+
+        // Internal: Recursively serializes an object. Implements the
+        // `Str(key, holder)`, `JO(value)`, and `JA(value)` operations.
+        var serialize = function (property, object, callback, properties, whitespace, indentation, stack) {
+          var value, className, year, month, date, time, hours, minutes, seconds, milliseconds, results, element, index, length, prefix, result;
+          try {
+            // Necessary for host object support.
+            value = object[property];
+          } catch (exception) {}
+          if (typeof value == "object" && value) {
+            className = getClass.call(value);
+            if (className == dateClass && !isProperty.call(value, "toJSON")) {
+              if (value > -1 / 0 && value < 1 / 0) {
+                // Dates are serialized according to the `Date#toJSON` method
+                // specified in ES 5.1 section 15.9.5.44. See section 15.9.1.15
+                // for the ISO 8601 date time string format.
+                if (getDay) {
+                  // Manually compute the year, month, date, hours, minutes,
+                  // seconds, and milliseconds if the `getUTC*` methods are
+                  // buggy. Adapted from @Yaffle's `date-shim` project.
+                  date = floor(value / 864e5);
+                  for (year = floor(date / 365.2425) + 1970 - 1; getDay(year + 1, 0) <= date; year++);
+                  for (month = floor((date - getDay(year, 0)) / 30.42); getDay(year, month + 1) <= date; month++);
+                  date = 1 + date - getDay(year, month);
+                  // The `time` value specifies the time within the day (see ES
+                  // 5.1 section 15.9.1.2). The formula `(A % B + B) % B` is used
+                  // to compute `A modulo B`, as the `%` operator does not
+                  // correspond to the `modulo` operation for negative numbers.
+                  time = (value % 864e5 + 864e5) % 864e5;
+                  // The hours, minutes, seconds, and milliseconds are obtained by
+                  // decomposing the time within the day. See section 15.9.1.10.
+                  hours = floor(time / 36e5) % 24;
+                  minutes = floor(time / 6e4) % 60;
+                  seconds = floor(time / 1e3) % 60;
+                  milliseconds = time % 1e3;
+                } else {
+                  year = value.getUTCFullYear();
+                  month = value.getUTCMonth();
+                  date = value.getUTCDate();
+                  hours = value.getUTCHours();
+                  minutes = value.getUTCMinutes();
+                  seconds = value.getUTCSeconds();
+                  milliseconds = value.getUTCMilliseconds();
+                }
+                // Serialize extended years correctly.
+                value = (year <= 0 || year >= 1e4 ? (year < 0 ? "-" : "+") + toPaddedString(6, year < 0 ? -year : year) : toPaddedString(4, year)) +
+                  "-" + toPaddedString(2, month + 1) + "-" + toPaddedString(2, date) +
+                  // Months, dates, hours, minutes, and seconds should have two
+                  // digits; milliseconds should have three.
+                  "T" + toPaddedString(2, hours) + ":" + toPaddedString(2, minutes) + ":" + toPaddedString(2, seconds) +
+                  // Milliseconds are optional in ES 5.0, but required in 5.1.
+                  "." + toPaddedString(3, milliseconds) + "Z";
+              } else {
+                value = null;
+              }
+            } else if (typeof value.toJSON == "function" && ((className != numberClass && className != stringClass && className != arrayClass) || isProperty.call(value, "toJSON"))) {
+              // Prototype <= 1.6.1 adds non-standard `toJSON` methods to the
+              // `Number`, `String`, `Date`, and `Array` prototypes. JSON 3
+              // ignores all `toJSON` methods on these objects unless they are
+              // defined directly on an instance.
+              value = value.toJSON(property);
+            }
+          }
+          if (callback) {
+            // If a replacement function was provided, call it to obtain the value
+            // for serialization.
+            value = callback.call(object, property, value);
+          }
+          if (value === null) {
+            return "null";
+          }
+          className = getClass.call(value);
+          if (className == booleanClass) {
+            // Booleans are represented literally.
+            return "" + value;
+          } else if (className == numberClass) {
+            // JSON numbers must be finite. `Infinity` and `NaN` are serialized as
+            // `"null"`.
+            return value > -1 / 0 && value < 1 / 0 ? "" + value : "null";
+          } else if (className == stringClass) {
+            // Strings are double-quoted and escaped.
+            return quote("" + value);
+          }
+          // Recursively serialize objects and arrays.
+          if (typeof value == "object") {
+            // Check for cyclic structures. This is a linear search; performance
+            // is inversely proportional to the number of unique nested objects.
+            for (length = stack.length; length--;) {
+              if (stack[length] === value) {
+                // Cyclic structures cannot be serialized by `JSON.stringify`.
+                throw TypeError();
+              }
+            }
+            // Add the object to the stack of traversed objects.
+            stack.push(value);
+            results = [];
+            // Save the current indentation level and indent one additional level.
+            prefix = indentation;
+            indentation += whitespace;
+            if (className == arrayClass) {
+              // Recursively serialize array elements.
+              for (index = 0, length = value.length; index < length; index++) {
+                element = serialize(index, value, callback, properties, whitespace, indentation, stack);
+                results.push(element === undef ? "null" : element);
+              }
+              result = results.length ? (whitespace ? "[\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "]" : ("[" + results.join(",") + "]")) : "[]";
+            } else {
+              // Recursively serialize object members. Members are selected from
+              // either a user-specified list of property names, or the object
+              // itself.
+              forEach(properties || value, function (property) {
+                var element = serialize(property, value, callback, properties, whitespace, indentation, stack);
+                if (element !== undef) {
+                  // According to ES 5.1 section 15.12.3: "If `gap` {whitespace}
+                  // is not the empty string, let `member` {quote(property) + ":"}
+                  // be the concatenation of `member` and the `space` character."
+                  // The "`space` character" refers to the literal space
+                  // character, not the `space` {width} argument provided to
+                  // `JSON.stringify`.
+                  results.push(quote(property) + ":" + (whitespace ? " " : "") + element);
+                }
+              });
+              result = results.length ? (whitespace ? "{\n" + indentation + results.join(",\n" + indentation) + "\n" + prefix + "}" : ("{" + results.join(",") + "}")) : "{}";
+            }
+            // Remove the object from the traversed object stack.
+            stack.pop();
+            return result;
+          }
+        };
+
+        // Public: `JSON.stringify`. See ES 5.1 section 15.12.3.
+        exports.stringify = function (source, filter, width) {
+          var whitespace, callback, properties, className;
+          if (typeof filter == "function" || typeof filter == "object" && filter) {
+            if ((className = getClass.call(filter)) == functionClass) {
+              callback = filter;
+            } else if (className == arrayClass) {
+              // Convert the property names array into a makeshift set.
+              properties = {};
+              for (var index = 0, length = filter.length, value; index < length; value = filter[index++], ((className = getClass.call(value)), className == stringClass || className == numberClass) && (properties[value] = 1));
+            }
+          }
+          if (width) {
+            if ((className = getClass.call(width)) == numberClass) {
+              // Convert the `width` to an integer and create a string containing
+              // `width` number of space characters.
+              if ((width -= width % 1) > 0) {
+                for (whitespace = "", width > 10 && (width = 10); whitespace.length < width; whitespace += " ");
+              }
+            } else if (className == stringClass) {
+              whitespace = width.length <= 10 ? width : width.slice(0, 10);
+            }
+          }
+          // Opera <= 7.54u2 discards the values associated with empty string keys
+          // (`""`) only if they are used directly within an object member list
+          // (e.g., `!("" in { "": 1})`).
+          return serialize("", (value = {}, value[""] = source, value), callback, properties, whitespace, "", []);
+        };
+      }
+
+      // Public: Parses a JSON source string.
+      if (!has("json-parse")) {
+        var fromCharCode = String.fromCharCode;
+
+        // Internal: A map of escaped control characters and their unescaped
+        // equivalents.
+        var Unescapes = {
+          92: "\\",
+          34: '"',
+          47: "/",
+          98: "\b",
+          116: "\t",
+          110: "\n",
+          102: "\f",
+          114: "\r"
+        };
+
+        // Internal: Stores the parser state.
+        var Index, Source;
+
+        // Internal: Resets the parser state and throws a `SyntaxError`.
+        var abort = function () {
+          Index = Source = null;
+          throw SyntaxError();
+        };
+
+        // Internal: Returns the next token, or `"$"` if the parser has reached
+        // the end of the source string. A token may be a string, number, `null`
+        // literal, or Boolean literal.
+        var lex = function () {
+          var source = Source, length = source.length, value, begin, position, isSigned, charCode;
+          while (Index < length) {
+            charCode = source.charCodeAt(Index);
+            switch (charCode) {
+              case 9: case 10: case 13: case 32:
+                // Skip whitespace tokens, including tabs, carriage returns, line
+                // feeds, and space characters.
+                Index++;
+                break;
+              case 123: case 125: case 91: case 93: case 58: case 44:
+                // Parse a punctuator token (`{`, `}`, `[`, `]`, `:`, or `,`) at
+                // the current position.
+                value = charIndexBuggy ? source.charAt(Index) : source[Index];
+                Index++;
+                return value;
+              case 34:
+                // `"` delimits a JSON string; advance to the next character and
+                // begin parsing the string. String tokens are prefixed with the
+                // sentinel `@` character to distinguish them from punctuators and
+                // end-of-string tokens.
+                for (value = "@", Index++; Index < length;) {
+                  charCode = source.charCodeAt(Index);
+                  if (charCode < 32) {
+                    // Unescaped ASCII control characters (those with a code unit
+                    // less than the space character) are not permitted.
+                    abort();
+                  } else if (charCode == 92) {
+                    // A reverse solidus (`\`) marks the beginning of an escaped
+                    // control character (including `"`, `\`, and `/`) or Unicode
+                    // escape sequence.
+                    charCode = source.charCodeAt(++Index);
+                    switch (charCode) {
+                      case 92: case 34: case 47: case 98: case 116: case 110: case 102: case 114:
+                        // Revive escaped control characters.
+                        value += Unescapes[charCode];
+                        Index++;
+                        break;
+                      case 117:
+                        // `\u` marks the beginning of a Unicode escape sequence.
+                        // Advance to the first character and validate the
+                        // four-digit code point.
+                        begin = ++Index;
+                        for (position = Index + 4; Index < position; Index++) {
+                          charCode = source.charCodeAt(Index);
+                          // A valid sequence comprises four hexdigits (case-
+                          // insensitive) that form a single hexadecimal value.
+                          if (!(charCode >= 48 && charCode <= 57 || charCode >= 97 && charCode <= 102 || charCode >= 65 && charCode <= 70)) {
+                            // Invalid Unicode escape sequence.
+                            abort();
+                          }
+                        }
+                        // Revive the escaped character.
+                        value += fromCharCode("0x" + source.slice(begin, Index));
+                        break;
+                      default:
+                        // Invalid escape sequence.
+                        abort();
+                    }
+                  } else {
+                    if (charCode == 34) {
+                      // An unescaped double-quote character marks the end of the
+                      // string.
+                      break;
+                    }
+                    charCode = source.charCodeAt(Index);
+                    begin = Index;
+                    // Optimize for the common case where a string is valid.
+                    while (charCode >= 32 && charCode != 92 && charCode != 34) {
+                      charCode = source.charCodeAt(++Index);
+                    }
+                    // Append the string as-is.
+                    value += source.slice(begin, Index);
+                  }
+                }
+                if (source.charCodeAt(Index) == 34) {
+                  // Advance to the next character and return the revived string.
+                  Index++;
+                  return value;
+                }
+                // Unterminated string.
+                abort();
+              default:
+                // Parse numbers and literals.
+                begin = Index;
+                // Advance past the negative sign, if one is specified.
+                if (charCode == 45) {
+                  isSigned = true;
+                  charCode = source.charCodeAt(++Index);
+                }
+                // Parse an integer or floating-point value.
+                if (charCode >= 48 && charCode <= 57) {
+                  // Leading zeroes are interpreted as octal literals.
+                  if (charCode == 48 && ((charCode = source.charCodeAt(Index + 1)), charCode >= 48 && charCode <= 57)) {
+                    // Illegal octal literal.
+                    abort();
+                  }
+                  isSigned = false;
+                  // Parse the integer component.
+                  for (; Index < length && ((charCode = source.charCodeAt(Index)), charCode >= 48 && charCode <= 57); Index++);
+                  // Floats cannot contain a leading decimal point; however, this
+                  // case is already accounted for by the parser.
+                  if (source.charCodeAt(Index) == 46) {
+                    position = ++Index;
+                    // Parse the decimal component.
+                    for (; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
+                    if (position == Index) {
+                      // Illegal trailing decimal.
+                      abort();
+                    }
+                    Index = position;
+                  }
+                  // Parse exponents. The `e` denoting the exponent is
+                  // case-insensitive.
+                  charCode = source.charCodeAt(Index);
+                  if (charCode == 101 || charCode == 69) {
+                    charCode = source.charCodeAt(++Index);
+                    // Skip past the sign following the exponent, if one is
+                    // specified.
+                    if (charCode == 43 || charCode == 45) {
+                      Index++;
+                    }
+                    // Parse the exponential component.
+                    for (position = Index; position < length && ((charCode = source.charCodeAt(position)), charCode >= 48 && charCode <= 57); position++);
+                    if (position == Index) {
+                      // Illegal empty exponent.
+                      abort();
+                    }
+                    Index = position;
+                  }
+                  // Coerce the parsed value to a JavaScript number.
+                  return +source.slice(begin, Index);
+                }
+                // A negative sign may only precede numbers.
+                if (isSigned) {
+                  abort();
+                }
+                // `true`, `false`, and `null` literals.
+                if (source.slice(Index, Index + 4) == "true") {
+                  Index += 4;
+                  return true;
+                } else if (source.slice(Index, Index + 5) == "false") {
+                  Index += 5;
+                  return false;
+                } else if (source.slice(Index, Index + 4) == "null") {
+                  Index += 4;
+                  return null;
+                }
+                // Unrecognized token.
+                abort();
+            }
+          }
+          // Return the sentinel `$` character if the parser has reached the end
+          // of the source string.
+          return "$";
+        };
+
+        // Internal: Parses a JSON `value` token.
+        var get = function (value) {
+          var results, hasMembers;
+          if (value == "$") {
+            // Unexpected end of input.
+            abort();
+          }
+          if (typeof value == "string") {
+            if ((charIndexBuggy ? value.charAt(0) : value[0]) == "@") {
+              // Remove the sentinel `@` character.
+              return value.slice(1);
+            }
+            // Parse object and array literals.
+            if (value == "[") {
+              // Parses a JSON array, returning a new JavaScript array.
+              results = [];
+              for (;; hasMembers || (hasMembers = true)) {
+                value = lex();
+                // A closing square bracket marks the end of the array literal.
+                if (value == "]") {
+                  break;
+                }
+                // If the array literal contains elements, the current token
+                // should be a comma separating the previous element from the
+                // next.
+                if (hasMembers) {
+                  if (value == ",") {
+                    value = lex();
+                    if (value == "]") {
+                      // Unexpected trailing `,` in array literal.
+                      abort();
+                    }
+                  } else {
+                    // A `,` must separate each array element.
+                    abort();
+                  }
+                }
+                // Elisions and leading commas are not permitted.
+                if (value == ",") {
+                  abort();
+                }
+                results.push(get(value));
+              }
+              return results;
+            } else if (value == "{") {
+              // Parses a JSON object, returning a new JavaScript object.
+              results = {};
+              for (;; hasMembers || (hasMembers = true)) {
+                value = lex();
+                // A closing curly brace marks the end of the object literal.
+                if (value == "}") {
+                  break;
+                }
+                // If the object literal contains members, the current token
+                // should be a comma separator.
+                if (hasMembers) {
+                  if (value == ",") {
+                    value = lex();
+                    if (value == "}") {
+                      // Unexpected trailing `,` in object literal.
+                      abort();
+                    }
+                  } else {
+                    // A `,` must separate each object member.
+                    abort();
+                  }
+                }
+                // Leading commas are not permitted, object property names must be
+                // double-quoted strings, and a `:` must separate each property
+                // name and value.
+                if (value == "," || typeof value != "string" || (charIndexBuggy ? value.charAt(0) : value[0]) != "@" || lex() != ":") {
+                  abort();
+                }
+                results[value.slice(1)] = get(lex());
+              }
+              return results;
+            }
+            // Unexpected token encountered.
+            abort();
+          }
+          return value;
+        };
+
+        // Internal: Updates a traversed object member.
+        var update = function (source, property, callback) {
+          var element = walk(source, property, callback);
+          if (element === undef) {
+            delete source[property];
+          } else {
+            source[property] = element;
+          }
+        };
+
+        // Internal: Recursively traverses a parsed JSON object, invoking the
+        // `callback` function for each value. This is an implementation of the
+        // `Walk(holder, name)` operation defined in ES 5.1 section 15.12.2.
+        var walk = function (source, property, callback) {
+          var value = source[property], length;
+          if (typeof value == "object" && value) {
+            // `forEach` can't be used to traverse an array in Opera <= 8.54
+            // because its `Object#hasOwnProperty` implementation returns `false`
+            // for array indices (e.g., `![1, 2, 3].hasOwnProperty("0")`).
+            if (getClass.call(value) == arrayClass) {
+              for (length = value.length; length--;) {
+                update(value, length, callback);
+              }
+            } else {
+              forEach(value, function (property) {
+                update(value, property, callback);
+              });
+            }
+          }
+          return callback.call(source, property, value);
+        };
+
+        // Public: `JSON.parse`. See ES 5.1 section 15.12.2.
+        exports.parse = function (source, callback) {
+          var result, value;
+          Index = 0;
+          Source = "" + source;
+          result = get(lex());
+          // If a JSON string contains multiple tokens, it is invalid.
+          if (lex() != "$") {
+            abort();
+          }
+          // Reset the parser state.
+          Index = Source = null;
+          return callback && getClass.call(callback) == functionClass ? walk((value = {}, value[""] = result, value), "", callback) : result;
+        };
+      }
+    }
+
+    exports["runInContext"] = runInContext;
+    return exports;
+  }
+
+  if (typeof exports == "object" && exports && !exports.nodeType && !isLoader) {
+    // Export for CommonJS environments.
+    runInContext(root, exports);
+  } else {
+    // Export for web browsers and JavaScript engines.
+    var nativeJSON = root.JSON;
+    var JSON3 = runInContext(root, (root["JSON3"] = {
+      // Public: Restores the original value of the global `JSON` object and
+      // returns a reference to the `JSON3` object.
+      "noConflict": function () {
+        root.JSON = nativeJSON;
+        return JSON3;
+      }
+    }));
+
+    root.JSON = {
+      "parse": JSON3.parse,
+      "stringify": JSON3.stringify
+    };
+  }
+
+  // Export for asynchronous module loaders.
+  if (isLoader) {
+    define(function () {
+      return JSON3;
+    });
+  }
+}(this));
+
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{}],24:[function(require,module,exports){
+"use strict";
+
+var hasOwn = Object.prototype.hasOwnProperty;
+var toString = Object.prototype.toString;
+
+var isFunction = function (fn) {
+	return (typeof fn === 'function' && !(fn instanceof RegExp)) || toString.call(fn) === '[object Function]';
+};
+
+module.exports = function forEach(obj, fn) {
+	if (!isFunction(fn)) {
+		throw new TypeError('iterator must be a function');
+	}
+	var i, k,
+		isString = typeof obj === 'string',
+		l = obj.length,
+		context = arguments.length > 2 ? arguments[2] : null;
+	if (l === +l) {
+		for (i = 0; i < l; i++) {
+			if (context === null) {
+				fn(isString ? obj.charAt(i) : obj[i], i, obj);
+			} else {
+				fn.call(context, isString ? obj.charAt(i) : obj[i], i, obj);
+			}
+		}
+	} else {
+		for (k in obj) {
+			if (hasOwn.call(obj, k)) {
+				if (context === null) {
+					fn(obj[k], k, obj);
+				} else {
+					fn.call(context, obj[k], k, obj);
+				}
+			}
+		}
+	}
+};
+
+
+},{}],25:[function(require,module,exports){
+"use strict";
+
+// modified from https://github.com/es-shims/es5-shim
+var has = Object.prototype.hasOwnProperty,
+	toString = Object.prototype.toString,
+	forEach = require('./foreach'),
+	isArgs = require('./isArguments'),
+	hasDontEnumBug = !({'toString': null}).propertyIsEnumerable('toString'),
+	hasProtoEnumBug = (function () {}).propertyIsEnumerable('prototype'),
+	dontEnums = [
+		"toString",
+		"toLocaleString",
+		"valueOf",
+		"hasOwnProperty",
+		"isPrototypeOf",
+		"propertyIsEnumerable",
+		"constructor"
+	];
+
+var keysShim = function keys(object) {
+	var isObject = object !== null && typeof object === 'object',
+		isFunction = toString.call(object) === '[object Function]',
+		isArguments = isArgs(object),
+		theKeys = [];
+
+	if (!isObject && !isFunction && !isArguments) {
+		throw new TypeError("Object.keys called on a non-object");
+	}
+
+	if (isArguments) {
+		forEach(object, function (value, index) {
+			theKeys.push(index);
+		});
+	} else {
+		var name,
+			skipProto = hasProtoEnumBug && isFunction;
+
+		for (name in object) {
+			if (!(skipProto && name === 'prototype') && has.call(object, name)) {
+				theKeys.push(name);
+			}
+		}
+	}
+
+	if (hasDontEnumBug) {
+		var ctor = object.constructor,
+			skipConstructor = ctor && ctor.prototype === object;
+
+		forEach(dontEnums, function (dontEnum) {
+			if (!(skipConstructor && dontEnum === 'constructor') && has.call(object, dontEnum)) {
+				theKeys.push(dontEnum);
+			}
+		});
+	}
+	return theKeys;
+};
+
+keysShim.shim = function shimObjectKeys() {
+	if (!Object.keys) {
+		Object.keys = keysShim;
+	}
+	return Object.keys || keysShim;
+};
+
+module.exports = keysShim;
+
+
+},{"./foreach":24,"./isArguments":26}],26:[function(require,module,exports){
+"use strict";
+
+var toString = Object.prototype.toString;
+
+module.exports = function isArguments(value) {
+	var str = toString.call(value);
+	var isArguments = str === '[object Arguments]';
+	if (!isArguments) {
+		isArguments = str !== '[object Array]'
+			&& value !== null
+			&& typeof value === 'object'
+			&& typeof value.length === 'number'
+			&& value.length >= 0
+			&& toString.call(value.callee) === '[object Function]';
+	}
+	return isArguments;
+};
+
+
+},{}],27:[function(require,module,exports){
+
+/**
+ * Module dependencies.
+ */
+
+var map = require('array-map');
+var indexOf = require('indexof');
+var isArray = require('isarray');
+var forEach = require('foreach');
+var reduce = require('array-reduce');
+var getObjectKeys = require('object-keys');
+var JSON = require('json3');
+
+/**
+ * Make sure `Object.keys` work for `undefined`
+ * values that are still there, like `document.all`.
+ * http://lists.w3.org/Archives/Public/public-html/2009Jun/0546.html
+ *
+ * @api private
+ */
+
+function objectKeys(val){
+  if (Object.keys) return Object.keys(val);
+  return getObjectKeys(val);
+}
+
+/**
+ * Module exports.
+ */
+
+module.exports = inspect;
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ * @license MIT (© Joyent)
+ */
+/* legacy: obj, showHidden, depth, colors*/
+
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    _extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+
+function isNull(arg) {
+  return arg === null;
+}
+
+function hasOwn(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+function arrayToHash(array) {
+  var hash = {};
+
+  forEach(array, function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwn(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  forEach(keys, function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = objectKeys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden && Object.getOwnPropertyNames) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (indexOf(keys, 'message') >= 0 || indexOf(keys, 'description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = map(keys, function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = { value: value[key] };
+  if (Object.getOwnPropertyDescriptor) {
+    desc = Object.getOwnPropertyDescriptor(value, key) || desc;
+  }
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwn(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (indexOf(ctx.seen, desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = map(str.split('\n'), function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + map(str.split('\n'), function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = reduce(output, function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+function _extend(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = objectKeys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+}
+
+},{"array-map":3,"array-reduce":4,"foreach":11,"indexof":12,"isarray":28,"json3":23,"object-keys":25}],28:[function(require,module,exports){
+module.exports = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]';
+};
+
+},{}],29:[function(require,module,exports){
+
+},{}],30:[function(require,module,exports){
 var asn1 = exports;
 
 asn1.bignum = require('bn.js');
@@ -3702,7 +6368,7 @@ asn1.constants = require('./asn1/constants');
 asn1.decoders = require('./asn1/decoders');
 asn1.encoders = require('./asn1/encoders');
 
-},{"./asn1/api":20,"./asn1/base":22,"./asn1/constants":26,"./asn1/decoders":28,"./asn1/encoders":31,"bn.js":33}],20:[function(require,module,exports){
+},{"./asn1/api":31,"./asn1/base":33,"./asn1/constants":37,"./asn1/decoders":39,"./asn1/encoders":42,"bn.js":44}],31:[function(require,module,exports){
 var asn1 = require('../asn1');
 var inherits = require('inherits');
 
@@ -3765,7 +6431,7 @@ Entity.prototype.encode = function encode(data, enc, /* internal */ reporter) {
   return this._getEncoder(enc).encode(data, reporter);
 };
 
-},{"../asn1":19,"inherits":152,"vm":216}],21:[function(require,module,exports){
+},{"../asn1":30,"inherits":163,"vm":227}],32:[function(require,module,exports){
 var inherits = require('inherits');
 var Reporter = require('../base').Reporter;
 var Buffer = require('buffer').Buffer;
@@ -3883,7 +6549,7 @@ EncoderBuffer.prototype.join = function join(out, offset) {
   return out;
 };
 
-},{"../base":22,"buffer":82,"inherits":152}],22:[function(require,module,exports){
+},{"../base":33,"buffer":93,"inherits":163}],33:[function(require,module,exports){
 var base = exports;
 
 base.Reporter = require('./reporter').Reporter;
@@ -3891,7 +6557,7 @@ base.DecoderBuffer = require('./buffer').DecoderBuffer;
 base.EncoderBuffer = require('./buffer').EncoderBuffer;
 base.Node = require('./node');
 
-},{"./buffer":21,"./node":23,"./reporter":24}],23:[function(require,module,exports){
+},{"./buffer":32,"./node":34,"./reporter":35}],34:[function(require,module,exports){
 var Reporter = require('../base').Reporter;
 var EncoderBuffer = require('../base').EncoderBuffer;
 var DecoderBuffer = require('../base').DecoderBuffer;
@@ -4527,7 +7193,7 @@ Node.prototype._isPrintstr = function isPrintstr(str) {
   return /^[A-Za-z0-9 '\(\)\+,\-\.\/:=\?]*$/.test(str);
 };
 
-},{"../base":22,"minimalistic-assert":158}],24:[function(require,module,exports){
+},{"../base":33,"minimalistic-assert":169}],35:[function(require,module,exports){
 var inherits = require('inherits');
 
 function Reporter(options) {
@@ -4650,7 +7316,7 @@ ReporterError.prototype.rethrow = function rethrow(msg) {
   return this;
 };
 
-},{"inherits":152}],25:[function(require,module,exports){
+},{"inherits":163}],36:[function(require,module,exports){
 var constants = require('../constants');
 
 exports.tagClass = {
@@ -4694,7 +7360,7 @@ exports.tag = {
 };
 exports.tagByName = constants._reverse(exports.tag);
 
-},{"../constants":26}],26:[function(require,module,exports){
+},{"../constants":37}],37:[function(require,module,exports){
 var constants = exports;
 
 // Helper
@@ -4715,7 +7381,7 @@ constants._reverse = function reverse(map) {
 
 constants.der = require('./der');
 
-},{"./der":25}],27:[function(require,module,exports){
+},{"./der":36}],38:[function(require,module,exports){
 var inherits = require('inherits');
 
 var asn1 = require('../../asn1');
@@ -5041,13 +7707,13 @@ function derDecodeLen(buf, primitive, fail) {
   return len;
 }
 
-},{"../../asn1":19,"inherits":152}],28:[function(require,module,exports){
+},{"../../asn1":30,"inherits":163}],39:[function(require,module,exports){
 var decoders = exports;
 
 decoders.der = require('./der');
 decoders.pem = require('./pem');
 
-},{"./der":27,"./pem":29}],29:[function(require,module,exports){
+},{"./der":38,"./pem":40}],40:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -5098,7 +7764,7 @@ PEMDecoder.prototype.decode = function decode(data, options) {
   return DERDecoder.prototype.decode.call(this, input, options);
 };
 
-},{"./der":27,"buffer":82,"inherits":152}],30:[function(require,module,exports){
+},{"./der":38,"buffer":93,"inherits":163}],41:[function(require,module,exports){
 var inherits = require('inherits');
 var Buffer = require('buffer').Buffer;
 
@@ -5395,13 +8061,13 @@ function encodeTag(tag, primitive, cls, reporter) {
   return res;
 }
 
-},{"../../asn1":19,"buffer":82,"inherits":152}],31:[function(require,module,exports){
+},{"../../asn1":30,"buffer":93,"inherits":163}],42:[function(require,module,exports){
 var encoders = exports;
 
 encoders.der = require('./der');
 encoders.pem = require('./pem');
 
-},{"./der":30,"./pem":32}],32:[function(require,module,exports){
+},{"./der":41,"./pem":43}],43:[function(require,module,exports){
 var inherits = require('inherits');
 
 var DEREncoder = require('./der');
@@ -5424,7 +8090,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   return out.join('\n');
 };
 
-},{"./der":30,"inherits":152}],33:[function(require,module,exports){
+},{"./der":41,"inherits":163}],44:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -8859,7 +11525,7 @@ PEMEncoder.prototype.encode = function encode(data, options) {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{"buffer":37}],34:[function(require,module,exports){
+},{"buffer":48}],45:[function(require,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -9013,7 +11679,7 @@ function fromByteArray (uint8) {
   return parts.join('')
 }
 
-},{}],35:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 (function (module, exports) {
   'use strict';
 
@@ -12551,7 +15217,7 @@ function fromByteArray (uint8) {
   };
 })(typeof module === 'undefined' || module, this);
 
-},{"buffer":37}],36:[function(require,module,exports){
+},{"buffer":48}],47:[function(require,module,exports){
 var r;
 
 module.exports = function rand(len) {
@@ -12618,9 +15284,9 @@ if (typeof self === 'object') {
   }
 }
 
-},{"crypto":37}],37:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],38:[function(require,module,exports){
+},{"crypto":48}],48:[function(require,module,exports){
+arguments[4][29][0].apply(exports,arguments)
+},{"dup":29}],49:[function(require,module,exports){
 // based on the aes implimentation in triple sec
 // https://github.com/keybase/triplesec
 // which is in turn based on the one from crypto-js
@@ -12850,7 +15516,7 @@ AES.prototype.scrub = function () {
 
 module.exports.AES = AES
 
-},{"safe-buffer":200}],39:[function(require,module,exports){
+},{"safe-buffer":211}],50:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -12969,7 +15635,7 @@ StreamCipher.prototype.setAAD = function setAAD (buf) {
 
 module.exports = StreamCipher
 
-},{"./aes":38,"./ghash":43,"./incr32":44,"buffer-xor":81,"cipher-base":83,"inherits":152,"safe-buffer":200}],40:[function(require,module,exports){
+},{"./aes":49,"./ghash":54,"./incr32":55,"buffer-xor":92,"cipher-base":94,"inherits":163,"safe-buffer":211}],51:[function(require,module,exports){
 var ciphers = require('./encrypter')
 var deciphers = require('./decrypter')
 var modes = require('./modes/list.json')
@@ -12984,7 +15650,7 @@ exports.createDecipher = exports.Decipher = deciphers.createDecipher
 exports.createDecipheriv = exports.Decipheriv = deciphers.createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"./decrypter":41,"./encrypter":42,"./modes/list.json":52}],41:[function(require,module,exports){
+},{"./decrypter":52,"./encrypter":53,"./modes/list.json":63}],52:[function(require,module,exports){
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
 var MODES = require('./modes')
@@ -13110,7 +15776,7 @@ function createDecipher (suite, password) {
 exports.createDecipher = createDecipher
 exports.createDecipheriv = createDecipheriv
 
-},{"./aes":38,"./authCipher":39,"./modes":51,"./streamCipher":54,"cipher-base":83,"evp_bytestokey":121,"inherits":152,"safe-buffer":200}],42:[function(require,module,exports){
+},{"./aes":49,"./authCipher":50,"./modes":62,"./streamCipher":65,"cipher-base":94,"evp_bytestokey":132,"inherits":163,"safe-buffer":211}],53:[function(require,module,exports){
 var MODES = require('./modes')
 var AuthCipher = require('./authCipher')
 var Buffer = require('safe-buffer').Buffer
@@ -13226,7 +15892,7 @@ function createCipher (suite, password) {
 exports.createCipheriv = createCipheriv
 exports.createCipher = createCipher
 
-},{"./aes":38,"./authCipher":39,"./modes":51,"./streamCipher":54,"cipher-base":83,"evp_bytestokey":121,"inherits":152,"safe-buffer":200}],43:[function(require,module,exports){
+},{"./aes":49,"./authCipher":50,"./modes":62,"./streamCipher":65,"cipher-base":94,"evp_bytestokey":132,"inherits":163,"safe-buffer":211}],54:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var ZEROES = Buffer.alloc(16, 0)
 
@@ -13317,7 +15983,7 @@ GHASH.prototype.final = function (abl, bl) {
 
 module.exports = GHASH
 
-},{"safe-buffer":200}],44:[function(require,module,exports){
+},{"safe-buffer":211}],55:[function(require,module,exports){
 function incr32 (iv) {
   var len = iv.length
   var item
@@ -13334,7 +16000,7 @@ function incr32 (iv) {
 }
 module.exports = incr32
 
-},{}],45:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 var xor = require('buffer-xor')
 
 exports.encrypt = function (self, block) {
@@ -13353,7 +16019,7 @@ exports.decrypt = function (self, block) {
   return xor(out, pad)
 }
 
-},{"buffer-xor":81}],46:[function(require,module,exports){
+},{"buffer-xor":92}],57:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var xor = require('buffer-xor')
 
@@ -13388,7 +16054,7 @@ exports.encrypt = function (self, data, decrypt) {
   return out
 }
 
-},{"buffer-xor":81,"safe-buffer":200}],47:[function(require,module,exports){
+},{"buffer-xor":92,"safe-buffer":211}],58:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -13432,7 +16098,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":200}],48:[function(require,module,exports){
+},{"safe-buffer":211}],59:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 function encryptByte (self, byteParam, decrypt) {
@@ -13459,7 +16125,7 @@ exports.encrypt = function (self, chunk, decrypt) {
   return out
 }
 
-},{"safe-buffer":200}],49:[function(require,module,exports){
+},{"safe-buffer":211}],60:[function(require,module,exports){
 var xor = require('buffer-xor')
 var Buffer = require('safe-buffer').Buffer
 var incr32 = require('../incr32')
@@ -13491,7 +16157,7 @@ exports.encrypt = function (self, chunk) {
   return xor(chunk, pad)
 }
 
-},{"../incr32":44,"buffer-xor":81,"safe-buffer":200}],50:[function(require,module,exports){
+},{"../incr32":55,"buffer-xor":92,"safe-buffer":211}],61:[function(require,module,exports){
 exports.encrypt = function (self, block) {
   return self._cipher.encryptBlock(block)
 }
@@ -13500,7 +16166,7 @@ exports.decrypt = function (self, block) {
   return self._cipher.decryptBlock(block)
 }
 
-},{}],51:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 var modeModules = {
   ECB: require('./ecb'),
   CBC: require('./cbc'),
@@ -13520,7 +16186,7 @@ for (var key in modes) {
 
 module.exports = modes
 
-},{"./cbc":45,"./cfb":46,"./cfb1":47,"./cfb8":48,"./ctr":49,"./ecb":50,"./list.json":52,"./ofb":53}],52:[function(require,module,exports){
+},{"./cbc":56,"./cfb":57,"./cfb1":58,"./cfb8":59,"./ctr":60,"./ecb":61,"./list.json":63,"./ofb":64}],63:[function(require,module,exports){
 module.exports={
   "aes-128-ecb": {
     "cipher": "AES",
@@ -13713,7 +16379,7 @@ module.exports={
   }
 }
 
-},{}],53:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function (Buffer){
 var xor = require('buffer-xor')
 
@@ -13733,7 +16399,7 @@ exports.encrypt = function (self, chunk) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":82,"buffer-xor":81}],54:[function(require,module,exports){
+},{"buffer":93,"buffer-xor":92}],65:[function(require,module,exports){
 var aes = require('./aes')
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('cipher-base')
@@ -13762,7 +16428,7 @@ StreamCipher.prototype._final = function () {
 
 module.exports = StreamCipher
 
-},{"./aes":38,"cipher-base":83,"inherits":152,"safe-buffer":200}],55:[function(require,module,exports){
+},{"./aes":49,"cipher-base":94,"inherits":163,"safe-buffer":211}],66:[function(require,module,exports){
 var DES = require('browserify-des')
 var aes = require('browserify-aes/browser')
 var aesModes = require('browserify-aes/modes')
@@ -13831,7 +16497,7 @@ exports.createDecipher = exports.Decipher = createDecipher
 exports.createDecipheriv = exports.Decipheriv = createDecipheriv
 exports.listCiphers = exports.getCiphers = getCiphers
 
-},{"browserify-aes/browser":40,"browserify-aes/modes":51,"browserify-des":56,"browserify-des/modes":57,"evp_bytestokey":121}],56:[function(require,module,exports){
+},{"browserify-aes/browser":51,"browserify-aes/modes":62,"browserify-des":67,"browserify-des/modes":68,"evp_bytestokey":132}],67:[function(require,module,exports){
 var CipherBase = require('cipher-base')
 var des = require('des.js')
 var inherits = require('inherits')
@@ -13883,7 +16549,7 @@ DES.prototype._final = function () {
   return Buffer.from(this._des.final())
 }
 
-},{"cipher-base":83,"des.js":92,"inherits":152,"safe-buffer":200}],57:[function(require,module,exports){
+},{"cipher-base":94,"des.js":103,"inherits":163,"safe-buffer":211}],68:[function(require,module,exports){
 exports['des-ecb'] = {
   key: 8,
   iv: 0
@@ -13909,7 +16575,7 @@ exports['des-ede'] = {
   iv: 0
 }
 
-},{}],58:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 (function (Buffer){
 var bn = require('bn.js');
 var randomBytes = require('randombytes');
@@ -13953,12 +16619,12 @@ function getr(priv) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":59,"buffer":82,"randombytes":182}],59:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"buffer":37,"dup":33}],60:[function(require,module,exports){
+},{"bn.js":70,"buffer":93,"randombytes":193}],70:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"buffer":48,"dup":44}],71:[function(require,module,exports){
 module.exports = require('./browser/algorithms.json')
 
-},{"./browser/algorithms.json":61}],61:[function(require,module,exports){
+},{"./browser/algorithms.json":72}],72:[function(require,module,exports){
 module.exports={
   "sha224WithRSAEncryption": {
     "sign": "rsa",
@@ -14112,7 +16778,7 @@ module.exports={
   }
 }
 
-},{}],62:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module.exports={
   "1.3.132.0.10": "secp256k1",
   "1.3.132.0.33": "p224",
@@ -14122,7 +16788,7 @@ module.exports={
   "1.3.132.0.35": "p521"
 }
 
-},{}],63:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var createHash = require('create-hash')
 var stream = require('readable-stream')
@@ -14216,7 +16882,7 @@ module.exports = {
   createVerify: createVerify
 }
 
-},{"./algorithms.json":61,"./sign":64,"./verify":65,"create-hash":87,"inherits":152,"readable-stream":80,"safe-buffer":200}],64:[function(require,module,exports){
+},{"./algorithms.json":72,"./sign":75,"./verify":76,"create-hash":98,"inherits":163,"readable-stream":91,"safe-buffer":211}],75:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var createHmac = require('create-hmac')
@@ -14361,7 +17027,7 @@ module.exports = sign
 module.exports.getKey = getKey
 module.exports.makeKey = makeKey
 
-},{"./curves.json":62,"bn.js":35,"browserify-rsa":58,"create-hmac":89,"elliptic":103,"parse-asn1":165,"safe-buffer":200}],65:[function(require,module,exports){
+},{"./curves.json":73,"bn.js":46,"browserify-rsa":69,"create-hmac":100,"elliptic":114,"parse-asn1":176,"safe-buffer":211}],76:[function(require,module,exports){
 // much of this based on https://github.com/indutny/self-signed/blob/gh-pages/lib/rsa.js
 var Buffer = require('safe-buffer').Buffer
 var BN = require('bn.js')
@@ -14447,7 +17113,7 @@ function checkValue (b, q) {
 
 module.exports = verify
 
-},{"./curves.json":62,"bn.js":35,"elliptic":103,"parse-asn1":165,"safe-buffer":200}],66:[function(require,module,exports){
+},{"./curves.json":73,"bn.js":46,"elliptic":114,"parse-asn1":176,"safe-buffer":211}],77:[function(require,module,exports){
 'use strict';
 
 function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; subClass.__proto__ = superClass; }
@@ -14576,7 +17242,7 @@ createErrorType('ERR_UNKNOWN_ENCODING', function (arg) {
 createErrorType('ERR_STREAM_UNSHIFT_AFTER_END_EVENT', 'stream.unshift() after end event');
 module.exports.codes = codes;
 
-},{}],67:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 (function (process){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -14718,7 +17384,7 @@ Object.defineProperty(Duplex.prototype, 'destroyed', {
   }
 });
 }).call(this,require('_process'))
-},{"./_stream_readable":69,"./_stream_writable":71,"_process":174,"inherits":152}],68:[function(require,module,exports){
+},{"./_stream_readable":80,"./_stream_writable":82,"_process":185,"inherits":163}],79:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -14758,7 +17424,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":70,"inherits":152}],69:[function(require,module,exports){
+},{"./_stream_transform":81,"inherits":163}],80:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -15885,7 +18551,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":66,"./_stream_duplex":67,"./internal/streams/async_iterator":72,"./internal/streams/buffer_list":73,"./internal/streams/destroy":74,"./internal/streams/from":76,"./internal/streams/state":78,"./internal/streams/stream":79,"_process":174,"buffer":82,"events":120,"inherits":152,"string_decoder/":210,"util":37}],70:[function(require,module,exports){
+},{"../errors":77,"./_stream_duplex":78,"./internal/streams/async_iterator":83,"./internal/streams/buffer_list":84,"./internal/streams/destroy":85,"./internal/streams/from":87,"./internal/streams/state":89,"./internal/streams/stream":90,"_process":185,"buffer":93,"events":131,"inherits":163,"string_decoder/":221,"util":48}],81:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -16087,7 +18753,7 @@ function done(stream, er, data) {
   if (stream._transformState.transforming) throw new ERR_TRANSFORM_ALREADY_TRANSFORMING();
   return stream.push(null);
 }
-},{"../errors":66,"./_stream_duplex":67,"inherits":152}],71:[function(require,module,exports){
+},{"../errors":77,"./_stream_duplex":78,"inherits":163}],82:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -16787,7 +19453,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../errors":66,"./_stream_duplex":67,"./internal/streams/destroy":74,"./internal/streams/state":78,"./internal/streams/stream":79,"_process":174,"buffer":82,"inherits":152,"util-deprecate":212}],72:[function(require,module,exports){
+},{"../errors":77,"./_stream_duplex":78,"./internal/streams/destroy":85,"./internal/streams/state":89,"./internal/streams/stream":90,"_process":185,"buffer":93,"inherits":163,"util-deprecate":223}],83:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -16997,7 +19663,7 @@ var createReadableStreamAsyncIterator = function createReadableStreamAsyncIterat
 
 module.exports = createReadableStreamAsyncIterator;
 }).call(this,require('_process'))
-},{"./end-of-stream":75,"_process":174}],73:[function(require,module,exports){
+},{"./end-of-stream":86,"_process":185}],84:[function(require,module,exports){
 'use strict';
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -17208,7 +19874,7 @@ function () {
 
   return BufferList;
 }();
-},{"buffer":82,"util":37}],74:[function(require,module,exports){
+},{"buffer":93,"util":48}],85:[function(require,module,exports){
 (function (process){
 'use strict'; // undocumented cb() API, needed for core, not for public API
 
@@ -17316,7 +19982,7 @@ module.exports = {
   errorOrDestroy: errorOrDestroy
 };
 }).call(this,require('_process'))
-},{"_process":174}],75:[function(require,module,exports){
+},{"_process":185}],86:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/end-of-stream with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -17421,12 +20087,12 @@ function eos(stream, opts, callback) {
 }
 
 module.exports = eos;
-},{"../../../errors":66}],76:[function(require,module,exports){
+},{"../../../errors":77}],87:[function(require,module,exports){
 module.exports = function () {
   throw new Error('Readable.from is not available in the browser')
 };
 
-},{}],77:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 // Ported from https://github.com/mafintosh/pump with
 // permission from the author, Mathias Buus (@mafintosh).
 'use strict';
@@ -17524,7 +20190,7 @@ function pipeline() {
 }
 
 module.exports = pipeline;
-},{"../../../errors":66,"./end-of-stream":75}],78:[function(require,module,exports){
+},{"../../../errors":77,"./end-of-stream":86}],89:[function(require,module,exports){
 'use strict';
 
 var ERR_INVALID_OPT_VALUE = require('../../../errors').codes.ERR_INVALID_OPT_VALUE;
@@ -17552,10 +20218,10 @@ function getHighWaterMark(state, options, duplexKey, isDuplex) {
 module.exports = {
   getHighWaterMark: getHighWaterMark
 };
-},{"../../../errors":66}],79:[function(require,module,exports){
+},{"../../../errors":77}],90:[function(require,module,exports){
 module.exports = require('events').EventEmitter;
 
-},{"events":120}],80:[function(require,module,exports){
+},{"events":131}],91:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -17566,7 +20232,7 @@ exports.PassThrough = require('./lib/_stream_passthrough.js');
 exports.finished = require('./lib/internal/streams/end-of-stream.js');
 exports.pipeline = require('./lib/internal/streams/pipeline.js');
 
-},{"./lib/_stream_duplex.js":67,"./lib/_stream_passthrough.js":68,"./lib/_stream_readable.js":69,"./lib/_stream_transform.js":70,"./lib/_stream_writable.js":71,"./lib/internal/streams/end-of-stream.js":75,"./lib/internal/streams/pipeline.js":77}],81:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":78,"./lib/_stream_passthrough.js":79,"./lib/_stream_readable.js":80,"./lib/_stream_transform.js":81,"./lib/_stream_writable.js":82,"./lib/internal/streams/end-of-stream.js":86,"./lib/internal/streams/pipeline.js":88}],92:[function(require,module,exports){
 (function (Buffer){
 module.exports = function xor (a, b) {
   var length = Math.min(a.length, b.length)
@@ -17580,7 +20246,7 @@ module.exports = function xor (a, b) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"buffer":82}],82:[function(require,module,exports){
+},{"buffer":93}],93:[function(require,module,exports){
 (function (Buffer){
 /*!
  * The buffer module from node.js, for the browser.
@@ -19361,7 +22027,7 @@ function numberIsNaN (obj) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"base64-js":34,"buffer":82,"ieee754":151}],83:[function(require,module,exports){
+},{"base64-js":45,"buffer":93,"ieee754":162}],94:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('stream').Transform
 var StringDecoder = require('string_decoder').StringDecoder
@@ -19462,7 +22128,7 @@ CipherBase.prototype._toString = function (value, enc, fin) {
 
 module.exports = CipherBase
 
-},{"inherits":152,"safe-buffer":200,"stream":209,"string_decoder":210}],84:[function(require,module,exports){
+},{"inherits":163,"safe-buffer":211,"stream":220,"string_decoder":221}],95:[function(require,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -19573,7 +22239,7 @@ function objectToString(o) {
 }
 
 }).call(this,{"isBuffer":require("../../is-buffer/index.js")})
-},{"../../is-buffer/index.js":153}],85:[function(require,module,exports){
+},{"../../is-buffer/index.js":164}],96:[function(require,module,exports){
 (function (Buffer){
 var elliptic = require('elliptic')
 var BN = require('bn.js')
@@ -19701,9 +22367,9 @@ function formatReturnValue (bn, enc, len) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"bn.js":86,"buffer":82,"elliptic":103}],86:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"buffer":37,"dup":33}],87:[function(require,module,exports){
+},{"bn.js":97,"buffer":93,"elliptic":114}],97:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"buffer":48,"dup":44}],98:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var MD5 = require('md5.js')
@@ -19735,14 +22401,14 @@ module.exports = function createHash (alg) {
   return new Hash(sha(alg))
 }
 
-},{"cipher-base":83,"inherits":152,"md5.js":155,"ripemd160":199,"sha.js":202}],88:[function(require,module,exports){
+},{"cipher-base":94,"inherits":163,"md5.js":166,"ripemd160":210,"sha.js":213}],99:[function(require,module,exports){
 var MD5 = require('md5.js')
 
 module.exports = function (buffer) {
   return new MD5().update(buffer).digest()
 }
 
-},{"md5.js":155}],89:[function(require,module,exports){
+},{"md5.js":166}],100:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Legacy = require('./legacy')
@@ -19806,7 +22472,7 @@ module.exports = function createHmac (alg, key) {
   return new Hmac(alg, key)
 }
 
-},{"./legacy":90,"cipher-base":83,"create-hash/md5":88,"inherits":152,"ripemd160":199,"safe-buffer":200,"sha.js":202}],90:[function(require,module,exports){
+},{"./legacy":101,"cipher-base":94,"create-hash/md5":99,"inherits":163,"ripemd160":210,"safe-buffer":211,"sha.js":213}],101:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var Buffer = require('safe-buffer').Buffer
@@ -19854,7 +22520,7 @@ Hmac.prototype._final = function () {
 }
 module.exports = Hmac
 
-},{"cipher-base":83,"inherits":152,"safe-buffer":200}],91:[function(require,module,exports){
+},{"cipher-base":94,"inherits":163,"safe-buffer":211}],102:[function(require,module,exports){
 'use strict'
 
 exports.randomBytes = exports.rng = exports.pseudoRandomBytes = exports.prng = require('randombytes')
@@ -19953,7 +22619,7 @@ exports.constants = {
   'POINT_CONVERSION_HYBRID': 6
 }
 
-},{"browserify-cipher":55,"browserify-sign":63,"browserify-sign/algos":60,"create-ecdh":85,"create-hash":87,"create-hmac":89,"diffie-hellman":98,"pbkdf2":167,"public-encrypt":175,"randombytes":182,"randomfill":183}],92:[function(require,module,exports){
+},{"browserify-cipher":66,"browserify-sign":74,"browserify-sign/algos":71,"create-ecdh":96,"create-hash":98,"create-hmac":100,"diffie-hellman":109,"pbkdf2":178,"public-encrypt":186,"randombytes":193,"randomfill":194}],103:[function(require,module,exports){
 'use strict';
 
 exports.utils = require('./des/utils');
@@ -19962,7 +22628,7 @@ exports.DES = require('./des/des');
 exports.CBC = require('./des/cbc');
 exports.EDE = require('./des/ede');
 
-},{"./des/cbc":93,"./des/cipher":94,"./des/des":95,"./des/ede":96,"./des/utils":97}],93:[function(require,module,exports){
+},{"./des/cbc":104,"./des/cipher":105,"./des/des":106,"./des/ede":107,"./des/utils":108}],104:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -20029,7 +22695,7 @@ proto._update = function _update(inp, inOff, out, outOff) {
   }
 };
 
-},{"inherits":152,"minimalistic-assert":158}],94:[function(require,module,exports){
+},{"inherits":163,"minimalistic-assert":169}],105:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -20172,7 +22838,7 @@ Cipher.prototype._finalDecrypt = function _finalDecrypt() {
   return this._unpad(out);
 };
 
-},{"minimalistic-assert":158}],95:[function(require,module,exports){
+},{"minimalistic-assert":169}],106:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -20316,7 +22982,7 @@ DES.prototype._decrypt = function _decrypt(state, lStart, rStart, out, off) {
   utils.rip(l, r, out, off);
 };
 
-},{"./cipher":94,"./utils":97,"inherits":152,"minimalistic-assert":158}],96:[function(require,module,exports){
+},{"./cipher":105,"./utils":108,"inherits":163,"minimalistic-assert":169}],107:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -20372,7 +23038,7 @@ EDE.prototype._update = function _update(inp, inOff, out, outOff) {
 EDE.prototype._pad = DES.prototype._pad;
 EDE.prototype._unpad = DES.prototype._unpad;
 
-},{"./cipher":94,"./des":95,"inherits":152,"minimalistic-assert":158}],97:[function(require,module,exports){
+},{"./cipher":105,"./des":106,"inherits":163,"minimalistic-assert":169}],108:[function(require,module,exports){
 'use strict';
 
 exports.readUInt32BE = function readUInt32BE(bytes, off) {
@@ -20630,7 +23296,7 @@ exports.padSplit = function padSplit(num, size, group) {
   return out.join(' ');
 };
 
-},{}],98:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 (function (Buffer){
 var generatePrime = require('./lib/generatePrime')
 var primes = require('./lib/primes.json')
@@ -20676,7 +23342,7 @@ exports.DiffieHellmanGroup = exports.createDiffieHellmanGroup = exports.getDiffi
 exports.createDiffieHellman = exports.DiffieHellman = createDiffieHellman
 
 }).call(this,require("buffer").Buffer)
-},{"./lib/dh":99,"./lib/generatePrime":100,"./lib/primes.json":101,"buffer":82}],99:[function(require,module,exports){
+},{"./lib/dh":110,"./lib/generatePrime":111,"./lib/primes.json":112,"buffer":93}],110:[function(require,module,exports){
 (function (Buffer){
 var BN = require('bn.js');
 var MillerRabin = require('miller-rabin');
@@ -20844,7 +23510,7 @@ function formatReturnValue(bn, enc) {
 }
 
 }).call(this,require("buffer").Buffer)
-},{"./generatePrime":100,"bn.js":102,"buffer":82,"miller-rabin":156,"randombytes":182}],100:[function(require,module,exports){
+},{"./generatePrime":111,"bn.js":113,"buffer":93,"miller-rabin":167,"randombytes":193}],111:[function(require,module,exports){
 var randomBytes = require('randombytes');
 module.exports = findPrime;
 findPrime.simpleSieve = simpleSieve;
@@ -20951,7 +23617,7 @@ function findPrime(bits, gen) {
 
 }
 
-},{"bn.js":102,"miller-rabin":156,"randombytes":182}],101:[function(require,module,exports){
+},{"bn.js":113,"miller-rabin":167,"randombytes":193}],112:[function(require,module,exports){
 module.exports={
     "modp1": {
         "gen": "02",
@@ -20986,9 +23652,9 @@ module.exports={
         "prime": "ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aaac42dad33170d04507a33a85521abdf1cba64ecfb850458dbef0a8aea71575d060c7db3970f85a6e1e4c7abf5ae8cdb0933d71e8c94e04a25619dcee3d2261ad2ee6bf12ffa06d98a0864d87602733ec86a64521f2b18177b200cbbe117577a615d6c770988c0bad946e208e24fa074e5ab3143db5bfce0fd108e4b82d120a92108011a723c12a787e6d788719a10bdba5b2699c327186af4e23c1a946834b6150bda2583e9ca2ad44ce8dbbbc2db04de8ef92e8efc141fbecaa6287c59474e6bc05d99b2964fa090c3a2233ba186515be7ed1f612970cee2d7afb81bdd762170481cd0069127d5b05aa993b4ea988d8fddc186ffb7dc90a6c08f4df435c93402849236c3fab4d27c7026c1d4dcb2602646dec9751e763dba37bdf8ff9406ad9e530ee5db382f413001aeb06a53ed9027d831179727b0865a8918da3edbebcf9b14ed44ce6cbaced4bb1bdb7f1447e6cc254b332051512bd7af426fb8f401378cd2bf5983ca01c64b92ecf032ea15d1721d03f482d7ce6e74fef6d55e702f46980c82b5a84031900b1c9e59e7c97fbec7e8f323a97a7e36cc88be0f1d45b7ff585ac54bd407b22b4154aacc8f6d7ebf48e1d814cc5ed20f8037e0a79715eef29be32806a1d58bb7c5da76f550aa3d8a1fbff0eb19ccb1a313d55cda56c9ec2ef29632387fe8d76e3c0468043e8f663f4860ee12bf2d5b0b7474d6e694f91e6dbe115974a3926f12fee5e438777cb6a932df8cd8bec4d073b931ba3bc832b68d9dd300741fa7bf8afc47ed2576f6936ba424663aab639c5ae4f5683423b4742bf1c978238f16cbe39d652de3fdb8befc848ad922222e04a4037c0713eb57a81a23f0c73473fc646cea306b4bcbc8862f8385ddfa9d4b7fa2c087e879683303ed5bdd3a062b3cf5b3a278a66d2a13f83f44f82ddf310ee074ab6a364597e899a0255dc164f31cc50846851df9ab48195ded7ea1b1d510bd7ee74d73faf36bc31ecfa268359046f4eb879f924009438b481c6cd7889a002ed5ee382bc9190da6fc026e479558e4475677e9aa9e3050e2765694dfc81f56e880b96e7160c980dd98edd3dfffffffffffffffff"
     }
 }
-},{}],102:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"buffer":37,"dup":33}],103:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"buffer":48,"dup":44}],114:[function(require,module,exports){
 'use strict';
 
 var elliptic = exports;
@@ -21003,7 +23669,7 @@ elliptic.curves = require('./elliptic/curves');
 elliptic.ec = require('./elliptic/ec');
 elliptic.eddsa = require('./elliptic/eddsa');
 
-},{"../package.json":119,"./elliptic/curve":106,"./elliptic/curves":109,"./elliptic/ec":110,"./elliptic/eddsa":113,"./elliptic/utils":117,"brorand":36}],104:[function(require,module,exports){
+},{"../package.json":130,"./elliptic/curve":117,"./elliptic/curves":120,"./elliptic/ec":121,"./elliptic/eddsa":124,"./elliptic/utils":128,"brorand":47}],115:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -21381,7 +24047,7 @@ BasePoint.prototype.dblp = function dblp(k) {
   return r;
 };
 
-},{"../utils":117,"bn.js":118}],105:[function(require,module,exports){
+},{"../utils":128,"bn.js":129}],116:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -21815,7 +24481,7 @@ Point.prototype.eqXToP = function eqXToP(x) {
 Point.prototype.toP = Point.prototype.normalize;
 Point.prototype.mixedAdd = Point.prototype.add;
 
-},{"../utils":117,"./base":104,"bn.js":118,"inherits":152}],106:[function(require,module,exports){
+},{"../utils":128,"./base":115,"bn.js":129,"inherits":163}],117:[function(require,module,exports){
 'use strict';
 
 var curve = exports;
@@ -21825,7 +24491,7 @@ curve.short = require('./short');
 curve.mont = require('./mont');
 curve.edwards = require('./edwards');
 
-},{"./base":104,"./edwards":105,"./mont":107,"./short":108}],107:[function(require,module,exports){
+},{"./base":115,"./edwards":116,"./mont":118,"./short":119}],118:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -22005,7 +24671,7 @@ Point.prototype.getX = function getX() {
   return this.x.fromRed();
 };
 
-},{"../utils":117,"./base":104,"bn.js":118,"inherits":152}],108:[function(require,module,exports){
+},{"../utils":128,"./base":115,"bn.js":129,"inherits":163}],119:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -22944,7 +25610,7 @@ JPoint.prototype.isInfinity = function isInfinity() {
   return this.z.cmpn(0) === 0;
 };
 
-},{"../utils":117,"./base":104,"bn.js":118,"inherits":152}],109:[function(require,module,exports){
+},{"../utils":128,"./base":115,"bn.js":129,"inherits":163}],120:[function(require,module,exports){
 'use strict';
 
 var curves = exports;
@@ -23152,7 +25818,7 @@ defineCurve('secp256k1', {
   ]
 });
 
-},{"./curve":106,"./precomputed/secp256k1":116,"./utils":117,"hash.js":138}],110:[function(require,module,exports){
+},{"./curve":117,"./precomputed/secp256k1":127,"./utils":128,"hash.js":149}],121:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -23395,7 +26061,7 @@ EC.prototype.getKeyRecoveryParam = function(e, signature, Q, enc) {
   throw new Error('Unable to find valid recovery factor');
 };
 
-},{"../curves":109,"../utils":117,"./key":111,"./signature":112,"bn.js":118,"brorand":36,"hmac-drbg":150}],111:[function(require,module,exports){
+},{"../curves":120,"../utils":128,"./key":122,"./signature":123,"bn.js":129,"brorand":47,"hmac-drbg":161}],122:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -23515,7 +26181,7 @@ KeyPair.prototype.inspect = function inspect() {
          ' pub: ' + (this.pub && this.pub.inspect()) + ' >';
 };
 
-},{"../utils":117,"bn.js":118}],112:[function(require,module,exports){
+},{"../utils":128,"bn.js":129}],123:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -23651,7 +26317,7 @@ Signature.prototype.toDER = function toDER(enc) {
   return utils.encode(res, enc);
 };
 
-},{"../utils":117,"bn.js":118}],113:[function(require,module,exports){
+},{"../utils":128,"bn.js":129}],124:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -23771,7 +26437,7 @@ EDDSA.prototype.isPoint = function isPoint(val) {
   return val instanceof this.pointClass;
 };
 
-},{"../curves":109,"../utils":117,"./key":114,"./signature":115,"hash.js":138}],114:[function(require,module,exports){
+},{"../curves":120,"../utils":128,"./key":125,"./signature":126,"hash.js":149}],125:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -23868,7 +26534,7 @@ KeyPair.prototype.getPublic = function getPublic(enc) {
 
 module.exports = KeyPair;
 
-},{"../utils":117}],115:[function(require,module,exports){
+},{"../utils":128}],126:[function(require,module,exports){
 'use strict';
 
 var BN = require('bn.js');
@@ -23935,7 +26601,7 @@ Signature.prototype.toHex = function toHex() {
 
 module.exports = Signature;
 
-},{"../utils":117,"bn.js":118}],116:[function(require,module,exports){
+},{"../utils":128,"bn.js":129}],127:[function(require,module,exports){
 module.exports = {
   doubles: {
     step: 4,
@@ -24717,7 +27383,7 @@ module.exports = {
   }
 };
 
-},{}],117:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -24838,9 +27504,9 @@ function intFromLE(bytes) {
 utils.intFromLE = intFromLE;
 
 
-},{"bn.js":118,"minimalistic-assert":158,"minimalistic-crypto-utils":159}],118:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"buffer":37,"dup":33}],119:[function(require,module,exports){
+},{"bn.js":129,"minimalistic-assert":169,"minimalistic-crypto-utils":170}],129:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"buffer":48,"dup":44}],130:[function(require,module,exports){
 module.exports={
   "_from": "elliptic@^6.5.2",
   "_id": "elliptic@6.5.2",
@@ -24929,7 +27595,7 @@ module.exports={
   "version": "6.5.2"
 }
 
-},{}],120:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -25454,7 +28120,7 @@ function functionBindPolyfill(context) {
   };
 }
 
-},{}],121:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 var MD5 = require('md5.js')
 
@@ -25501,7 +28167,7 @@ function EVP_BytesToKey (password, salt, keyBits, ivLen) {
 
 module.exports = EVP_BytesToKey
 
-},{"md5.js":155,"safe-buffer":200}],122:[function(require,module,exports){
+},{"md5.js":166,"safe-buffer":211}],133:[function(require,module,exports){
 'use strict'
 var Buffer = require('safe-buffer').Buffer
 var Transform = require('readable-stream').Transform
@@ -25598,37 +28264,37 @@ HashBase.prototype._digest = function () {
 
 module.exports = HashBase
 
-},{"inherits":152,"readable-stream":137,"safe-buffer":200}],123:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"dup":66}],124:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"./_stream_readable":126,"./_stream_writable":128,"_process":174,"dup":67,"inherits":152}],125:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./_stream_transform":127,"dup":68,"inherits":152}],126:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"../errors":123,"./_stream_duplex":124,"./internal/streams/async_iterator":129,"./internal/streams/buffer_list":130,"./internal/streams/destroy":131,"./internal/streams/from":133,"./internal/streams/state":135,"./internal/streams/stream":136,"_process":174,"buffer":82,"dup":69,"events":120,"inherits":152,"string_decoder/":210,"util":37}],127:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"../errors":123,"./_stream_duplex":124,"dup":70,"inherits":152}],128:[function(require,module,exports){
-arguments[4][71][0].apply(exports,arguments)
-},{"../errors":123,"./_stream_duplex":124,"./internal/streams/destroy":131,"./internal/streams/state":135,"./internal/streams/stream":136,"_process":174,"buffer":82,"dup":71,"inherits":152,"util-deprecate":212}],129:[function(require,module,exports){
-arguments[4][72][0].apply(exports,arguments)
-},{"./end-of-stream":132,"_process":174,"dup":72}],130:[function(require,module,exports){
-arguments[4][73][0].apply(exports,arguments)
-},{"buffer":82,"dup":73,"util":37}],131:[function(require,module,exports){
-arguments[4][74][0].apply(exports,arguments)
-},{"_process":174,"dup":74}],132:[function(require,module,exports){
-arguments[4][75][0].apply(exports,arguments)
-},{"../../../errors":123,"dup":75}],133:[function(require,module,exports){
-arguments[4][76][0].apply(exports,arguments)
-},{"dup":76}],134:[function(require,module,exports){
+},{"inherits":163,"readable-stream":148,"safe-buffer":211}],134:[function(require,module,exports){
 arguments[4][77][0].apply(exports,arguments)
-},{"../../../errors":123,"./end-of-stream":132,"dup":77}],135:[function(require,module,exports){
+},{"dup":77}],135:[function(require,module,exports){
 arguments[4][78][0].apply(exports,arguments)
-},{"../../../errors":123,"dup":78}],136:[function(require,module,exports){
+},{"./_stream_readable":137,"./_stream_writable":139,"_process":185,"dup":78,"inherits":163}],136:[function(require,module,exports){
 arguments[4][79][0].apply(exports,arguments)
-},{"dup":79,"events":120}],137:[function(require,module,exports){
+},{"./_stream_transform":138,"dup":79,"inherits":163}],137:[function(require,module,exports){
 arguments[4][80][0].apply(exports,arguments)
-},{"./lib/_stream_duplex.js":124,"./lib/_stream_passthrough.js":125,"./lib/_stream_readable.js":126,"./lib/_stream_transform.js":127,"./lib/_stream_writable.js":128,"./lib/internal/streams/end-of-stream.js":132,"./lib/internal/streams/pipeline.js":134,"dup":80}],138:[function(require,module,exports){
+},{"../errors":134,"./_stream_duplex":135,"./internal/streams/async_iterator":140,"./internal/streams/buffer_list":141,"./internal/streams/destroy":142,"./internal/streams/from":144,"./internal/streams/state":146,"./internal/streams/stream":147,"_process":185,"buffer":93,"dup":80,"events":131,"inherits":163,"string_decoder/":221,"util":48}],138:[function(require,module,exports){
+arguments[4][81][0].apply(exports,arguments)
+},{"../errors":134,"./_stream_duplex":135,"dup":81,"inherits":163}],139:[function(require,module,exports){
+arguments[4][82][0].apply(exports,arguments)
+},{"../errors":134,"./_stream_duplex":135,"./internal/streams/destroy":142,"./internal/streams/state":146,"./internal/streams/stream":147,"_process":185,"buffer":93,"dup":82,"inherits":163,"util-deprecate":223}],140:[function(require,module,exports){
+arguments[4][83][0].apply(exports,arguments)
+},{"./end-of-stream":143,"_process":185,"dup":83}],141:[function(require,module,exports){
+arguments[4][84][0].apply(exports,arguments)
+},{"buffer":93,"dup":84,"util":48}],142:[function(require,module,exports){
+arguments[4][85][0].apply(exports,arguments)
+},{"_process":185,"dup":85}],143:[function(require,module,exports){
+arguments[4][86][0].apply(exports,arguments)
+},{"../../../errors":134,"dup":86}],144:[function(require,module,exports){
+arguments[4][87][0].apply(exports,arguments)
+},{"dup":87}],145:[function(require,module,exports){
+arguments[4][88][0].apply(exports,arguments)
+},{"../../../errors":134,"./end-of-stream":143,"dup":88}],146:[function(require,module,exports){
+arguments[4][89][0].apply(exports,arguments)
+},{"../../../errors":134,"dup":89}],147:[function(require,module,exports){
+arguments[4][90][0].apply(exports,arguments)
+},{"dup":90,"events":131}],148:[function(require,module,exports){
+arguments[4][91][0].apply(exports,arguments)
+},{"./lib/_stream_duplex.js":135,"./lib/_stream_passthrough.js":136,"./lib/_stream_readable.js":137,"./lib/_stream_transform.js":138,"./lib/_stream_writable.js":139,"./lib/internal/streams/end-of-stream.js":143,"./lib/internal/streams/pipeline.js":145,"dup":91}],149:[function(require,module,exports){
 var hash = exports;
 
 hash.utils = require('./hash/utils');
@@ -25645,7 +28311,7 @@ hash.sha384 = hash.sha.sha384;
 hash.sha512 = hash.sha.sha512;
 hash.ripemd160 = hash.ripemd.ripemd160;
 
-},{"./hash/common":139,"./hash/hmac":140,"./hash/ripemd":141,"./hash/sha":142,"./hash/utils":149}],139:[function(require,module,exports){
+},{"./hash/common":150,"./hash/hmac":151,"./hash/ripemd":152,"./hash/sha":153,"./hash/utils":160}],150:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -25739,7 +28405,7 @@ BlockHash.prototype._pad = function pad() {
   return res;
 };
 
-},{"./utils":149,"minimalistic-assert":158}],140:[function(require,module,exports){
+},{"./utils":160,"minimalistic-assert":169}],151:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -25788,7 +28454,7 @@ Hmac.prototype.digest = function digest(enc) {
   return this.outer.digest(enc);
 };
 
-},{"./utils":149,"minimalistic-assert":158}],141:[function(require,module,exports){
+},{"./utils":160,"minimalistic-assert":169}],152:[function(require,module,exports){
 'use strict';
 
 var utils = require('./utils');
@@ -25936,7 +28602,7 @@ var sh = [
   8, 5, 12, 9, 12, 5, 14, 6, 8, 13, 6, 5, 15, 13, 11, 11
 ];
 
-},{"./common":139,"./utils":149}],142:[function(require,module,exports){
+},{"./common":150,"./utils":160}],153:[function(require,module,exports){
 'use strict';
 
 exports.sha1 = require('./sha/1');
@@ -25945,7 +28611,7 @@ exports.sha256 = require('./sha/256');
 exports.sha384 = require('./sha/384');
 exports.sha512 = require('./sha/512');
 
-},{"./sha/1":143,"./sha/224":144,"./sha/256":145,"./sha/384":146,"./sha/512":147}],143:[function(require,module,exports){
+},{"./sha/1":154,"./sha/224":155,"./sha/256":156,"./sha/384":157,"./sha/512":158}],154:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26021,7 +28687,7 @@ SHA1.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":139,"../utils":149,"./common":148}],144:[function(require,module,exports){
+},{"../common":150,"../utils":160,"./common":159}],155:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26053,7 +28719,7 @@ SHA224.prototype._digest = function digest(enc) {
 };
 
 
-},{"../utils":149,"./256":145}],145:[function(require,module,exports){
+},{"../utils":160,"./256":156}],156:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26160,7 +28826,7 @@ SHA256.prototype._digest = function digest(enc) {
     return utils.split32(this.h, 'big');
 };
 
-},{"../common":139,"../utils":149,"./common":148,"minimalistic-assert":158}],146:[function(require,module,exports){
+},{"../common":150,"../utils":160,"./common":159,"minimalistic-assert":169}],157:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26197,7 +28863,7 @@ SHA384.prototype._digest = function digest(enc) {
     return utils.split32(this.h.slice(0, 12), 'big');
 };
 
-},{"../utils":149,"./512":147}],147:[function(require,module,exports){
+},{"../utils":160,"./512":158}],158:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26529,7 +29195,7 @@ function g1_512_lo(xh, xl) {
   return r;
 }
 
-},{"../common":139,"../utils":149,"minimalistic-assert":158}],148:[function(require,module,exports){
+},{"../common":150,"../utils":160,"minimalistic-assert":169}],159:[function(require,module,exports){
 'use strict';
 
 var utils = require('../utils');
@@ -26580,7 +29246,7 @@ function g1_256(x) {
 }
 exports.g1_256 = g1_256;
 
-},{"../utils":149}],149:[function(require,module,exports){
+},{"../utils":160}],160:[function(require,module,exports){
 'use strict';
 
 var assert = require('minimalistic-assert');
@@ -26860,7 +29526,7 @@ function shr64_lo(ah, al, num) {
 }
 exports.shr64_lo = shr64_lo;
 
-},{"inherits":152,"minimalistic-assert":158}],150:[function(require,module,exports){
+},{"inherits":163,"minimalistic-assert":169}],161:[function(require,module,exports){
 'use strict';
 
 var hash = require('hash.js');
@@ -26975,7 +29641,7 @@ HmacDRBG.prototype.generate = function generate(len, enc, add, addEnc) {
   return utils.encode(res, enc);
 };
 
-},{"hash.js":138,"minimalistic-assert":158,"minimalistic-crypto-utils":159}],151:[function(require,module,exports){
+},{"hash.js":149,"minimalistic-assert":169,"minimalistic-crypto-utils":170}],162:[function(require,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = (nBytes * 8) - mLen - 1
@@ -27061,7 +29727,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],152:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -27090,7 +29756,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],153:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -27113,14 +29779,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],154:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],155:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 'use strict'
 var inherits = require('inherits')
 var HashBase = require('hash-base')
@@ -27268,7 +29934,7 @@ function fnI (a, b, c, d, m, k, s) {
 
 module.exports = MD5
 
-},{"hash-base":122,"inherits":152,"safe-buffer":200}],156:[function(require,module,exports){
+},{"hash-base":133,"inherits":163,"safe-buffer":211}],167:[function(require,module,exports){
 var bn = require('bn.js');
 var brorand = require('brorand');
 
@@ -27385,9 +30051,9 @@ MillerRabin.prototype.getDivisor = function getDivisor(n, k) {
   return false;
 };
 
-},{"bn.js":157,"brorand":36}],157:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"buffer":37,"dup":33}],158:[function(require,module,exports){
+},{"bn.js":168,"brorand":47}],168:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"buffer":48,"dup":44}],169:[function(require,module,exports){
 module.exports = assert;
 
 function assert(val, msg) {
@@ -27400,7 +30066,7 @@ assert.equal = function assertEqual(l, r, msg) {
     throw new Error(msg || ('Assertion failed: ' + l + ' != ' + r));
 };
 
-},{}],159:[function(require,module,exports){
+},{}],170:[function(require,module,exports){
 'use strict';
 
 var utils = exports;
@@ -27460,7 +30126,7 @@ utils.encode = function encode(arr, enc) {
     return arr;
 };
 
-},{}],160:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 exports.endianness = function () { return 'LE' };
 
 exports.hostname = function () {
@@ -27511,7 +30177,7 @@ exports.homedir = function () {
 	return '/'
 };
 
-},{}],161:[function(require,module,exports){
+},{}],172:[function(require,module,exports){
 module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.2": "aes-128-cbc",
 "2.16.840.1.101.3.4.1.3": "aes-128-ofb",
@@ -27525,7 +30191,7 @@ module.exports={"2.16.840.1.101.3.4.1.1": "aes-128-ecb",
 "2.16.840.1.101.3.4.1.43": "aes-256-ofb",
 "2.16.840.1.101.3.4.1.44": "aes-256-cfb"
 }
-},{}],162:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 // from https://github.com/indutny/self-signed/blob/gh-pages/lib/asn1.js
 // Fedor, you are amazing.
 'use strict'
@@ -27649,7 +30315,7 @@ exports.signature = asn1.define('signature', function () {
   )
 })
 
-},{"./certificate":163,"asn1.js":19}],163:[function(require,module,exports){
+},{"./certificate":174,"asn1.js":30}],174:[function(require,module,exports){
 // from https://github.com/Rantanen/node-dtls/blob/25a7dc861bda38cfeac93a723500eea4f0ac2e86/Certificate.js
 // thanks to @Rantanen
 
@@ -27740,7 +30406,7 @@ var X509Certificate = asn.define('X509Certificate', function () {
 
 module.exports = X509Certificate
 
-},{"asn1.js":19}],164:[function(require,module,exports){
+},{"asn1.js":30}],175:[function(require,module,exports){
 // adapted from https://github.com/apatil/pemstrip
 var findProc = /Proc-Type: 4,ENCRYPTED[\n\r]+DEK-Info: AES-((?:128)|(?:192)|(?:256))-CBC,([0-9A-H]+)[\n\r]+([0-9A-z\n\r\+\/\=]+)[\n\r]+/m
 var startRegex = /^-----BEGIN ((?:.*? KEY)|CERTIFICATE)-----/m
@@ -27773,7 +30439,7 @@ module.exports = function (okey, password) {
   }
 }
 
-},{"browserify-aes":40,"evp_bytestokey":121,"safe-buffer":200}],165:[function(require,module,exports){
+},{"browserify-aes":51,"evp_bytestokey":132,"safe-buffer":211}],176:[function(require,module,exports){
 var asn1 = require('./asn1')
 var aesid = require('./aesid.json')
 var fixProc = require('./fixProc')
@@ -27882,7 +30548,7 @@ function decrypt (data, password) {
   return Buffer.concat(out)
 }
 
-},{"./aesid.json":161,"./asn1":162,"./fixProc":164,"browserify-aes":40,"pbkdf2":167,"safe-buffer":200}],166:[function(require,module,exports){
+},{"./aesid.json":172,"./asn1":173,"./fixProc":175,"browserify-aes":51,"pbkdf2":178,"safe-buffer":211}],177:[function(require,module,exports){
 (function (process){
 // .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
 // backported and transplited with Babel, with backwards-compat fixes
@@ -28188,11 +30854,11 @@ var substr = 'ab'.substr(-1) === 'b'
 ;
 
 }).call(this,require('_process'))
-},{"_process":174}],167:[function(require,module,exports){
+},{"_process":185}],178:[function(require,module,exports){
 exports.pbkdf2 = require('./lib/async')
 exports.pbkdf2Sync = require('./lib/sync')
 
-},{"./lib/async":168,"./lib/sync":171}],168:[function(require,module,exports){
+},{"./lib/async":179,"./lib/sync":182}],179:[function(require,module,exports){
 (function (process,global){
 var Buffer = require('safe-buffer').Buffer
 
@@ -28298,7 +30964,7 @@ module.exports = function (password, salt, iterations, keylen, digest, callback)
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./default-encoding":169,"./precondition":170,"./sync":171,"./to-buffer":172,"_process":174,"safe-buffer":200}],169:[function(require,module,exports){
+},{"./default-encoding":180,"./precondition":181,"./sync":182,"./to-buffer":183,"_process":185,"safe-buffer":211}],180:[function(require,module,exports){
 (function (process){
 var defaultEncoding
 /* istanbul ignore next */
@@ -28314,7 +30980,7 @@ if (process.browser) {
 module.exports = defaultEncoding
 
 }).call(this,require('_process'))
-},{"_process":174}],170:[function(require,module,exports){
+},{"_process":185}],181:[function(require,module,exports){
 var MAX_ALLOC = Math.pow(2, 30) - 1 // default in iojs
 
 module.exports = function (iterations, keylen) {
@@ -28335,7 +31001,7 @@ module.exports = function (iterations, keylen) {
   }
 }
 
-},{}],171:[function(require,module,exports){
+},{}],182:[function(require,module,exports){
 var md5 = require('create-hash/md5')
 var RIPEMD160 = require('ripemd160')
 var sha = require('sha.js')
@@ -28442,7 +31108,7 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
 
 module.exports = pbkdf2
 
-},{"./default-encoding":169,"./precondition":170,"./to-buffer":172,"create-hash/md5":88,"ripemd160":199,"safe-buffer":200,"sha.js":202}],172:[function(require,module,exports){
+},{"./default-encoding":180,"./precondition":181,"./to-buffer":183,"create-hash/md5":99,"ripemd160":210,"safe-buffer":211,"sha.js":213}],183:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 module.exports = function (thing, encoding, name) {
@@ -28457,7 +31123,7 @@ module.exports = function (thing, encoding, name) {
   }
 }
 
-},{"safe-buffer":200}],173:[function(require,module,exports){
+},{"safe-buffer":211}],184:[function(require,module,exports){
 (function (process){
 'use strict';
 
@@ -28506,7 +31172,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 
 }).call(this,require('_process'))
-},{"_process":174}],174:[function(require,module,exports){
+},{"_process":185}],185:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -28692,7 +31358,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],175:[function(require,module,exports){
+},{}],186:[function(require,module,exports){
 exports.publicEncrypt = require('./publicEncrypt')
 exports.privateDecrypt = require('./privateDecrypt')
 
@@ -28704,7 +31370,7 @@ exports.publicDecrypt = function publicDecrypt (key, buf) {
   return exports.privateDecrypt(key, buf, true)
 }
 
-},{"./privateDecrypt":178,"./publicEncrypt":179}],176:[function(require,module,exports){
+},{"./privateDecrypt":189,"./publicEncrypt":190}],187:[function(require,module,exports){
 var createHash = require('create-hash')
 var Buffer = require('safe-buffer').Buffer
 
@@ -28725,9 +31391,9 @@ function i2ops (c) {
   return out
 }
 
-},{"create-hash":87,"safe-buffer":200}],177:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"buffer":37,"dup":33}],178:[function(require,module,exports){
+},{"create-hash":98,"safe-buffer":211}],188:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"buffer":48,"dup":44}],189:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var mgf = require('./mgf')
 var xor = require('./xor')
@@ -28834,7 +31500,7 @@ function compare (a, b) {
   return dif
 }
 
-},{"./mgf":176,"./withPublic":180,"./xor":181,"bn.js":177,"browserify-rsa":58,"create-hash":87,"parse-asn1":165,"safe-buffer":200}],179:[function(require,module,exports){
+},{"./mgf":187,"./withPublic":191,"./xor":192,"bn.js":188,"browserify-rsa":69,"create-hash":98,"parse-asn1":176,"safe-buffer":211}],190:[function(require,module,exports){
 var parseKeys = require('parse-asn1')
 var randomBytes = require('randombytes')
 var createHash = require('create-hash')
@@ -28924,7 +31590,7 @@ function nonZero (len) {
   return out
 }
 
-},{"./mgf":176,"./withPublic":180,"./xor":181,"bn.js":177,"browserify-rsa":58,"create-hash":87,"parse-asn1":165,"randombytes":182,"safe-buffer":200}],180:[function(require,module,exports){
+},{"./mgf":187,"./withPublic":191,"./xor":192,"bn.js":188,"browserify-rsa":69,"create-hash":98,"parse-asn1":176,"randombytes":193,"safe-buffer":211}],191:[function(require,module,exports){
 var BN = require('bn.js')
 var Buffer = require('safe-buffer').Buffer
 
@@ -28938,7 +31604,7 @@ function withPublic (paddedMsg, key) {
 
 module.exports = withPublic
 
-},{"bn.js":177,"safe-buffer":200}],181:[function(require,module,exports){
+},{"bn.js":188,"safe-buffer":211}],192:[function(require,module,exports){
 module.exports = function xor (a, b) {
   var len = a.length
   var i = -1
@@ -28948,7 +31614,7 @@ module.exports = function xor (a, b) {
   return a
 }
 
-},{}],182:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 (function (process,global){
 'use strict'
 
@@ -29002,7 +31668,7 @@ function randomBytes (size, cb) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":174,"safe-buffer":200}],183:[function(require,module,exports){
+},{"_process":185,"safe-buffer":211}],194:[function(require,module,exports){
 (function (process,global){
 'use strict'
 
@@ -29114,10 +31780,10 @@ function randomFillSync (buf, offset, size) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":174,"randombytes":182,"safe-buffer":200}],184:[function(require,module,exports){
+},{"_process":185,"randombytes":193,"safe-buffer":211}],195:[function(require,module,exports){
 module.exports = require('./lib/_stream_duplex.js');
 
-},{"./lib/_stream_duplex.js":185}],185:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":196}],196:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29249,7 +31915,7 @@ Duplex.prototype._destroy = function (err, cb) {
 
   pna.nextTick(cb, err);
 };
-},{"./_stream_readable":187,"./_stream_writable":189,"core-util-is":84,"inherits":152,"process-nextick-args":173}],186:[function(require,module,exports){
+},{"./_stream_readable":198,"./_stream_writable":200,"core-util-is":95,"inherits":163,"process-nextick-args":184}],197:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -29297,7 +31963,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":188,"core-util-is":84,"inherits":152}],187:[function(require,module,exports){
+},{"./_stream_transform":199,"core-util-is":95,"inherits":163}],198:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -30319,7 +32985,7 @@ function indexOf(xs, x) {
   return -1;
 }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./_stream_duplex":185,"./internal/streams/BufferList":190,"./internal/streams/destroy":191,"./internal/streams/stream":192,"_process":174,"core-util-is":84,"events":120,"inherits":152,"isarray":154,"process-nextick-args":173,"safe-buffer":193,"string_decoder/":194,"util":37}],188:[function(require,module,exports){
+},{"./_stream_duplex":196,"./internal/streams/BufferList":201,"./internal/streams/destroy":202,"./internal/streams/stream":203,"_process":185,"core-util-is":95,"events":131,"inherits":163,"isarray":165,"process-nextick-args":184,"safe-buffer":204,"string_decoder/":205,"util":48}],199:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -30534,7 +33200,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":185,"core-util-is":84,"inherits":152}],189:[function(require,module,exports){
+},{"./_stream_duplex":196,"core-util-is":95,"inherits":163}],200:[function(require,module,exports){
 (function (process,global,setImmediate){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -31224,7 +33890,7 @@ Writable.prototype._destroy = function (err, cb) {
   cb(err);
 };
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},require("timers").setImmediate)
-},{"./_stream_duplex":185,"./internal/streams/destroy":191,"./internal/streams/stream":192,"_process":174,"core-util-is":84,"inherits":152,"process-nextick-args":173,"safe-buffer":193,"timers":211,"util-deprecate":212}],190:[function(require,module,exports){
+},{"./_stream_duplex":196,"./internal/streams/destroy":202,"./internal/streams/stream":203,"_process":185,"core-util-is":95,"inherits":163,"process-nextick-args":184,"safe-buffer":204,"timers":222,"util-deprecate":223}],201:[function(require,module,exports){
 'use strict';
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -31304,7 +33970,7 @@ if (util && util.inspect && util.inspect.custom) {
     return this.constructor.name + ' ' + obj;
   };
 }
-},{"safe-buffer":193,"util":37}],191:[function(require,module,exports){
+},{"safe-buffer":204,"util":48}],202:[function(require,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -31379,9 +34045,9 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":173}],192:[function(require,module,exports){
-arguments[4][79][0].apply(exports,arguments)
-},{"dup":79,"events":120}],193:[function(require,module,exports){
+},{"process-nextick-args":184}],203:[function(require,module,exports){
+arguments[4][90][0].apply(exports,arguments)
+},{"dup":90,"events":131}],204:[function(require,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
 var Buffer = buffer.Buffer
@@ -31445,7 +34111,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":82}],194:[function(require,module,exports){
+},{"buffer":93}],205:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -31742,10 +34408,10 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":193}],195:[function(require,module,exports){
+},{"safe-buffer":204}],206:[function(require,module,exports){
 module.exports = require('./readable').PassThrough
 
-},{"./readable":196}],196:[function(require,module,exports){
+},{"./readable":207}],207:[function(require,module,exports){
 exports = module.exports = require('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -31754,13 +34420,13 @@ exports.Duplex = require('./lib/_stream_duplex.js');
 exports.Transform = require('./lib/_stream_transform.js');
 exports.PassThrough = require('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":185,"./lib/_stream_passthrough.js":186,"./lib/_stream_readable.js":187,"./lib/_stream_transform.js":188,"./lib/_stream_writable.js":189}],197:[function(require,module,exports){
+},{"./lib/_stream_duplex.js":196,"./lib/_stream_passthrough.js":197,"./lib/_stream_readable.js":198,"./lib/_stream_transform.js":199,"./lib/_stream_writable.js":200}],208:[function(require,module,exports){
 module.exports = require('./readable').Transform
 
-},{"./readable":196}],198:[function(require,module,exports){
+},{"./readable":207}],209:[function(require,module,exports){
 module.exports = require('./lib/_stream_writable.js');
 
-},{"./lib/_stream_writable.js":189}],199:[function(require,module,exports){
+},{"./lib/_stream_writable.js":200}],210:[function(require,module,exports){
 'use strict'
 var Buffer = require('buffer').Buffer
 var inherits = require('inherits')
@@ -31925,7 +34591,7 @@ function fn5 (a, b, c, d, e, m, k, s) {
 
 module.exports = RIPEMD160
 
-},{"buffer":82,"hash-base":122,"inherits":152}],200:[function(require,module,exports){
+},{"buffer":93,"hash-base":133,"inherits":163}],211:[function(require,module,exports){
 /*! safe-buffer. MIT License. Feross Aboukhadijeh <https://feross.org/opensource> */
 /* eslint-disable node/no-deprecated-api */
 var buffer = require('buffer')
@@ -31992,7 +34658,7 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":82}],201:[function(require,module,exports){
+},{"buffer":93}],212:[function(require,module,exports){
 var Buffer = require('safe-buffer').Buffer
 
 // prototype class for hash functions
@@ -32075,7 +34741,7 @@ Hash.prototype._update = function () {
 
 module.exports = Hash
 
-},{"safe-buffer":200}],202:[function(require,module,exports){
+},{"safe-buffer":211}],213:[function(require,module,exports){
 var exports = module.exports = function SHA (algorithm) {
   algorithm = algorithm.toLowerCase()
 
@@ -32092,7 +34758,7 @@ exports.sha256 = require('./sha256')
 exports.sha384 = require('./sha384')
 exports.sha512 = require('./sha512')
 
-},{"./sha":203,"./sha1":204,"./sha224":205,"./sha256":206,"./sha384":207,"./sha512":208}],203:[function(require,module,exports){
+},{"./sha":214,"./sha1":215,"./sha224":216,"./sha256":217,"./sha384":218,"./sha512":219}],214:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-0, as defined
  * in FIPS PUB 180-1
@@ -32188,7 +34854,7 @@ Sha.prototype._hash = function () {
 
 module.exports = Sha
 
-},{"./hash":201,"inherits":152,"safe-buffer":200}],204:[function(require,module,exports){
+},{"./hash":212,"inherits":163,"safe-buffer":211}],215:[function(require,module,exports){
 /*
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-1, as defined
  * in FIPS PUB 180-1
@@ -32289,7 +34955,7 @@ Sha1.prototype._hash = function () {
 
 module.exports = Sha1
 
-},{"./hash":201,"inherits":152,"safe-buffer":200}],205:[function(require,module,exports){
+},{"./hash":212,"inherits":163,"safe-buffer":211}],216:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -32344,7 +35010,7 @@ Sha224.prototype._hash = function () {
 
 module.exports = Sha224
 
-},{"./hash":201,"./sha256":206,"inherits":152,"safe-buffer":200}],206:[function(require,module,exports){
+},{"./hash":212,"./sha256":217,"inherits":163,"safe-buffer":211}],217:[function(require,module,exports){
 /**
  * A JavaScript implementation of the Secure Hash Algorithm, SHA-256, as defined
  * in FIPS 180-2
@@ -32481,7 +35147,7 @@ Sha256.prototype._hash = function () {
 
 module.exports = Sha256
 
-},{"./hash":201,"inherits":152,"safe-buffer":200}],207:[function(require,module,exports){
+},{"./hash":212,"inherits":163,"safe-buffer":211}],218:[function(require,module,exports){
 var inherits = require('inherits')
 var SHA512 = require('./sha512')
 var Hash = require('./hash')
@@ -32540,7 +35206,7 @@ Sha384.prototype._hash = function () {
 
 module.exports = Sha384
 
-},{"./hash":201,"./sha512":208,"inherits":152,"safe-buffer":200}],208:[function(require,module,exports){
+},{"./hash":212,"./sha512":219,"inherits":163,"safe-buffer":211}],219:[function(require,module,exports){
 var inherits = require('inherits')
 var Hash = require('./hash')
 var Buffer = require('safe-buffer').Buffer
@@ -32802,7 +35468,7 @@ Sha512.prototype._hash = function () {
 
 module.exports = Sha512
 
-},{"./hash":201,"inherits":152,"safe-buffer":200}],209:[function(require,module,exports){
+},{"./hash":212,"inherits":163,"safe-buffer":211}],220:[function(require,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -32931,9 +35597,9 @@ Stream.prototype.pipe = function(dest, options) {
   return dest;
 };
 
-},{"events":120,"inherits":152,"readable-stream/duplex.js":184,"readable-stream/passthrough.js":195,"readable-stream/readable.js":196,"readable-stream/transform.js":197,"readable-stream/writable.js":198}],210:[function(require,module,exports){
-arguments[4][194][0].apply(exports,arguments)
-},{"dup":194,"safe-buffer":200}],211:[function(require,module,exports){
+},{"events":131,"inherits":163,"readable-stream/duplex.js":195,"readable-stream/passthrough.js":206,"readable-stream/readable.js":207,"readable-stream/transform.js":208,"readable-stream/writable.js":209}],221:[function(require,module,exports){
+arguments[4][205][0].apply(exports,arguments)
+},{"dup":205,"safe-buffer":211}],222:[function(require,module,exports){
 (function (setImmediate,clearImmediate){
 var nextTick = require('process/browser.js').nextTick;
 var apply = Function.prototype.apply;
@@ -33012,7 +35678,7 @@ exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate :
   delete immediateIds[id];
 };
 }).call(this,require("timers").setImmediate,require("timers").clearImmediate)
-},{"process/browser.js":174,"timers":211}],212:[function(require,module,exports){
+},{"process/browser.js":185,"timers":222}],223:[function(require,module,exports){
 (function (global){
 
 /**
@@ -33083,7 +35749,7 @@ function config (name) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],213:[function(require,module,exports){
+},{}],224:[function(require,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -33108,14 +35774,14 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],214:[function(require,module,exports){
+},{}],225:[function(require,module,exports){
 module.exports = function isBuffer(arg) {
   return arg && typeof arg === 'object'
     && typeof arg.copy === 'function'
     && typeof arg.fill === 'function'
     && typeof arg.readUInt8 === 'function';
 }
-},{}],215:[function(require,module,exports){
+},{}],226:[function(require,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -33705,7 +36371,7 @@ function hasOwnProperty(obj, prop) {
 }
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./support/isBuffer":214,"_process":174,"inherits":213}],216:[function(require,module,exports){
+},{"./support/isBuffer":225,"_process":185,"inherits":224}],227:[function(require,module,exports){
 var indexOf = function (xs, item) {
     if (xs.indexOf) return xs.indexOf(item);
     else for (var i = 0; i < xs.length; i++) {
