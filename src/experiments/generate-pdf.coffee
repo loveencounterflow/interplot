@@ -45,6 +45,7 @@ settings                  = require '../settings'
 
 
 #-----------------------------------------------------------------------------------------------------------
+_prv_console_warning = null
 echo_browser_console = ( c ) =>
   ### OK ###
   linenr      = c._location?.lineNumber ? '?'
@@ -69,7 +70,12 @@ echo_browser_console = ( c ) =>
     # throw new Error text
   #.........................................................................................................
   else
-    whisper "#{location}:", text
+    if c._type is 'warning'
+      return if text is _prv_console_warning
+      _prv_console_warning = text
+    else
+      _prv_console_warning = null
+    whisper "^44598^ #{c._type} #{location}:", text
   return null
 
 #-----------------------------------------------------------------------------------------------------------
