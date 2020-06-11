@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "cnd": "^9.0.0",
-    "coffeenode-teacup": "^0.2.0",
+    "coffeenode-teacup": "^1.0.0",
     "commander": "^5.1.0",
     "intertext": "^1.2.0",
     "intertype": "^7.0.1",
