@@ -1,6 +1,19 @@
-<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css" /><script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script><script type="text/javascript" src="../plink-plonk.js"></script><script type="text/javascript" src="../browserified.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops-microdom.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><body class="debug">
+<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css" /><script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script><script type="text/javascript" src="../plink-plonk.js"></script><script type="text/javascript" src="../browserified.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops-microdom.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><script>(function() {
+        return µ.DOM.ready(function() {
+          return console.log('^4445^', "demo for `µ.DOM.ready()`");
+        });
+      })();</script><body class="debug">
 
-<script type="text/javascript" src="../fczbkk-css-selector-generator.js"></script><link rel="stylesheet" href="./galley.css" /><unstyledelement></unstyledelement><style>gauge#gauge {
+<script type="text/javascript" src="../fczbkk-css-selector-generator.js"></script><script>(function() {
+      return ($(document)).ready(function() {
+        var sg;
+        sg = new CssSelectorGenerator();
+        globalThis.selector_of = function(node) {
+          return sg.getSelector(as_dom_node(node));
+        };
+        return null;
+      });
+    })();</script><link rel="stylesheet" href="./galley.css" /><unstyledelement></unstyledelement><style>gauge#gauge {
   display:                block;
   position:               absolute;
   top:                    10mm;
@@ -15,7 +28,74 @@
   backdrop-filter:        blur(0.2mm);
   background-color:       #ab2865; }
 @media print{ gauge#gauge { display: none; } }
-</style><gauge id="gauge" class="gui draggable"></gauge><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><caret id="caret"></caret><zoomer id="zoomer"><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:300mm;height:20mm;left:31mm;top:17mm"><img src="../rulers/hruler.png" style="mix-blend-mode:multiply;" /></div><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm"><img src="../rulers/vruler.png" style="mix-blend-mode:multiply;" /></div><page id="page1" class="right"><earmark>1</earmark><paper></paper><chase><topmargin></topmargin><hbox><leftmargin></leftmargin><column></column><vgap></vgap><column></column><vgap></vgap><column></column><rightmargin></rightmargin></hbox><bottommargin></bottommargin></chase></page><page id="page4" class="left"><earmark>4</earmark><paper></paper><chase><demo-paragraph id="d1" contenteditable="true">自馮瀛王</demo-paragraph></chase></page><page id="page5" class="right"><earmark>5</earmark><paper></paper><chase><demo-paragraph id="d2" contenteditable="true">䷼䷽䷾䷿䷼䷽䷾䷿䷼䷽おきみつおきかずこううんじおきひでこうえいおきながカキクケオイロハニオヘトキュウカッパダッテ
+</style><script>(function() {
+      return ($(document)).ready(function() {
+        var f;
+        //.....................................................................................................
+        f = function() {
+          var cmgauge_jq;
+          cmgauge_jq = $('gauge#gauge');
+          this.px_per_mm = cmgauge_jq.width() / 10;
+          this.mm_per_px = 1 / this.px_per_mm;
+          this.px_from_mm = function(mm) {
+            return mm * this.px_per_mm;
+          };
+          this.mm_from_px = function(px) {
+            return px * this.mm_per_px;
+          };
+          this.width_mm_of = function(node) {
+            return this.mm_from_px((as_dom_node(node)).getBoundingClientRect().width);
+          };
+          return this.height_mm_of = function(node) {
+            return this.mm_from_px((as_dom_node(node)).getBoundingClientRect().height);
+          };
+        };
+        //.....................................................................................................
+        f.apply(globalThis.GAUGE = {});
+        return null;
+      });
+    })();</script><gauge id="gauge" class="gui draggable"></gauge><script>(function() {
+      return ($(document)).ready(function() {
+        var debugonoff_jq, zoomer_jq, zoomin_jq, zoomout_jq;
+        globalThis.toolbox = {};
+        toolbox.debugonoff_jq = debugonoff_jq = $('#debugonoff');
+        toolbox.zoomin_jq = zoomin_jq = $('#zoomin');
+        toolbox.zoomout_jq = zoomout_jq = $('#zoomout');
+        toolbox.zoomer_jq = zoomer_jq = $('#zoomer');
+        // zoomer_jq.css 'transform-origin', "top left"
+        //.....................................................................................................
+        debugonoff_jq.on('click', function() {
+          return ($('body')).toggleClass('debug');
+        });
+        //.....................................................................................................
+        /* TAINT should use CSS animations */
+        zoomin_jq.on('click', function() {
+          var current_zoom;
+          current_zoom = parseFloat(zoomer_jq.css('zoom'));
+          return zoomer_jq.animate({
+            zoom: current_zoom * 1.25
+          }, 150, 'linear');
+        });
+        //.....................................................................................................
+        zoomout_jq.on('click', function() {
+          var current_zoom;
+          // zoomer_jq.css 'transform-origin', "top left"
+          current_zoom = parseFloat(zoomer_jq.css('zoom'));
+          return zoomer_jq.animate({
+            zoom: current_zoom / 1.25
+          }, 150, 'linear');
+        });
+        //.....................................................................................................
+        return null;
+      });
+    })();</script><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><caret id="caret"></caret><zoomer id="zoomer"><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:300mm;height:20mm;left:31mm;top:17mm"><img src="../rulers/hruler.png" style="mix-blend-mode:multiply;" /></div><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm"><img src="../rulers/vruler.png" style="mix-blend-mode:multiply;" /></div><script>(function() {
+            return ($(document)).ready(function() {
+              ($('.draggable')).draggable();
+              return ($('.draggable')).on('focus', function() {
+                return ($(this)).blur();
+              });
+            });
+          })();</script><page id="page1" class="right"><earmark>1</earmark><paper></paper><chase><topmargin></topmargin><hbox><leftmargin></leftmargin><column></column><vgap></vgap><column></column><vgap></vgap><column></column><rightmargin></rightmargin></hbox><bottommargin></bottommargin></chase></page><page id="page4" class="left"><earmark>4</earmark><paper></paper><chase><demo-paragraph id="d1" contenteditable="true">自馮瀛王</demo-paragraph></chase></page><page id="page5" class="right"><earmark>5</earmark><paper></paper><chase><demo-paragraph id="d2" contenteditable="true">䷼䷽䷾䷿䷼䷽䷾䷿䷼䷽おきみつおきかずこううんじおきひでこうえいおきながカキクケオイロハニオヘトキュウカッパダッテ
 亥核帝六今令户戶京立音言主文一丁丂國七丄種从虫䜌聲한국어조선말ABC123縉鄑戬戩虚虛嘘噓墟任廷呈程草花
 敬寬茍苟慈没殁沒歿芟投般咎昝晷倃卧臥虎微秃丸常當尚尙區陋沿匚匡亡匸匿龍祗萬禽宫宮侣營麻術述刹新案
 條寨甚商罕深差茶採某也的害編真直值縣祖概鄉者良鬼龜過骨為爲益温溫穴空舟近雞食搵絕丟丢曾𠔃兮清前有
