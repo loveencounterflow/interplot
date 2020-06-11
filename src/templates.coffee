@@ -235,10 +235,14 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     _.CSS resolve './jquery-ui-1.12.1/jquery-ui.min.css'
     _.JS  resolve './jquery-ui-1.12.1/jquery-ui.min.js'
     _.JS  resolve './plink-plonk.js'
+    _.JS  resolve './browserified.js'
     _.JS  resolve './ops-globals.js'
+    _.JS  resolve './ops-microdom.js'
     _.JS  resolve './ops.js'
     _.CSS resolve './reset.css'
     _.CSS resolve './styles.css'
+    SCRIPT ->
+      µ.DOM.ready -> console.log '^4445^', "demo for `µ.DOM.ready()`"
     ### ------------------------------------------------------------------------------------------------ ###
     ### LIBRARIES                                                                                       ###
     # _.JS  'http://d3js.org/d3.v4.js'
