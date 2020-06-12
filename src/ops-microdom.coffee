@@ -39,9 +39,8 @@ class Micro_dom # extends Multimix
   select_from: ( element, selector, fallback = misfit ) ->
     V.delement element
     V.nonempty_text selector
-    R = element.querySelector selector
-    if not R?
-      throw new Error "^µDOM/select@7758^ no such element: #{µ.rpr selector}" if fallback is misfit
+    unless ( R = element.querySelector selector )?
+      throw new Error "^µDOM/select_from@7758^ no such element: #{µ.rpr selector}" if fallback is misfit
       return fallback
     return R
 
@@ -52,9 +51,12 @@ class Micro_dom # extends Multimix
     Array.from element.querySelectorAll selector
 
   #-----------------------------------------------------------------------------------------------------------
-  select_id:  ( id ) ->
+  select_id:  ( id, fallback = misfit ) ->
     V.nonempty_text id
-    return document.getElementById id
+    unless ( R = document.getElementById id )?
+      throw new Error "^µDOM/select_id@7758^ no element with ID: #{µ.rpr id}" if fallback is misfit
+      return fallback
+    return R
 
   #-----------------------------------------------------------------------------------------------------------
   matches_selector: ( element, selector ) ->
