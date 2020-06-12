@@ -3,11 +3,6 @@
 
 globalThis.µ ?= {}
 µ.TYPES = new ( require 'intertype' ).Intertype()
-
-µ.TYPES.declare 'frob', ( x ) -> ( @isa.text x ) or x is 42
-µ.TYPES.declare 'domelement', ( x ) ->
-	( @type_of x ) in [ 'htmlhtmlelement', 'htmldocument', 'htmlunknownelement', ]
-
 µ.rpr 	= require 'util-inspect'
 µ.TMP	 ?= {}
 µ.TMP._css_properties = require './css-properties.js'
