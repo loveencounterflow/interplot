@@ -185,8 +185,8 @@ _.GAUGE = _.new_tag ->
         @mm_per_px    = 1 / @px_per_mm
         @px_from_mm   = ( mm    ) -> mm * @px_per_mm
         @mm_from_px   = ( px    ) -> px * @mm_per_px
-        @width_mm_of  = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().width
-        @height_mm_of = ( node  ) -> @mm_from_px ( as_dom_node node ).getBoundingClientRect().height
+        @width_mm_of  = ( node  ) -> @mm_from_px ( _KW_as_dom_node node ).getBoundingClientRect().width
+        @height_mm_of = ( node  ) -> @mm_from_px ( _KW_as_dom_node node ).getBoundingClientRect().height
       #.....................................................................................................
       f.apply globalThis.GAUGE = {}
       return null
@@ -198,7 +198,7 @@ _.selector_generator = ->
   _.RAW SCRIPT ->
     µ.DOM.ready ->
       sg = new CssSelectorGenerator;
-      globalThis.selector_of = ( node ) -> sg.getSelector as_dom_node node
+      globalThis.selector_of = ( node ) -> sg.getSelector _KW_as_dom_node node
       return null
 
 #-----------------------------------------------------------------------------------------------------------
