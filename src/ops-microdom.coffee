@@ -23,7 +23,7 @@ class Micro_dom # extends Multimix
   ### inspired by http://youmightnotneedjquery.com
   and https://blog.garstasio.com/you-dont-need-jquery ###
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   ready: ( f ) ->
     # thx to https://stackoverflow.com/a/7053197/7568091
     # function r(f){/in/.test(document.readyState)?setTimeout(r,9,f):f()}
@@ -31,11 +31,11 @@ class Micro_dom # extends Multimix
     return ( setTimeout ( => @ready f ), 9 ) if /in/.test document.readyState
     return f()
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   select:     ( selector, fallback = misfit ) -> @select_from     document, selector, fallback
   select_all: ( selector                    ) -> @select_all_from document, selector
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   select_from: ( element, selector, fallback = misfit ) ->
     V.delement element
     V.nonempty_text selector
@@ -44,13 +44,13 @@ class Micro_dom # extends Multimix
       return fallback
     return R
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   select_all_from: ( element, selector ) ->
     V.delement element
     V.nonempty_text selector
     Array.from element.querySelectorAll selector
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   select_id:  ( id, fallback = misfit ) ->
     V.nonempty_text id
     unless ( R = document.getElementById id )?
@@ -58,38 +58,38 @@ class Micro_dom # extends Multimix
       return fallback
     return R
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   matches_selector: ( element, selector ) ->
     V.nonempty_text selector
     V.element element
     return element[ name_of_match_method ] selector
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   get:              ( element, name         ) -> V.element element; element.getAttribute name
   set:              ( element, name, value  ) -> V.element element; element.setAttribute name, value
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   get_classes:      ( element               ) -> V.element element; element.classList
   add_class:        ( element, name         ) -> V.element element; element.classList.add      name
   has_class:        ( element, name         ) -> V.element element; element.classList.contains name
   remove_class:     ( element, name         ) -> V.element element; element.classList.remove   name
   toggle_class:     ( element, name         ) -> V.element element; element.classList.toggle   name
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   hide:             ( element               ) -> V.element element; element.style.display = 'none'
   show:             ( element               ) -> V.element element; element.style.display = ''
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   get_inner_html:   ( element               ) -> V.element element; element.innerHTML
   get_outer_html:   ( element               ) -> V.element element; element.outerHTML
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   get_live_styles:  ( element               ) -> getComputedStyle element ### validation done by method ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   parse_html: ( html ) ->
     R = document.implementation.createHTMLDocument()
     R.body.innerHTML = html
     return R.body.children
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   new_element: ( xname, P... ) ->
     ### TAINT analyze xname (a la `div#id42.foo.bar`) as done in Intertext.Cupofhtml ###
     ### TAINT in some cases using innerHTML, documentFragment may be advantageous ###
@@ -105,31 +105,44 @@ class Micro_dom # extends Multimix
     R.setAttribute k, v for k, v of attributes
     return R
 
-  #-----------------------------------------------------------------------------------------------------------
-  insert: ( position, target, dlm ) ->
+  #---------------------------------------------------------------------------------------------------------
+  insert: ( position, target, x ) ->
     switch position
-      when 'before',    'beforebegin' then return @insert_before   target, dlm
-      when 'as_first',  'afterbegin'  then return @insert_as_first target, dlm
-      when 'as_last',   'beforeend'   then return @insert_as_last  target, dlm
-      when 'after',     'afterend'    then return @insert_after    target, dlm
+      when 'before',    'beforebegin' then return @insert_before   target, x
+      when 'as_first',  'afterbegin'  then return @insert_as_first target, x
+      when 'as_last',   'beforeend'   then return @insert_as_last  target, x
+      when 'after',     'afterend'    then return @insert_after    target, x
     throw new Error "^µDOM/insert@7758^ not a valid position: #{µ.rpr position}"
 
-  #-----------------------------------------------------------------------------------------------------------
+  #---------------------------------------------------------------------------------------------------------
   ### NOTE pending practical considerations and benchmarks we will probably remove one of the two sets
   of insertion methods ###
-  insert_before:   ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'beforebegin', dlm
-  insert_as_first: ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'afterbegin',  dlm
-  insert_as_last:  ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'beforeend',   dlm
-  insert_after:    ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'afterend',    dlm
+  insert_before:   ( target, x ) -> V.element target; target.insertAdjacentElement 'beforebegin', x
+  insert_as_first: ( target, x ) -> V.element target; target.insertAdjacentElement 'afterbegin',  x
+  insert_as_last:  ( target, x ) -> V.element target; target.insertAdjacentElement 'beforeend',   x
+  insert_after:    ( target, x ) -> V.element target; target.insertAdjacentElement 'afterend',    x
 
-  #-----------------------------------------------------------------------------------------------------------
-  before:   ( target, dlms... ) -> V.delement target; target.before   dlms...
-  prepend:  ( target, dlms... ) -> V.delement target; target.prepend  dlms...
-  append:   ( target, dlms... ) -> V.delement target; target.append   dlms...
-  after:    ( target, dlms... ) -> V.delement target; target.after    dlms...
+  #---------------------------------------------------------------------------------------------------------
+  before:   ( target, x... ) -> V.element target; target.before   x...
+  prepend:  ( target, x... ) -> V.element target; target.prepend  x...
+  append:   ( target, x... ) -> V.element target; target.append   x...
+  after:    ( target, x... ) -> V.element target; target.after    x...
 
+  #=========================================================================================================
+  # GEOMETRY
+  #---------------------------------------------------------------------------------------------------------
+  ### NOTE observe that `DOM.get_offset_top()` and `element.offsetTop` are two different things; terminology
+  is confusing here, so consider renaming to avoid `offset` altogether ###
+  get_offset_top:  ( element ) -> ( @get_offset element ).top
+  get_offset_left: ( element ) -> ( @get_offset element ).left
 
-
+  #---------------------------------------------------------------------------------------------------------
+  get_offset: ( element ) ->
+    V.element element
+    rectangle = element.getBoundingClientRect()
+    return {
+      top:  rectangle.top   + document.body.scrollTop
+      left: rectangle.left  + document.body.scrollLeft }
 
 
 
