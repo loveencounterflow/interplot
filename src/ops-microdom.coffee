@@ -104,6 +104,30 @@ class Micro_dom # extends Multimix
     R.setAttribute k, v for k, v of attributes
     return R
 
+  #-----------------------------------------------------------------------------------------------------------
+  insert: ( position, target, dlm ) ->
+    switch position
+      when 'before',    'beforebegin' then return @insert_before   target, dlm
+      when 'as_first',  'afterbegin'  then return @insert_as_first target, dlm
+      when 'as_last',   'beforeend'   then return @insert_as_last  target, dlm
+      when 'after',     'afterend'    then return @insert_after    target, dlm
+    throw new Error "^µDOM/insert@7758^ not a valid position: #{µ.rpr position}"
+
+  #-----------------------------------------------------------------------------------------------------------
+  insert_before:   ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'beforebegin', dlm
+  insert_as_first: ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'afterbegin',  dlm
+  insert_as_last:  ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'beforeend',   dlm
+  insert_after:    ( target, dlm ) -> V.delement target; target.insertAdjacentElement 'afterend',    dlm
+
+
+
+
+
+
+
+
+
+
 ( globalThis.µ ?= {} ).DOM = new Micro_dom()
 
 ###
