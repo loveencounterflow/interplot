@@ -92,6 +92,7 @@ class Micro_dom # extends Multimix
   #-----------------------------------------------------------------------------------------------------------
   new_element: ( xname, P... ) ->
     ### TAINT analyze xname (a la `div#id42.foo.bar`) as done in Intertext.Cupofhtml ###
+    ### TAINT in some cases using innerHTML, documentFragment may be advantageous ###
     R           = document.createElement xname
     attributes  = {}
     text        = null

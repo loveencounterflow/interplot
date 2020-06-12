@@ -168,8 +168,11 @@ provide_ops = ->
     R.column_top        = GAUGE.mm_from_px    R.column_jq.offset().top
     R.column_width_mm   = GAUGE.width_mm_of   column_dom
     R.column_height_mm  = GAUGE.height_mm_of  column_dom
-    R.pointer_jq        = $ await TEMPLATES_pointer()
-    R.column_jq.append R.pointer_jq
+    ### TAINT in some cases using innerHTML, documentFragment may be advantageous ###
+    ### TAINT do not use literal name, ID; refer to templates ###
+    R.reglet_dom        = µ.DOM.new_element 'pointer', { id: 'pointer', }
+    µ.DOM.insert_as_last column_dom, R.reglet_dom
+    R.pointer_jq        = $ 'pointer#pointer'
     R.epsilon_mm        = 0.2
     R.prv_dom_id        = 0
     R.caret_dom         = µ.DOM.select '#caret'
