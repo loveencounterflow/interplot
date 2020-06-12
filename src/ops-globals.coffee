@@ -7,7 +7,6 @@ globalThis.running_in_browser     = -> @window?
 globalThis.jr                     = JSON.stringify
 globalThis.sleep                  = ( dts ) -> new Promise ( done ) => setTimeout done, dts * 1000
 globalThis.as_plain_object        = ( x ) -> JSON.parse JSON.stringify x
-globalThis.as_html                = ( dom_or_jquery ) -> ( _KW_as_dom_node dom_or_jquery ).outerHTML
 
 #-----------------------------------------------------------------------------------------------------------
 globalThis.js_type_of = ( x ) ->

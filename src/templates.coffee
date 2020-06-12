@@ -81,23 +81,22 @@ _.TOOLBOX = ->
   _.RAW SCRIPT ->
     µ.DOM.ready ->
       globalThis.toolbox    = {}
-      toolbox.debugonoff_jq = debugonoff_jq = $ '#debugonoff'
-      toolbox.zoomin_jq     = zoomin_jq     = $ '#zoomin'
-      toolbox.zoomout_jq    = zoomout_jq    = $ '#zoomout'
-      toolbox.zoomer_jq     = zoomer_jq     = $ '#zoomer'
+      toolbox.debugonoff_dom  = µ.DOM.select '#debugonoff'
+      toolbox.zoomin_dom      = µ.DOM.select '#zoomin'
+      toolbox.zoomout_dom     = µ.DOM.select '#zoomout'
+      toolbox.zoomer_dom      = µ.DOM.select '#zoomer'
       # zoomer_jq.css 'transform-origin', "top left"
       #.....................................................................................................
-      debugonoff_jq.on 'click', -> ( $ 'body' ).toggleClass 'debug'
+      µ.DOM.on toolbox.debugonoff_dom, 'click', -> µ.DOM.toggle_class ( µ.DOM.select 'body' ), 'debug'
       #.....................................................................................................
       ### TAINT should use CSS animations ###
-      zoomin_jq.on 'click', ->
-        current_zoom = parseFloat zoomer_jq.css 'zoom'
-        zoomer_jq.animate { zoom: current_zoom * 1.25, }, 150, 'linear'
+      µ.DOM.on toolbox.zoomin_dom, 'click', ->
+        current_zoom = parseFloat µ.DOM.get_style_rule toolbox.zoomer_dom, 'zoom'
+        toolbox.zoomer_dom.style.zoom = current_zoom * 1.25
       #.....................................................................................................
-      zoomout_jq.on 'click', ->
-        # zoomer_jq.css 'transform-origin', "top left"
-        current_zoom = parseFloat zoomer_jq.css 'zoom'
-        zoomer_jq.animate { zoom: current_zoom / 1.25, }, 150, 'linear'
+      µ.DOM.on toolbox.zoomout_dom, 'click', ->
+        current_zoom = parseFloat µ.DOM.get_style_rule toolbox.zoomer_dom, 'zoom'
+        toolbox.zoomer_dom.style.zoom = current_zoom / 1.25
       #.....................................................................................................
       return null
   _.TAG 'toolbox', '.gui', ->

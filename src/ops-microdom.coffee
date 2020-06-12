@@ -77,9 +77,6 @@ class Micro_dom # extends Multimix
   hide:             ( element               ) -> V.element element; element.style.display = 'none'
   show:             ( element               ) -> V.element element; element.style.display = ''
   #---------------------------------------------------------------------------------------------------------
-  get_inner_html:   ( element               ) -> V.element element; element.innerHTML
-  get_outer_html:   ( element               ) -> V.element element; element.outerHTML
-  #---------------------------------------------------------------------------------------------------------
   get_live_styles:  ( element               ) -> getComputedStyle element ### validation done by method ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
 
@@ -119,6 +116,13 @@ class Micro_dom # extends Multimix
 
   #---------------------------------------------------------------------------------------------------------
   deep_copy: ( element ) -> element.cloneNode true
+
+
+  #=========================================================================================================
+  # OUTER, INNER HTML
+  #---------------------------------------------------------------------------------------------------------
+  get_inner_html:   ( element ) -> V.element element; element.innerHTML
+  get_outer_html:   ( element ) -> V.element element; element.outerHTML
 
 
   #=========================================================================================================
@@ -174,6 +178,15 @@ class Micro_dom # extends Multimix
       left: rectangle.left  + document.body.scrollLeft }
 
 
+  #=========================================================================================================
+  # EVENTS
+  #---------------------------------------------------------------------------------------------------------
+  on: ( element, name, handler ) ->
+    ### see http://youmightnotneedjquery.com/#on, http://youmightnotneedjquery.com/#delegate ###
+    V.element element
+    V.nonempty_text name
+    V.function handler
+    return element.addEventListener name, handler
 
 
 
