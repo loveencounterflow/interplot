@@ -85,7 +85,7 @@ _.TOOLBOX = ->
       toolbox.zoomin_dom      = µ.DOM.select '#zoomin'
       toolbox.zoomout_dom     = µ.DOM.select '#zoomout'
       toolbox.zoomer_dom      = µ.DOM.select '#zoomer'
-      # zoomer_jq.css 'transform-origin', "top left"
+      # zoomer_dom.css 'transform-origin', "top left"
       #.....................................................................................................
       µ.DOM.on toolbox.debugonoff_dom, 'click', -> µ.DOM.toggle_class ( µ.DOM.select 'body' ), 'debug'
       #.....................................................................................................
@@ -179,8 +179,8 @@ _.GAUGE = _.new_tag ->
     µ.DOM.ready ->
       #.....................................................................................................
       f = ->
-        cmgauge_jq    = $ 'gauge#gauge'
-        @px_per_mm    = cmgauge_jq.width() / 10
+        cmgauge_dom   = µ.DOM.select '#gauge'
+        @px_per_mm    = ( µ.DOM.get_width cmgauge_dom ) / 10
         @mm_per_px    = 1 / @px_per_mm
         @px_from_mm   = ( mm    ) -> mm * @px_per_mm
         @mm_from_px   = ( px    ) -> px * @mm_per_px

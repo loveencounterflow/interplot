@@ -79,6 +79,11 @@ class Micro_dom # extends Multimix
   #---------------------------------------------------------------------------------------------------------
   get_live_styles:  ( element               ) -> getComputedStyle element ### validation done by method ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
+  set_style_rule:   ( element, name, value  ) ->
+    ### see https://developer.mozilla.org/en-US/docs/Web/API/ElementCSSInlineStyle/style ###
+    throw new Error "^888744^ not implemented"
+    # toolbox.zoomer_dom.style.zoom = current_zoom * 1.25
+    # ( getComputedStyle element )[ name ] ### validation done by method ###
 
 
   #=========================================================================================================
@@ -176,6 +181,10 @@ class Micro_dom # extends Multimix
     return {
       top:  rectangle.top   + document.body.scrollTop
       left: rectangle.left  + document.body.scrollLeft }
+
+  #---------------------------------------------------------------------------------------------------------
+  ### see http://youmightnotneedjquery.com/#get_width ###
+  get_width: ( element ) -> parseFloat ( getComputedStyle element, null ).width
 
 
   #=========================================================================================================
