@@ -13,7 +13,8 @@ name_of_match_method  = do ->
 
 #===========================================================================================================
 class Micro_dom # extends Multimix
-  ### inspired by http://youmightnotneedjquery.com/ ###
+  ### inspired by http://youmightnotneedjquery.com
+  and https://blog.garstasio.com/you-dont-need-jquery ###
 
   #-----------------------------------------------------------------------------------------------------------
   ready: ( f ) ->
