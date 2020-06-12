@@ -118,12 +118,10 @@ provide_ops = ->
   @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
     slug_dom          = µ.DOM.deep_copy ctx.slug_stencil
     trim_dom          = µ.DOM.select_from slug_dom, 'trim'
-    slug_jq           = $ slug_dom
     ctx.prv_dom_id++
     µ.DOM.set slug_dom, 'id', "slug#{ctx.prv_dom_id}"
     µ.DOM.set trim_dom, 'id', "trim#{ctx.prv_dom_id}"
     column_dom        = ctx.columns_dom[ ctx.columns_idx ]
-    # column_height_mm  = GAUGE.height_mm_of column_dom
     #.........................................................................................................
     µ.DOM.prepend trim_dom, partial_slug.text, ctx.caret_dom
     µ.DOM.append column_dom, slug_dom
@@ -131,17 +129,13 @@ provide_ops = ->
     width_mm          = GAUGE.width_mm_of trim_dom
     overshoot_mm      = width_mm - ctx.column_width_mm
     spc_delta_mm      = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
-    # slug_height_mm    = GAUGE.height_mm_of slug_jq
-    # slug_top_mm       = GAUGE.mm_from_px slug_jq.offset().top
-    # slug_bottom_mm    = slug_height_mm + slug_top_mm
-    # log '^44342^', column_height_mm, slug_bottom_mm, slug_jq[ 0 ]
     ### NOTE here we use a boolean quality assessment; a more refined algorithm should use points for
     to differentiate between less and more desirable fittings based on delta space added to or subtracted
     from all space characters, presence or absence of hyphen and so on ###
     fitting_ok        = overshoot_mm <= ctx.epsilon_mm
     await sleep 0 if ctx.live_demo
     µ.DOM.remove slug_dom
-    return { slug_jq, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
+    return { slug_dom, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
 
   #-----------------------------------------------------------------------------------------------------------
   @get_pointer_metrics = ( ctx ) ->
@@ -210,18 +204,18 @@ provide_ops = ->
     push_metrics = ( slug_metrics ) =>
       line_nr++
       R.push slug_metrics
-      slug_metrics.html = as_html slug_metrics.slug_jq
-      ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
-      if ctx.XXX_insert_big_words and ( parts = slug_metrics.slug_jq.text().split /(raised)/ ).length is 3 ### !!!! ###
-        # slug_metrics.slug_jq.html "#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}"
-        ### NOTE `<trim/>` needed for proper baseline-alignment ###
-        slug_metrics.slug_jq.html "<trim>#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}</trim>"
-      ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
-      µ.DOM.before ctx.reglet_dom, slug_metrics.slug_jq[ 0 ]
+      slug_metrics.html = µ.DOM.get_outer_html slug_metrics.slug_dom
+      # ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+      # if ctx.XXX_insert_big_words and ( parts = slug_metrics.slug_jq.text().split /(raised)/ ).length is 3 ### !!!! ###
+      #   # slug_metrics.slug_jq.html "#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}"
+      #   ### NOTE `<trim/>` needed for proper baseline-alignment ###
+      #   slug_metrics.slug_jq.html "<trim>#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}</trim>"
+      # ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+      µ.DOM.before ctx.reglet_dom, slug_metrics.slug_dom
       reglet_metrics    = @get_pointer_metrics ctx
-      log '^33442^', line_nr, "#{reglet_metrics.advance_mm.toFixed 1} mm / #{reglet_metrics.remain_mm.toFixed 1} mm" # , slug_metrics.slug_jq[ 0 ]
+      log '^33442^', line_nr, "#{reglet_metrics.advance_mm.toFixed 1} mm / #{reglet_metrics.remain_mm.toFixed 1} mm"
       await sleep 0 if ctx.live_demo
-      delete slug_metrics.slug_jq
+      delete slug_metrics.slug_dom
       return null
     #.........................................................................................................
     ctx           = await @get_context()
