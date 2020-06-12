@@ -145,7 +145,7 @@ provide_ops = ->
 
   #-----------------------------------------------------------------------------------------------------------
   @get_pointer_metrics = ( ctx ) ->
-    top_mm      = GAUGE.mm_from_px ctx.pointer_jq.offset().top
+    top_mm      = GAUGE.mm_from_px µ.DOM.get_offset_top ctx.reglet_dom
     advance_mm  = top_mm - ctx.column_top
     remain_mm   = ctx.column_height_mm - advance_mm
     return { advance_mm, remain_mm, }
@@ -164,8 +164,7 @@ provide_ops = ->
     R.columns_dom       = µ.DOM.select_all_from page_dom, 'column'
     R.columns_idx       = 0
     column_dom          = R.columns_dom[ R.columns_idx ]
-    R.column_jq         = $ column_dom
-    R.column_top        = GAUGE.mm_from_px    R.column_jq.offset().top
+    R.column_top        = GAUGE.mm_from_px    µ.DOM.get_offset_top column_dom
     R.column_width_mm   = GAUGE.width_mm_of   column_dom
     R.column_height_mm  = GAUGE.height_mm_of  column_dom
     ### TAINT in some cases using innerHTML, documentFragment may be advantageous ###
@@ -173,7 +172,6 @@ provide_ops = ->
     R.reglet_dom        = µ.DOM.new_element 'pointer', { id: 'pointer', }
     # µ.DOM.insert_as_last column_dom, R.reglet_dom
     µ.DOM.append column_dom, R.reglet_dom
-    R.pointer_jq        = $ 'pointer#pointer'
     R.epsilon_mm        = 0.2
     R.prv_dom_id        = 0
     R.caret_dom         = µ.DOM.select '#caret'
@@ -219,7 +217,7 @@ provide_ops = ->
         ### NOTE `<trim/>` needed for proper baseline-alignment ###
         slug_metrics.slug_jq.html "<trim>#{parts[ 0 ]}<span style='font-size:300%'>g#{parts[ 1 ]}y</span>#{parts[ 2 ]}</trim>"
       ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
-      ctx.pointer_jq.before slug_metrics.slug_jq
+      µ.DOM.before ctx.reglet_dom, slug_metrics.slug_jq[ 0 ]
       reglet_metrics    = @get_pointer_metrics ctx
       log '^33442^', line_nr, "#{reglet_metrics.advance_mm.toFixed 1} mm / #{reglet_metrics.remain_mm.toFixed 1} mm" # , slug_metrics.slug_jq[ 0 ]
       await sleep 0 if ctx.live_demo
@@ -227,8 +225,8 @@ provide_ops = ->
       return null
     #.........................................................................................................
     ctx           = await @get_context()
-    ctx.live_demo = true
     ctx.live_demo = false
+    ctx.live_demo = true
     #.........................................................................................................
     loop
       max_slab_idx++
