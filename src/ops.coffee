@@ -121,7 +121,7 @@ provide_ops = ->
     ctx.prv_dom_id++
     slug_jq.attr  'id', "slug#{ctx.prv_dom_id}"
     trim_jq.attr  'id', "trim#{ctx.prv_dom_id}"
-    column_dom        = ctx.columns_jq[ ctx.columns_idx ] ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+    column_dom        = ctx.columns_dom[ ctx.columns_idx ]
     # column_height_mm  = GAUGE.height_mm_of column_dom
     #.........................................................................................................
     trim_jq[ 0 ].insertAdjacentText 'afterbegin', partial_slug.text
@@ -160,9 +160,10 @@ provide_ops = ->
     log '^ops/get_context@66855-1^'
     R                   = {}
     R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
-    R.columns_jq        = ( $ 'page:first' ).find 'column'
+    page_dom            = µ.DOM.select 'page'
+    R.columns_dom       = µ.DOM.select_all_from page_dom, 'column'
     R.columns_idx       = 0
-    R.column_jq         = $ R.columns_jq[ R.columns_idx ]
+    R.column_jq         = $ R.columns_dom[ R.columns_idx ]
     R.column_top        = GAUGE.mm_from_px    R.column_jq.offset().top
     R.column_width_mm   = GAUGE.width_mm_of   R.column_jq
     R.column_height_mm  = GAUGE.height_mm_of  R.column_jq
