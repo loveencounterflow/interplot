@@ -9,15 +9,6 @@
 
   µ.TYPES = new (require('intertype')).Intertype();
 
-  µ.TYPES.declare('frob', function(x) {
-    return (this.isa.text(x)) || x === 42;
-  });
-
-  µ.TYPES.declare('domelement', function(x) {
-    var ref;
-    return (ref = this.type_of(x)) === 'htmlhtmlelement' || ref === 'htmldocument' || ref === 'htmlunknownelement';
-  });
-
   µ.rpr = require('util-inspect');
 
   if (µ.TMP == null) {
