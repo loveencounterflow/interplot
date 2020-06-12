@@ -5,11 +5,18 @@ misfit                = Symbol 'misfit'
 _types                = µ.TYPES.export()
 V                     = _types.validate
 { isa }               = _types
+
+#===========================================================================================================
 name_of_match_method  = do ->
   element = document.createElement 'div'
   for name in [ 'matches', 'matchesSelector', 'msMatchesSelector', \
     'mozMatchesSelector', 'webkitMatchesSelector', 'oMatchesSelector', ]
     return name if element[ name ]?
+
+#===========================================================================================================
+µ.TYPES.declare 'element',  ( x ) -> x instanceof Element
+µ.TYPES.declare 'delement', ( x ) -> x is document or x instanceof Element
+
 
 #===========================================================================================================
 class Micro_dom # extends Multimix
@@ -30,8 +37,8 @@ class Micro_dom # extends Multimix
 
   #-----------------------------------------------------------------------------------------------------------
   select_from: ( element, selector, fallback = misfit ) ->
+    V.delement element
     V.nonempty_text selector
-    V.domelement element
     R = element.querySelector selector
     if not R?
       throw new Error "^µDOM/select@7758^ no such element: #{µ.rpr selector}" if fallback is misfit
@@ -40,8 +47,8 @@ class Micro_dom # extends Multimix
 
   #-----------------------------------------------------------------------------------------------------------
   select_all_from: ( element, selector ) ->
+    V.delement element
     V.nonempty_text selector
-    V.domelement element
     Array.from element.querySelectorAll selector
 
   #-----------------------------------------------------------------------------------------------------------
@@ -52,24 +59,24 @@ class Micro_dom # extends Multimix
   #-----------------------------------------------------------------------------------------------------------
   matches_selector: ( element, selector ) ->
     V.nonempty_text selector
-    V.domelement element
+    V.element element
     return element[ name_of_match_method ] selector
 
   #-----------------------------------------------------------------------------------------------------------
-  get:              ( element, name         ) -> V.domelement element; element.getAttribute name
-  set:              ( element, name, value  ) -> V.domelement element; element.setAttribute name, value
+  get:              ( element, name         ) -> V.element element; element.getAttribute name
+  set:              ( element, name, value  ) -> V.element element; element.setAttribute name, value
   #-----------------------------------------------------------------------------------------------------------
-  get_classes:      ( element               ) -> V.domelement element; element.classList
-  add_class:        ( element, name         ) -> V.domelement element; element.classList.add      name
-  has_class:        ( element, name         ) -> V.domelement element; element.classList.contains name
-  remove_class:     ( element, name         ) -> V.domelement element; element.classList.remove   name
-  toggle_class:     ( element, name         ) -> V.domelement element; element.classList.toggle   name
+  get_classes:      ( element               ) -> V.element element; element.classList
+  add_class:        ( element, name         ) -> V.element element; element.classList.add      name
+  has_class:        ( element, name         ) -> V.element element; element.classList.contains name
+  remove_class:     ( element, name         ) -> V.element element; element.classList.remove   name
+  toggle_class:     ( element, name         ) -> V.element element; element.classList.toggle   name
   #-----------------------------------------------------------------------------------------------------------
-  hide:             ( element               ) -> V.domelement element; element.style.display = 'none'
-  show:             ( element               ) -> V.domelement element; element.style.display = ''
+  hide:             ( element               ) -> V.element element; element.style.display = 'none'
+  show:             ( element               ) -> V.element element; element.style.display = ''
   #-----------------------------------------------------------------------------------------------------------
-  get_inner_html:   ( element               ) -> V.domelement element; element.innerHTML
-  get_outer_html:   ( element               ) -> V.domelement element; element.outerHTML
+  get_inner_html:   ( element               ) -> V.element element; element.innerHTML
+  get_outer_html:   ( element               ) -> V.element element; element.outerHTML
   #-----------------------------------------------------------------------------------------------------------
   get_live_styles:  ( element               ) -> getComputedStyle element ### validation done by method ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
