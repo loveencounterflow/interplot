@@ -83,8 +83,20 @@ class Micro_dom # extends Multimix
   get_live_styles:  ( element               ) -> getComputedStyle element ### validation done by method ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
 
+
+  #=========================================================================================================
+  # ELEMENT CREATION
   #---------------------------------------------------------------------------------------------------------
-  parse_html: ( html ) ->
+  parse_one: ( element_html ) ->
+    R = @parse_all element_html
+    unless ( length = R.length ) is 1
+      throw new Error "^µDOM/parse_one@7558^ expected HTML for 1 element but got #{length}"
+    return R[ 0 ]
+
+  #---------------------------------------------------------------------------------------------------------
+  parse_all: ( html ) ->
+    ### TAINT return Array or HTMLCollection? ###
+    V.nonempty_text html
     R = document.implementation.createHTMLDocument()
     R.body.innerHTML = html
     return R.body.children
@@ -105,6 +117,12 @@ class Micro_dom # extends Multimix
     R.setAttribute k, v for k, v of attributes
     return R
 
+  #---------------------------------------------------------------------------------------------------------
+  deep_copy: ( element ) -> element.cloneNode true
+
+
+  #=========================================================================================================
+  # INSERTION
   #---------------------------------------------------------------------------------------------------------
   insert: ( position, target, x ) ->
     switch position
@@ -138,6 +156,7 @@ class Micro_dom # extends Multimix
 
   #---------------------------------------------------------------------------------------------------------
   get_offset: ( element ) ->
+    ### see http://youmightnotneedjquery.com/#offset ###
     V.element element
     rectangle = element.getBoundingClientRect()
     return {
@@ -156,16 +175,21 @@ class Micro_dom # extends Multimix
 
 https://stackoverflow.com/a/117988/7568091
 
-innerHTML is remarkably fast, and in many cases you will get the best results just setting that (I would just use append).
+innerHTML is remarkably fast, and in many cases you will get the best results just setting that (I would
+just use append).
 
-However, if there is much already in "mydiv" then you are forcing the browser to parse and render all of that content again (everything that was there before, plus all of your new content). You can avoid this by appending a document fragment onto "mydiv" instead:
+However, if there is much already in "mydiv" then you are forcing the browser to parse and render all of
+that content again (everything that was there before, plus all of your new content). You can avoid this by
+appending a document fragment onto "mydiv" instead:
 
 var frag = document.createDocumentFragment();
 frag.innerHTML = html;
 $("#mydiv").append(frag);
 In this way, only your new content gets parsed (unavoidable) and the existing content does not.
 
-EDIT: My bad... I've discovered that innerHTML isn't well supported on document fragments. You can use the same technique with any node type. For your example, you could create the root table node and insert the innerHTML into that:
+EDIT: My bad... I've discovered that innerHTML isn't well supported on document fragments. You can use the
+same technique with any node type. For your example, you could create the root table node and insert the
+innerHTML into that:
 
 var frag = document.createElement('table');
 frag.innerHTML = tableInnerHtml;

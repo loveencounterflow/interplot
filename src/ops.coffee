@@ -116,8 +116,10 @@ provide_ops = ->
 
   #-----------------------------------------------------------------------------------------------------------
   @_metrics_from_partial_slug = ( ctx, partial_slug ) ->
-    slug_jq           = $ ctx.slug_template
-    trim_jq           = slug_jq.find 'trim'
+    slug_dom          = µ.DOM.deep_copy ctx.slug_stencil
+    trim_dom          = µ.DOM.select_from slug_dom, 'trim'
+    slug_jq           = $ slug_dom
+    trim_jq           = $ trim_dom
     ctx.prv_dom_id++
     slug_jq.attr  'id', "slug#{ctx.prv_dom_id}"
     trim_jq.attr  'id', "trim#{ctx.prv_dom_id}"
@@ -159,7 +161,7 @@ provide_ops = ->
     default) in document order. ###
     log '^ops/get_context@66855-1^'
     R                   = {}
-    R.slug_template     = await TEMPLATES_slug() ### use single composer !!!!!!!!!!!!!!!!!!!!!!!!!!! ###
+    R.slug_stencil      = µ.DOM.parse_one await TEMPLATES_slug()
     page_dom            = µ.DOM.select 'page'
     R.columns_dom       = µ.DOM.select_all_from page_dom, 'column'
     R.columns_idx       = 0
