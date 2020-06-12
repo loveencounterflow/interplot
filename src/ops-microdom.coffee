@@ -78,6 +78,14 @@ class Micro_dom # extends Multimix
   show:             ( element               ) -> V.element element; element.style.display = ''
   #---------------------------------------------------------------------------------------------------------
   get_live_styles:  ( element               ) -> getComputedStyle element ### validation done by method ###
+  ###
+  globalThis.get_style = ( element, pseudo_selector, attribute_name ) ->
+    unless attribute_name?
+      [ pseudo_selector, attribute_name, ] = [ undefined, pseudo_selector, ]
+    style = window.getComputedStyle element, pseudo_selector
+    return style.getPropertyValue attribute_name
+  ###
+  ### TAINT also use pseudo_selector, see above ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
   set_style_rule:   ( element, name, value  ) ->
     ### see https://developer.mozilla.org/en-US/docs/Web/API/ElementCSSInlineStyle/style ###

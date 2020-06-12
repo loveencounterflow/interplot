@@ -127,7 +127,7 @@ L                         = @
   tests:
     "x is an object":                         ( x ) -> @isa.object x
   ###
-    slug_metrics = { slug_jq, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
+    slug_metrics = { slug_dom, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
   ###
 
 #-----------------------------------------------------------------------------------------------------------
