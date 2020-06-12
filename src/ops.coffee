@@ -119,18 +119,16 @@ provide_ops = ->
     slug_dom          = µ.DOM.deep_copy ctx.slug_stencil
     trim_dom          = µ.DOM.select_from slug_dom, 'trim'
     slug_jq           = $ slug_dom
-    trim_jq           = $ trim_dom
     ctx.prv_dom_id++
-    slug_jq.attr  'id', "slug#{ctx.prv_dom_id}"
-    trim_jq.attr  'id', "trim#{ctx.prv_dom_id}"
+    µ.DOM.set slug_dom, 'id', "slug#{ctx.prv_dom_id}"
+    µ.DOM.set trim_dom, 'id', "trim#{ctx.prv_dom_id}"
     column_dom        = ctx.columns_dom[ ctx.columns_idx ]
     # column_height_mm  = GAUGE.height_mm_of column_dom
     #.........................................................................................................
-    trim_jq[ 0 ].insertAdjacentText 'afterbegin', partial_slug.text
-    trim_jq[ 0 ].insertAdjacentElement 'beforeend', ctx.caret_dom
-    column_dom.insertAdjacentElement 'beforeend', slug_jq[ 0 ]
+    µ.DOM.prepend trim_dom, partial_slug.text, ctx.caret_dom
+    µ.DOM.append column_dom, slug_dom
     @XXX_show_caret_style ctx
-    width_mm          = GAUGE.width_mm_of trim_jq
+    width_mm          = GAUGE.width_mm_of trim_dom
     overshoot_mm      = width_mm - ctx.column_width_mm
     spc_delta_mm      = if partial_slug.spc_count < 1 then null else -( overshoot_mm / partial_slug.spc_count )
     # slug_height_mm    = GAUGE.height_mm_of slug_jq
@@ -142,7 +140,7 @@ provide_ops = ->
     from all space characters, presence or absence of hyphen and so on ###
     fitting_ok        = overshoot_mm <= ctx.epsilon_mm
     await sleep 0 if ctx.live_demo
-    slug_jq.remove()
+    µ.DOM.remove slug_dom
     return { slug_jq, width_mm, overshoot_mm, spc_delta_mm, fitting_ok, }
 
   #-----------------------------------------------------------------------------------------------------------

@@ -146,6 +146,16 @@ class Micro_dom # extends Multimix
   append:   ( target, x... ) -> V.element target; target.append   x...
   after:    ( target, x... ) -> V.element target; target.after    x...
 
+
+  #=========================================================================================================
+  # REMOVAL
+  #---------------------------------------------------------------------------------------------------------
+  remove: ( element ) ->
+    ### see http://youmightnotneedjquery.com/#remove ###
+    V.element element
+    element.parentNode.removeChild element
+
+
   #=========================================================================================================
   # GEOMETRY
   #---------------------------------------------------------------------------------------------------------
