@@ -1,4 +1,4 @@
-<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../jquery-3.4.1.js"></script><link rel="stylesheet" href="../jquery-ui-1.12.1/jquery-ui.min.css" /><script type="text/javascript" src="../jquery-ui-1.12.1/jquery-ui.min.js"></script><script type="text/javascript" src="../plink-plonk.js"></script><script type="text/javascript" src="../browserified.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops-microdom.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><script>(function() {
+<!DOCTYPE html><meta charset="utf-8" /><title>Galley Demo</title><script type="text/javascript" src="../plink-plonk.js"></script><script type="text/javascript" src="../browserified.js"></script><script type="text/javascript" src="../ops-globals.js"></script><script type="text/javascript" src="../ops-microdom.js"></script><script type="text/javascript" src="../ops.js"></script><link rel="stylesheet" href="../reset.css" /><link rel="stylesheet" href="../styles.css" /><script>(function() {
         return µ.DOM.ready(function() {
           return console.log('^4445^', "demo for `µ.DOM.ready()`");
         });
@@ -84,10 +84,14 @@
       });
     })();</script><toolbox class="gui"><button id="debugonoff" class="gui">dbg</button><button id="zoomout" class="gui">z–</button><button id="zoomin" class="gui">z+</button></toolbox><artboard id="artboard1" class="pages"><caret id="caret"></caret><zoomer id="zoomer"><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:300mm;height:20mm;left:31mm;top:17mm"><img src="../rulers/hruler.png" style="mix-blend-mode:multiply;" /></div><div class="draggable dropshadow" style="position:absolute;z-index:100;mix-blend-mode:multiply;backdrop-filter:blur(0.2mm);background-color:yellow;width:20mm;height:300mm;left:8mm;top:40mm"><img src="../rulers/vruler.png" style="mix-blend-mode:multiply;" /></div><script>(function() {
             return µ.DOM.ready(function() {
-              ($('.draggable')).draggable();
-              return ($('.draggable')).on('focus', function() {
-                return ($(this)).blur();
-              });
+              var element, i, len, ref, results;
+              ref = µ.DOM.select_all('.draggable');
+              results = [];
+              for (i = 0, len = ref.length; i < len; i++) {
+                element = ref[i];
+                results.push(µ.DOM.make_draggable(element));
+              }
+              return results;
             });
           })();</script><page id="page1" class="right"><earmark>1</earmark><paper></paper><chase><topmargin></topmargin><hbox><leftmargin></leftmargin><column></column><vgap></vgap><column></column><vgap></vgap><column></column><rightmargin></rightmargin></hbox><bottommargin></bottommargin></chase></page><page id="page4" class="left"><earmark>4</earmark><paper></paper><chase><demo-paragraph id="d1" contenteditable="true">自馮瀛王</demo-paragraph></chase></page><page id="page5" class="right"><earmark>5</earmark><paper></paper><chase><demo-paragraph id="d2" contenteditable="true">䷼䷽䷾䷿䷼䷽䷾䷿䷼䷽おきみつおきかずこううんじおきひでこうえいおきながカキクケオイロハニオヘトキュウカッパダッテ
 亥核帝六今令户戶京立音言主文一丁丂國七丄種从虫䜌聲한국어조선말ABC123縉鄑戬戩虚虛嘘噓墟任廷呈程草花
