@@ -14,8 +14,9 @@ name_of_match_method  = do ->
     return name if element[ name ]?
 
 #===========================================================================================================
+### TAINT probably not correct to only check for Element, at least in some cases could be Node as well ###
 µ.TYPES.declare 'element',  ( x ) -> x instanceof Element
-µ.TYPES.declare 'delement', ( x ) -> x is document or x instanceof Element
+µ.TYPES.declare 'delement', ( x ) -> ( x is document ) or ( x instanceof Element )
 
 
 #===========================================================================================================
