@@ -21,6 +21,19 @@ globalThis._KW_as_dom_node = ( dom_or_jquery ) ->
   return dom_or_jquery[ 0 ] if ( typeof dom_or_jquery?.jquery ) is 'string'
   return dom_or_jquery
 
+#-----------------------------------------------------------------------------------------------------------
+### TAINT intermediate solution until intertext can be browserified ###
+globalThis.INTERTEXT ?= {}
+#-----------------------------------------------------------------------------------------------------------
+INTERTEXT.camelize = ( text ) ->
+  ### thx to https://github.com/lodash/lodash/blob/master/camelCase.js ###
+  words = text.split '-'
+  for idx in [ 1 ... words.length ] by +1
+    word = words[ idx ]
+    continue if word is ''
+    words[ idx ] = word[ 0 ].toUpperCase() + word[ 1 .. ]
+  return words.join ''
+
 
 
 
