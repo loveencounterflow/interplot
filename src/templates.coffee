@@ -230,9 +230,9 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
     # _.META 'http-equiv': "Content-Security-Policy", content: "script-src 'unsafe-inline'"
     _.TITLE settings.title
     ### ------------------------------------------------------------------------------------------------ ###
-    _.JS  resolve './jquery-3.4.1.js'
-    _.CSS resolve './jquery-ui-1.12.1/jquery-ui.min.css'
-    _.JS  resolve './jquery-ui-1.12.1/jquery-ui.min.js'
+    # _.JS  resolve './jquery-3.4.1.js'
+    # _.CSS resolve './jquery-ui-1.12.1/jquery-ui.min.css'
+    # _.JS  resolve './jquery-ui-1.12.1/jquery-ui.min.js'
     _.JS  resolve './plink-plonk.js'
     _.JS  resolve './browserified.js'
     _.JS  resolve './ops-globals.js'
