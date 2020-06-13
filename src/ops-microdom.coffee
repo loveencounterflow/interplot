@@ -49,7 +49,8 @@ class Micro_dom # extends Multimix
   select_all_from: ( element, selector ) ->
     V.delement element
     V.nonempty_text selector
-    Array.from element.querySelectorAll selector
+    return element.querySelectorAll selector
+    # Array.from element.querySelectorAll selector
 
   #---------------------------------------------------------------------------------------------------------
   select_id:  ( id, fallback = misfit ) ->
