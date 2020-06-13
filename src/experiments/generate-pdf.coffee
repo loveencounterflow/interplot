@@ -231,7 +231,7 @@ mark_elements_with_fallback_glyphs = ( page ) ->
       count_txt     = CND.white ( format_integer font.glyphCount ).padStart 5
       echo font_name_txt, count_txt, selector_txt
       R.push selector
-      await page.evaluate ( ( selector ) -> ( $ selector ).addClass 'has-fallback-glyphs' ), selector
+      await page.evaluate ( ( selector ) -> µ.DOM.add_class ( µ.DOM.select selector ), 'has-fallback-glyphs' ), selector
   #.........................................................................................................
   echo CND.grey "—".repeat 108
   return R
