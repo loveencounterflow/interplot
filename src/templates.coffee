@@ -324,8 +324,10 @@ insert = ( layout, content ) -> layout.replace /%content%/g, content
           _.IMG { src: '../rulers/vruler.png', style: "mix-blend-mode:multiply;", }
         _.RAW SCRIPT ->
           µ.DOM.ready ->
-            ( $ '.draggable' ).draggable()
-            ( $ '.draggable' ).on 'focus', -> ( $ @ ).blur()
+            µ.DOM.make_draggable element for element in µ.DOM.select_all '.draggable'
+            # console.log '^33376^', "draggables deactivated FTTB"
+            # ( $ '.draggable' ).draggable()
+            # ( $ '.draggable' ).on 'focus', -> ( $ @ ).blur()
         # _.TAG 'page', { pagenr: 0, }
         #.......................................................................................................
         _.PAGE { pagenr: 1, }, ->
