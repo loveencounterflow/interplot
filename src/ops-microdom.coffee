@@ -87,11 +87,13 @@ class Micro_dom # extends Multimix
   ###
   ### TAINT also use pseudo_selector, see above ###
   get_style_rule:   ( element, name         ) -> ( getComputedStyle element )[ name ] ### validation done by method ###
+
+  #---------------------------------------------------------------------------------------------------------
   set_style_rule:   ( element, name, value  ) ->
     ### see https://developer.mozilla.org/en-US/docs/Web/API/ElementCSSInlineStyle/style ###
-    throw new Error "^888744^ not implemented"
-    # toolbox.zoomer_dom.style.zoom = current_zoom * 1.25
-    # ( getComputedStyle element )[ name ] ### validation done by method ###
+    V.element element
+    V.nonempty_text name
+    element.style[ INTERTEXT.camelize name ] = value
 
 
   #=========================================================================================================

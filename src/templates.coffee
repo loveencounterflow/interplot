@@ -92,11 +92,11 @@ _.TOOLBOX = ->
       ### TAINT should use CSS animations ###
       µ.DOM.on toolbox.zoomin_dom, 'click', ->
         current_zoom = parseFloat µ.DOM.get_style_rule toolbox.zoomer_dom, 'zoom'
-        toolbox.zoomer_dom.style.zoom = current_zoom * 1.25
+        µ.DOM.set_style_rule toolbox.zoomer_dom, 'zoom', current_zoom * 1.25
       #.....................................................................................................
       µ.DOM.on toolbox.zoomout_dom, 'click', ->
         current_zoom = parseFloat µ.DOM.get_style_rule toolbox.zoomer_dom, 'zoom'
-        toolbox.zoomer_dom.style.zoom = current_zoom / 1.25
+        µ.DOM.set_style_rule toolbox.zoomer_dom, 'zoom', current_zoom / 1.25
       #.....................................................................................................
       return null
   _.TAG 'toolbox', '.gui', ->
