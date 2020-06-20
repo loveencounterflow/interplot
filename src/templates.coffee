@@ -29,12 +29,11 @@ URL                       = require 'url'
 #...........................................................................................................
 ### NOTE starting migration to `Cupofhtml` b/c of `&quote` bug in teacup ###
 INTERTEXT                 = require 'intertext'
-{ HTML }                  = INTERTEXT
 SCRIPT = ( f ) ->
   # validate.function f
-  cupofhtml = new HTML.Cupofhtml { flatten: true, }
-  cupofhtml.script f
-  return HTML.html_from_datoms cupofhtml.expand()
+  cupofhtml = new INTERTEXT.CUPOFHTML.Cupofhtml()
+  cupofhtml.S.script f
+  return INTERTEXT.HTML.html_from_datoms cupofhtml.expand()
 
 
 #===========================================================================================================
