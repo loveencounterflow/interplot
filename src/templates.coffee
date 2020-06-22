@@ -30,6 +30,16 @@ URL                       = require 'url'
 ### NOTE starting migration to `Cupofhtml` b/c of `&quote` bug in teacup ###
 INTERTEXT                 = require 'intertext'
 
+
+#===========================================================================================================
+# EXPOSED METHODS (EXPERIMENTAL: FOR USE IN BROWSER CONTEXT)
+#-----------------------------------------------------------------------------------------------------------
+@slug_as_html = ->
+  c = new Mycupofhtml()
+  c.S.slug()
+  return c.as_html()
+
+
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------
@@ -57,8 +67,10 @@ class Myspecials extends INTERTEXT.CUPOFHTML.Specials
   rightmargin:      ( P... ) -> @_.tag 'rightmargin',   { $blk: true, }, P...
   column:           ( P... ) -> @_.tag 'column',        { $blk: true, }, P...
   ### TAINT should be `<pageready></pageready>` if needed at all ###
-  pageready:        -> @_.H.span { id: 'page-ready', }
   artboard:         ( P... ) -> @_.tag 'artboard', { $blk: true, }, P...
+  trim:             -> @_.tag 'trim'
+  slug:             -> @_.tag 'slug', => @trim()
+  pageready:        -> @_.H.span { id: 'page-ready', }
 
   #---------------------------------------------------------------------------------------------------------
   selector_generator: ->
