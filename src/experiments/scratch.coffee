@@ -39,8 +39,8 @@ SP                        = require 'steampipes'
   $async
   $drain
   $watch
-  $before_first
-  $async_before_first
+  $once_before_first
+  $once_async_before_first
   $show  }                = SP.export()
 #...........................................................................................................
 after                     = ( dts, f ) -> setTimeout f, dts * 1000
@@ -48,7 +48,7 @@ sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done
 # page_html_path            = PATH.resolve PATH.join __dirname, '../../../public/main.html'
 # PUPPETEER                 = require 'puppeteer'
 INTERTEXT                 = require 'intertext'
-{ HTML, }                 = INTERTEXT
+HTML                      = require 'paragate/lib/htmlish.grammar'
 #...........................................................................................................
 RC                        = require '../remote-control'
 DATAMILL                  = {}
@@ -87,20 +87,19 @@ DATAMILL.$stop_on_stop_tag = ->
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------
-DEMO.$grab_first_paragraphs = ->
+DEMO.$grab_first_paragraphs = ( n = 2 ) ->
   p_count   = 0
   within_p  = false
   return $ ( d, send ) =>
-    return send.end() if p_count >= 2
-    switch d.$key
-      when '<p'
-        within_p = true
-        send d
-      when '>p'
-        within_p = false
-        p_count++
-        send d
-      else
+    return if p_count >= n
+    if ( d.$key is '<tag' ) and ( d.name is 'p' )
+      within_p = true
+      send d
+    else if ( d.$key is '>tag' ) and ( d.name is 'p' )
+      within_p = false
+      p_count++
+      send d
+    else
         return send d if within_p
     return null
 
@@ -173,7 +172,7 @@ provide_interplot_extensions = ->
     wait_for_selector = '#page-ready'
     gui               = true
     #.........................................................................................................
-    return $async_before_first ( send, done ) =>
+    return $once_async_before_first ( send, done ) =>
       send new_datom '^interplot:launch-browser'
       urge "launching browser..."
       S.rc = await RC.new_remote_control { url, wait_for_selector, gui, }
@@ -218,6 +217,7 @@ provide_interplot_extensions = ->
     pipeline  = []
     pipeline.push @$launch                      S
     pipeline.push @$find_first_target_element   S
+    pipeline.push $watch ( d ) -> urge '^88767^', rpr d
     #..........................................................................................................
     return SP.pull pipeline...
 
@@ -247,8 +247,8 @@ provide_interplot_extensions.apply INTERPLOT
   pipeline.push DATAMILL.$stop_on_stop_tag()
   pipeline.push INTERTEXT.$append '\n'
   #.........................................................................................................
-  pipeline.push $ { leapfrog: not_a_text, }, HTML.$html_as_datoms()
-  pipeline.push DEMO.$grab_first_paragraphs()
+  pipeline.push $ { leapfrog: not_a_text, }, HTML.$parse()
+  pipeline.push DEMO.$grab_first_paragraphs 2
   pipeline.push DEMO.$filter_text()
   # pipeline.push DEMO.$consolidate_text()
   pipeline.push DEMO.$blockify()                                         ### ↓↓↓ text/HTML of blocks ↓↓↓ ###
