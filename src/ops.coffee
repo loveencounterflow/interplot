@@ -47,24 +47,24 @@ provide_ops = ->
   #   return R
 
   #-----------------------------------------------------------------------------------------------------------
-  @_get_partial_slug = ( slabs, min_slab_idx, max_slab_idx ) ->
+  @_get_partial_slug = ( slabs_dtm, min_slab_idx, max_slab_idx ) ->
     ### TAINT also return text usable on next invocation so that part will not have to be computed again ###
     text      = ''
     spc_count = 0
     for slab_idx in [ min_slab_idx .. max_slab_idx ]
       is_first_slab = slab_idx is min_slab_idx
       is_last_slab  = slab_idx is max_slab_idx
-      slab          = slabs[ slab_idx ]
-      { txt, rhs, } = slab
+      txt           = slabs_dtm.slabs[ slab_idx ]
+      rhs           = slabs_dtm.ends[ slab_idx ]
       #.......................................................................................................
       switch rhs ? null
         when null then null
         #.....................................................................................................
-        when 'shy'
+        when '|'
           if is_last_slab
             txt += '-'
         #.....................................................................................................
-        when 'spc'
+        when '_'
           unless is_last_slab
             spc_count++
             txt += ' '
@@ -192,7 +192,7 @@ provide_ops = ->
     log '^ops/slugs_with_metrics_from_slabs@4455-1^'
     defaults            = { min_slab_idx: 0, }
     settings            = { defaults..., settings..., }
-    slabs               = slabs_dtm.$value
+    slabs               = slabs_dtm.slabs
     { min_slab_idx, }   = settings
     last_slab_idx       = slabs.length - 1
     max_slab_idx        = min_slab_idx - 1
@@ -231,7 +231,8 @@ provide_ops = ->
           push_metrics prv_slug_metrics
           prv_slug_metrics  = null
         break
-      partial_slug  = @_get_partial_slug slabs, min_slab_idx, max_slab_idx
+      partial_slug  = @_get_partial_slug slabs_dtm, min_slab_idx, max_slab_idx
+      # console.log '^77787^', partial_slug
       slug_metrics  = await @_metrics_from_partial_slug ctx, partial_slug
       #.......................................................................................................
       unless slug_metrics.fitting_ok
