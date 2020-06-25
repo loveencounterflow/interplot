@@ -145,6 +145,12 @@ DEMO.$as_slabs = ->
     # send lets d, ( d ) => d.text = INTERTEXT.hyphenate d.text
 
 
+#-----------------------------------------------------------------------------------------------------------
+### TAINT use OPS proxy or `require` OPS into this context ###
+DEMO.OPS_slugs_with_metrics_from_slabs = ( page, P... ) ->
+  return await page.evaluate ( ( P... ) -> OPS.slugs_with_metrics_from_slabs P... ), P...
+
+
 #===========================================================================================================
 #
 #-----------------------------------------------------------------------------------------------------------
@@ -216,6 +222,19 @@ provide_interplot_extensions = ->
     pipeline  = []
     pipeline.push @$launch                      S
     pipeline.push @$find_first_target_element   S
+    pipeline.push $async ( d, send, done ) ->
+      switch d.$key
+        when '^text'
+          help rpr d.text
+          send d
+        when '^slabs'
+          validate.interplot_slabs_datom d
+          urge rpr d.slabs
+          XXX_settings              = { min_slab_idx: 0, }
+          debug slugs_with_metrics  = await DEMO.OPS_slugs_with_metrics_from_slabs S.rc.page, d, XXX_settings
+        else
+          send d
+      done()
     pipeline.push $watch ( d ) -> urge '^88767^', rpr d
     #..........................................................................................................
     return SP.pull pipeline...
