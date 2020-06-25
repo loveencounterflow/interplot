@@ -8,6 +8,7 @@ globalThis.µ ?= {}
 µ.TMP._css_properties = require './css-properties.js'
 µ.TMP._css_font_properties = ( k for k, v of µ.TMP._css_properties when v.fonts ).sort()
 
+
 # INTERTEXT 								= require 'intertext'
 # { HYPH, }									= INTERTEXT
 # console.log '^4453-2^', INTERTEXT
