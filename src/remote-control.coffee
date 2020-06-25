@@ -26,34 +26,7 @@ types                     = require './types'
   validate
   cast
   type_of }               = types
-# #...........................................................................................................
-# # DATOM                     = new ( require 'datom' ).Datom { dirty: false, }
-# DATOM                     = require 'datom'
-# { new_datom
-#   stamp
-#   lets
-#   select }                = DATOM.export()
-# #...........................................................................................................
-# SP                        = require 'steampipes'
-# # SP                        = require '../../apps/steampipes'
-# { $
-#   $async
-#   $drain
-#   $watch
-#   $show  }                = SP.export()
-# #...........................................................................................................
-# after                     = ( dts, f ) -> setTimeout f, dts * 1000
-# sleep                     = ( dts ) -> new Promise ( done ) -> after dts, done
-# # page_html_path            = PATH.resolve PATH.join __dirname, '../../../public/main.html'
-# LINEMAKER                 = require '../linemaker'
-# # PUPPETEER                 = require 'puppeteer'
-# INTERTEXT                 = require 'intertext'
-# { HTML, }                 = INTERTEXT
-# #...........................................................................................................
-# DATAMILL                  = {}
-# DEMO                      = {}
-# INTERPLOT                 = {}
-# _settings                 = DATOM.freeze require '../settings'
+#...........................................................................................................
 PUPPETEER                 = require 'puppeteer'
 ### NOTE consider to use https://github.com/TehShrike/deepmerge ###
 merge                     = require 'lodash.merge'

@@ -5,6 +5,7 @@ PATH = require 'path'
 module.exports =
   fallback_font_names:  [ 'Adobe NotDef', 'LastResort', ]
   has_error:            false
+  extra_script_path:    '../../../hengist/dev/interplot/lib/ops-hengist-experimental.js'
   #.........................................................................................................
   close:
     on_finish:  true
@@ -19,7 +20,7 @@ module.exports =
   firefox:
     product:          'firefox'
     headless:         false
-    executablePath:   '/home/flow/bin/firefox-nightly'
+    executablePath:   'firefox-nightly'
   #.........................................................................................................
   puppeteer:
     product:            'chrome'

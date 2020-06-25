@@ -229,7 +229,7 @@ provide_interplot_extensions = ->
           send d
         when '^slabs'
           validate.interplot_slabs_datom d
-          urge rpr d.slabs
+          urge '^605921^', rpr d
           XXX_settings              = { min_slab_idx: 0, }
           debug slugs_with_metrics  = await DEMO.OPS_slugs_with_metrics_from_slabs S.rc.page, d, XXX_settings
         else
@@ -266,7 +266,7 @@ provide_interplot_extensions.apply INTERPLOT
   pipeline.push INTERTEXT.$append '\n'
   #.........................................................................................................
   pipeline.push $ { leapfrog: not_a_text, }, HTML.$parse()
-  pipeline.push DEMO.$grab_first_paragraphs 2
+  pipeline.push DEMO.$grab_first_paragraphs 6
   pipeline.push DEMO.$filter_text()
   # pipeline.push DEMO.$consolidate_text()
   pipeline.push DEMO.$blockify()                                         ### ↓↓↓ text/HTML of blocks ↓↓↓ ###
