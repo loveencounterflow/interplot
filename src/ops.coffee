@@ -114,7 +114,7 @@ provide_ops = ->
     css = ctx.caret_style
     # log '^3334-1^', [ ( css.getPropertyValue 'font-family' ), ( css.getPropertyValue 'font-size' ), ( css.getPropertyValue 'font-style' ), ]
     # log '^3334-2^', [ ( css[ 'font-family' ] ), ( css[ 'font-size' ] ), ( css[ 'font-style' ] ), ]
-    log '^3334-3^', ( css[ k ] for k in µ.TMP._css_font_properties ).join '/'
+    # log '^3334-3^', ( css[ k ] for k in µ.TMP._css_font_properties ).join '/'
     return null
 
   #-----------------------------------------------------------------------------------------------------------
