@@ -170,17 +170,20 @@ class Myspecials extends INTERTEXT.CUPOFHTML.Specials
     # H.html ->
     #   H.head ->
     H.meta { charset: 'utf8', }
-    H.title settings.title
+    H.title settings.page.title
+    ### TAINT should resolve path according to page address ###
     S.script '../plink-plonk.js'
     S.script '../browserified.js'
     S.script '../ops-globals.js'
     S.script '../ops-microdom.js'
     S.script '../ops.js'
+    if settings.extra_script_path?
+      S.script settings.extra_script_path
     S.link_css '../reset.css'
     S.link_css '../styles.css'
     S.script ->
       µ.DOM.ready -> console.log '^4445^', "demo for `µ.DOM.ready()`"
-    H.body ( if settings.body_def then { class: settings.body_def, } else {} ), ->
+    H.body ( if settings.page.body_def then { class: settings.page.body_def, } else {} ), ->
       content()
       S.pageready()
 
@@ -197,11 +200,14 @@ class Mycupofhtml extends INTERTEXT.CUPOFHTML.Cupofhtml
   unless ( arity = arguments.length ) is 0
     throw new Error "^33211^ expected 0 arguments, got #{arity}"
   #.........................................................................................................
-  c         = new Mycupofhtml()
-  { H, S, } = c.export()
-  settings  =
-    title:      'Galley Demo'
-    body_def:   'debug'
+  c             = new Mycupofhtml()
+  { H, S, }     = c.export()
+  settings      = require './settings'
+  page_settings =
+    page:
+      title:      'Galley Demo'
+      body_def:   'debug'
+  settings      = { settings..., page_settings..., }
   S.layout settings, ->
     S.selector_generator()
     S.link_css './galley.css'
