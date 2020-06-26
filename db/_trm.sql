@@ -1,0 +1,1 @@
+../intershop/db/010-trm.sql

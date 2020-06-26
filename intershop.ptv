@@ -1,0 +1,28 @@
+
+
+
+
+#-----------------------------------------------------------------------------------------------------------
+intershop/host/name                   ::text=            interplot
+
+#-----------------------------------------------------------------------------------------------------------
+# intershop/db/host                     ::text=            localhost
+intershop/db/port                     ::integer=         5432
+intershop/db/name                     ::text=            ${intershop/host/name}
+intershop/db/user                     ::text=            ${intershop/db/name}
+
+#-----------------------------------------------------------------------------------------------------------
+intershop/invariants/autovalidate     ::boolean=         true
+
+#-----------------------------------------------------------------------------------------------------------
+interplot/path                              ::text/path/folder=   ${intershop/host/path}
+intershop/mirage/parallel-limit             ::U.natural_number=   2
+intershop/mirage/dsk/configuration          ::url=                ptv:${intershop/host/configuration/path}
+intershop/mirage/dsk/pkgjson                ::url=                plain:${interplot/path}/package.json
+intershop/mirage/dsk/readme                 ::url=                plain:${interplot/path}/README.md
+# intershop/mirage/dsk/interplot/svg-to-png   ::url=                plain:apps/interplot/svg-to-png
+
+
+
+
+
