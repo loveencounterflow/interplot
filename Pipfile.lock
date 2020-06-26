@@ -1,0 +1,43 @@
+{
+    "_meta": {
+        "hash": {
+            "sha256": "f12fb79032b632848092d5ed89186dde3fdd5ff67f23f83d9f14dbeba87ff5dd"
+        },
+        "pipfile-spec": 6,
+        "requires": {
+            "python_version": "3.6"
+        },
+        "sources": [
+            {
+                "name": "pypi",
+                "url": "https://pypi.org/simple",
+                "verify_ssl": true
+            }
+        ]
+    },
+    "default": {
+        "uharfbuzz": {
+            "hashes": [
+                "sha256:0791693c44f94cedb5b33bc35774e92d5561462f6cdda7ca5bc41e1ebf1f6040",
+                "sha256:2ed92937e20d7792b9a1a084ba00bf30d8fdd5efb49c08d85619b2c1552db542",
+                "sha256:388c36d09fe5154e797df589b13f926e5f51cd08d5895db0acde5f8068059b85",
+                "sha256:598ed283b6df54c7a492833cbb45ffc9d10ef377f9dd920a4d5ed0188df43700",
+                "sha256:5fbb38fbd1289493062b19674272c6c3521886af1ce880d7bfabd7f8c3c06e6d",
+                "sha256:6ba81212f43faf122175af45ec4a7989fa7e67a62b396a5723e32cd21779200f",
+                "sha256:6eb4bb380c38312f80675770a31e50eb6c3b93369777cdef8e9957bc294baa8f",
+                "sha256:8c53c595cefa57fff445da0a9dbd30b1402dc009e1e442bda759b2262c54d737",
+                "sha256:a1fc73d0f290fd55fdbc152d72dfdc2c4018dab37b0564fed9317120a7293652",
+                "sha256:aada1bd10779def69be596e5ce14f9764f4c977e320915bbf8fd354483005aec",
+                "sha256:b8bcb8b76442be84644e8e538aa3cbfb10ce93c9037e162038cf9d4f8d2f9611",
+                "sha256:c3046143439e4413c1227b1da3e25c4172d2adf70b68c2bddf7a3b9c8e179611",
+                "sha256:c5f42bbe3620fe37ebca12ad4efb7eacd4acc89eacf584116228421501c2f228",
+                "sha256:d670e7a0997713d503535befdabe6c64fc4cce0d86836874260790089de87882",
+                "sha256:e4c62c8b653c74cc531e2cc95e1faf2ad3dec87fad3cdb6fbfb62f78a30241dc",
+                "sha256:f26056ef57fe00844f2f886fdb8893862f43b9807b76a98758942b2bbfd0b756"
+            ],
+            "index": "pypi",
+            "version": "==0.12.0"
+        }
+    },
+    "develop": {}
+}
