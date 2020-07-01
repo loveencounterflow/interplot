@@ -5,6 +5,7 @@ PATH = require 'path'
 module.exports =
   fallback_font_names:  [ 'Adobe NotDef', 'LastResort', ]
   has_error:            false
+  ### TAINT use path relative to interplot/public? ###
   extra_script_path:    '../../../hengist/dev/interplot/lib/ops-hengist-experimental.js'
   #.........................................................................................................
   close:
