@@ -16,6 +16,7 @@
     "brfs": "^2.0.2",
     "cnd": "^9.0.0",
     "commander": "^5.1.0",
+    "intershop-rpc": "^0.1.1",
     "intertext": "^5.0.0",
     "intertype": "^7.0.2",
     "lodash": "^4.17.15",
