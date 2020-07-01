@@ -22,7 +22,11 @@ intershop/mirage/dsk/pkgjson                ::url=                plain:${interp
 intershop/mirage/dsk/readme                 ::url=                plain:${interplot/path}/README.md
 # intershop/mirage/dsk/interplot/svg-to-png   ::url=                plain:apps/interplot/svg-to-png
 
+#-----------------------------------------------------------------------------------------------------------
+uharfbuzz/path                              ::text/path/file=     /home/flow/.local/lib/python3.6/site-packages/uharfbuzz/__init__.py
 
+intershop/rpc/host                  ::text=         127.0.0.1
+intershop/rpc/port                  ::integer=      23001
 
 
 
