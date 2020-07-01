@@ -16,7 +16,7 @@
     "brfs": "^2.0.2",
     "cnd": "^9.0.0",
     "commander": "^5.1.0",
-    "intershop-rpc": "^0.1.1",
+    "intershop-rpc": "^0.2.0",
     "intertext": "^5.0.0",
     "intertype": "^7.0.2",
     "lodash": "^4.17.15",
@@ -24,7 +24,7 @@
     "number-format.js": "^2.0.9",
     "paragate": "^1.2.1",
     "puppeteer": "^4.0.1",
-    "steampipes": "^6.3.0",
+    "steampipes": "^6.4.0",
     "util-inspect": "^0.1.8"
   }
 }
