@@ -40,7 +40,6 @@ create function HARFBUZZ._positions_from_text( _text text )
   # sys.path.insert( 1, sys.path[ 0 ] + '/site-packages/uharfbuzz' )
   # ctx.log( '^44498^', os.getcwd() )
   import myharfbuzz as MHB
-  MHB.provide_uharfbuzz( ctx )
   R = MHB.demo_uharfbuzz( ctx, _text )
   return JSON.dumps( R )
   $$;
@@ -63,12 +62,11 @@ reset role;
 
 -- ---------------------------------------------------------------------------------------------------------
 \echo :signal ———{ :filename 1 }———:reset
--- select * from HARFBUZZ.positions_from_text( e'这个东西' );
--- select * from HARFBUZZ.positions_from_text( e'affix' );
--- -- select * from HARFBUZZ.positions_from_text( e'xحرف‌بازx' );
--- select * from HARFBUZZ.positions_from_text( e'حرف‌بازx' );
--- -- select * from jsonb_populate_recordset( null::HARFBUZZ.x, HARFBUZZ.positions_from_text( 42 ) );
--- select HARFBUZZ.f();
+select * from HARFBUZZ.positions_from_text( e'这个东西' );
+select * from HARFBUZZ.positions_from_text( e'affix' );
+-- select * from HARFBUZZ.positions_from_text( e'xحرف‌بازx' );
+select * from HARFBUZZ.positions_from_text( e'حرف‌بازx' );
+-- select * from jsonb_populate_recordset( null::HARFBUZZ.x, HARFBUZZ.positions_from_text( 42 ) );
 select IPC.rpc( '^hyphenate', '"some text to be hyphenated"' );
 
 /* ###################################################################################################### */
