@@ -17,7 +17,7 @@
     "cnd": "^9.1.0",
     "commander": "^5.1.0",
     "intertext": "^5.0.0",
-    "intertype": "^7.0.3",
+    "intertype": "^7.2.0",
     "lodash": "^4.17.19",
     "lodash.merge": "^4.6.2",
     "number-format.js": "^2.0.9",
