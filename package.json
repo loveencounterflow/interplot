@@ -17,7 +17,7 @@
     "commander": "^5.1.0",
     "intertext": "^1.2.0",
     "intertype": "^7.0.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lodash.merge": "^4.6.2",
     "playwright": "^1.0.2",
     "puppeteer": "^3.3.0",
