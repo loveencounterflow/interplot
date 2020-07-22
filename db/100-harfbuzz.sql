@@ -51,13 +51,16 @@ reset role;
 -- ---------------------------------------------------------------------------------------------------------
 \echo :signal ———{ :filename 5 }———:reset
 set role dba;
-create function HARFBUZZ.width_from_text( _text text, _size float default 1 )
-  returns float strict immutable language plpython3u as $$
+create function HARFBUZZ.metrics_from_text( _font_path text, _text text )
+  returns jsonb strict immutable language plpython3u as $$
   plpy.execute( 'select U.py_init()' ); ctx = GD[ 'ctx' ]
   import myharfbuzz as MHB
-  return MHB.width_from_text( ctx, _text, _size )
+  import json as JSON
+  return JSON.dumps( MHB.metrics_from_text( ctx, _font_path, _text ) )
   $$;
 reset role;
+
+-- do $$ begin perform log( '^3337669^' ); end; $$;
 
 -- -- ---------------------------------------------------------------------------------------------------------
 -- \echo :signal ———{ :filename 6 }———:reset

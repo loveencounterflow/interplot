@@ -39,7 +39,7 @@ create function HARFBUZZ_X.measure_widths( ¶slab text )
 -- select * from HARFBUZZ._positions_from_text( 'some text' );
 -- select * from HARFBUZZ_X.measure_widths( 'some text' );
 -- select * from HARFBUZZ.positions_from_text( 'somewhere' );
-select * from HARFBUZZ.width_from_text( 'super' );
+-- select * from HARFBUZZ.metrics_from_text( 'super' );
 
 create table HARFBUZZ_X.slabjoints_01_probes as
   select * from INTERTEXT_SLABS.shyphenate(
@@ -55,9 +55,10 @@ create view HARFBUZZ_X.slabwidths as ( select
     d1.joint      as joint,
     d3.width      as width
   from HARFBUZZ_X.slabjoints_01_probes                      as d1,
-  lateral ( select 5 as size_mm )                           as d11,
-  lateral HARFBUZZ.width_from_text( d1.slab, d11.size_mm )  as d2 ( width ),
-  lateral to_char( d2.width, '99,990.000' )                 as d3 ( width )
+  -- lateral ( select '/home/flow/jzr/hengist/assets/jizura-fonts/FandolKai-Regular.otf' as font_path ) as d12,
+  lateral ( select '/home/flow/jzr/hengist/assets/jizura-fonts/lmroman10-italic.otf' as font_path ) as d12,
+  lateral HARFBUZZ.metrics_from_text( d12.font_path, d1.slab )  as d3 ( width )
+  -- lateral to_char( d2.width, '99,990.000' )                 as d3 ( width )
   order by vnr );
 
 /* ###################################################################################################### */
