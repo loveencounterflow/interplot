@@ -286,5 +286,8 @@ provide_interplot_extensions.apply INTERPLOT
 if module is require.main then do =>
   await @f()
   help 'ok'
-
-
+  # warn CND.reverse "try without Chrome Hardware Accelearation"
+  # warn CND.reverse "CSS: text-rendering auto|optimizeSpeed|optimizeLegibility|geometricPrecision"
+  # warn CND.reverse "(Gecko: geometricPrecision == optimizeLegibility)"
+  # warn CND.reverse "Gecko: browser.display.auto_quality_min_font_size"
+  # warn CND.cyan CND.reverse "https://css-tricks.com/almanac/properties/t/text-rendering/"
