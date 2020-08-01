@@ -82,7 +82,7 @@ create function INTERTEXT_SLABS.slabjoints_from_jsonb( ¶slabjoint jsonb )
     ¶segments :=  ¶slabjoint->'segments';
     for ¶idx in 0 .. jsonb_array_length( ¶segments ) - 1 loop
       ¶segment  :=  ¶segments->>¶idx;
-      R.vnr     := array[ ¶idx ];
+      R.vnr     := array[ ¶idx + 1 ];
       R.slab    := substring( ¶segment for length( ¶segment ) - 1 );
       R.joint   := substring( ¶segment from length( ¶segment ) );
       return next R;
