@@ -29,29 +29,28 @@ create table HARFBUZZ.x (
 -- ---------------------------------------------------------------------------------------------------------
 \echo :signal ———{ :filename 3 }———:reset
 create type HARFBUZZ.hrfb_glyphadvance as (
+    vnr         VNR.vnr,
     gid         integer,
-    upem        integer,
-    cluster     integer,
-    x_advance   float );
+    dx          float );
 
 -- ---------------------------------------------------------------------------------------------------------
 \echo :signal ———{ :filename 4 }———:reset
 set role dba;
-create function HARFBUZZ.get_detailed_metrics( _text text )
+create function HARFBUZZ.metrics_from_text_as_rows( _font_path text, _text text )
   returns setof HARFBUZZ.hrfb_glyphadvance strict immutable language plpython3u as $$
   plpy.execute( 'select U.py_init()' ); ctx = GD[ 'ctx' ]
   import myharfbuzz as MHB
-  ds = MHB.get_detailed_metrics( ctx, _text )
-  ctx.log( '^236767^', ds )
-  for d in ds:
-    yield d
+  nr = 0
+  for part in MHB.metrics_from_text( ctx, _font_path, _text ).parts:
+    nr += +1
+    yield { 'vnr': [ nr, ], 'gid': part.gid, 'dx': part.dx, }
   $$;
 reset role;
 
 -- ---------------------------------------------------------------------------------------------------------
 \echo :signal ———{ :filename 5 }———:reset
 set role dba;
-create function HARFBUZZ.metrics_from_text( _font_path text, _text text )
+create function HARFBUZZ.metrics_from_text_as_jsonb( _font_path text, _text text )
   returns jsonb strict immutable language plpython3u as $$
   plpy.execute( 'select U.py_init()' ); ctx = GD[ 'ctx' ]
   import myharfbuzz as MHB
@@ -60,40 +59,9 @@ create function HARFBUZZ.metrics_from_text( _font_path text, _text text )
   $$;
 reset role;
 
--- do $$ begin perform log( '^3337669^' ); end; $$;
-
--- -- ---------------------------------------------------------------------------------------------------------
--- \echo :signal ———{ :filename 6 }———:reset
--- set role dba;
--- create function HARFBUZZ._positions_from_text( _text text )
---   returns jsonb strict immutable language plpython3u as $$
---   plpy.execute( 'select U.py_init()' ); ctx = GD[ 'ctx' ]
---   import myharfbuzz as MHB
---   R = MHB.demo_uharfbuzz( ctx, _text )
---   return JSON.dumps( R )
---   $$;
--- reset role;
-
--- -- ---------------------------------------------------------------------------------------------------------
--- create function HARFBUZZ.positions_from_text( ¶text text )
---   returns setof HARFBUZZ.x strict immutable language sql as $$
---     select * from jsonb_populate_recordset( null::HARFBUZZ.x, HARFBUZZ._positions_from_text( ¶text ) ); $$;
-
--- ---------------------------------------------------------------------------------------------------------
-\echo :signal ———{ :filename 7 }———:reset
-set role dba;
-create function HARFBUZZ.f() returns void strict immutable language plpython3u as $$
-  plpy.execute( 'select U.py_init()' ); ctx = GD[ 'ctx' ]
-  import myharfbuzz as MHB
-  MHB.f( ctx )
-  $$;
-reset role;
-
-
-
 
 /* ###################################################################################################### */
-\echo :red ———{ :filename 3 }———:reset
+\echo :red ———{ :filename 6 }———:reset
 \quit
 
 
