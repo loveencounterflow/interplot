@@ -50,7 +50,7 @@ class Mytags extends INTERTEXT.CUPOFHTML.Tags
 
 #-----------------------------------------------------------------------------------------------------------
 class Myspecials extends INTERTEXT.CUPOFHTML.Specials
-  tabletop:         get_sameid_tag 'tabletop'
+  # tabletop:         get_sameid_tag 'tabletop'
   grid:             get_sameid_tag 'grid'
   zoomer:           get_sameid_tag 'zoomer', { $blk: true, }
   caret:            get_sameid_tag 'caret'
