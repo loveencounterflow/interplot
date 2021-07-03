@@ -21,6 +21,8 @@ PATH                      = require 'path'
 warn CND.reverse "Can't use harfbuzzjs because:"
 warn CND.reverse "* harfbuzzjs doesn't have font feature switches (python version has them)"
 warn CND.reverse "* metrics returned with font glyph nr, but have no way so far to access these for typesetting"
+warn()
+warn CND.reverse "this code has been moved to jzr/font-outlines-as-svg"
 process.exit 1
 
 #-----------------------------------------------------------------------------------------------------------
