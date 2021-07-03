@@ -15,6 +15,7 @@
   font-family:            'flow';
   src:                    url( './fonts/sunflower-exta-201903.ttf' );
   unicode-range:
+    U+2e80-2eff,
     U+3006-3007,
     U+3021-3029,
     U+3038-303a,
