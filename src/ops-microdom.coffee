@@ -31,7 +31,12 @@ class Micro_dom # extends Multimix
     V.function f
     return ( setTimeout ( => @ready f ), 9 ) if /in/.test document.readyState
     return f()
-
+# thx to https://codetonics.com/javascript/detect-document-ready/
+# function ready(callbackFunction){
+#   if(document.readyState != 'loading')
+#     callbackFunction(event)
+#   else
+#     document.addEventListener("DOMContentLoaded", callbackFunction)}
   #---------------------------------------------------------------------------------------------------------
   select:     ( selector, fallback = misfit ) -> @select_from     document, selector, fallback
   select_all: ( selector                    ) -> @select_all_from document, selector
