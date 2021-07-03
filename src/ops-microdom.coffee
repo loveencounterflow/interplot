@@ -215,6 +215,12 @@ class Micro_dom # extends Multimix
     V.function handler
     return element.addEventListener name, handler, false
 
+  #---------------------------------------------------------------------------------------------------------
+  emit_custom_event: ( name, options ) ->
+    # thx to https://www.javascripttutorial.net/javascript-dom/javascript-custom-events/
+    V.nonempty_text name
+    document.dispatchEvent new CustomEvent name, options
+
 
   #=========================================================================================================
   # DRAGGABLES
