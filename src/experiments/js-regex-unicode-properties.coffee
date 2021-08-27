@@ -116,6 +116,7 @@ patterns =
 ### see https://github.com/mathiasbynens/regexpu-core/blob/master/property-escapes.md ###
 patterns    = []
 # patterns.push /^\p{Script_Extensions=Latin}$/u
+patterns.push /^\p{Script_Extensions=Arabic}$/u
 # patterns.push /^\p{Script=Latin}$/u
 # # patterns.push /^\p{Script_Extensions=Cyrillic}$/u
 # # patterns.push /^\p{Script_Extensions=Greek}$/u
