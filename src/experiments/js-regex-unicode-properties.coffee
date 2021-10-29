@@ -90,6 +90,7 @@ patterns =
   control:                /^\p{Cc}$/u # Control
   format:                 /^\p{Cf}$/u # Format
   unassigned:             /^\p{Cn}$/u # Unassigned
+  assigned:               /^\P{Cn}$/u # Assigned
   pua:                    /^\p{Co}$/u # Private Use
   surrogate:              /^\p{Cs}$/u # Surrogate
   ideographic:            /^\p{Ideographic}$/u
